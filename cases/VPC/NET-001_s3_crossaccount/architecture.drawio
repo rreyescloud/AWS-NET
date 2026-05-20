@@ -1,0 +1,76 @@
+<mxfile host="drawio-plugin" modified="2026-05-19T21:13:07.792Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36" version="22.1.22" etag="GAXznDeGYMSGzauWFeJ3" type="embed">
+  <diagram name="NET-001 Final Architecture" id="net001-final">
+    <mxGraphModel dx="1264" dy="663" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="account_a" value="Account A (us-east-1)" style="points=[[0,0],[0.25,0],[0.5,0],[0.75,0],[1,0],[1,0.25],[1,0.5],[1,0.75],[1,1],[0.75,1],[0.5,1],[0.25,1],[0,1],[0,0.75],[0,0.5],[0,0.25]];outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=13;fontStyle=1;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_account;strokeColor=#CD2264;fillColor=none;verticalAlign=top;align=left;spacingLeft=30;fontColor=#CD2264;dashed=0;" parent="1" vertex="1">
+          <mxGeometry x="40" y="40" width="1050" height="920" as="geometry" />
+        </mxCell>
+        <mxCell id="vpc" value="VPC CLAUDE (10.0.0.0/16)&#xa;No IGW | No NAT | No Internet" style="points=[[0,0],[0.25,0],[0.5,0],[0.75,0],[1,0],[1,0.25],[1,0.5],[1,0.75],[1,1],[0.75,1],[0.5,1],[0.25,1],[0,1],[0,0.75],[0,0.5],[0,0.25]];outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=11;fontStyle=1;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_vpc;strokeColor=#248814;fillColor=none;verticalAlign=top;align=left;spacingLeft=30;fontColor=#248814;dashed=0;" parent="1" vertex="1">
+          <mxGeometry x="80" y="100" width="970" height="820" as="geometry" />
+        </mxCell>
+        <mxCell id="subnet" value="Private Subnet (10.0.1.0/24) — us-east-1a" style="points=[[0,0],[0.25,0],[0.5,0],[0.75,0],[1,0],[1,0.25],[1,0.5],[1,0.75],[1,1],[0.75,1],[0.5,1],[0.25,1],[0,1],[0,0.75],[0,0.5],[0,0.25]];outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=10;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;strokeColor=#147EBA;fillColor=none;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=0;" parent="1" vertex="1">
+          <mxGeometry x="120" y="180" width="900" height="700" as="geometry" />
+        </mxCell>
+        <mxCell id="ec2" value="EC2 Instance&#xa;10.0.1.84 (t3.micro)&#xa;No Public IP&#xa;Role: NET-001-S3-Role" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#ED7100;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=1;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.instance2;" parent="1" vertex="1">
+          <mxGeometry x="200" y="420" width="60" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="gw_ep" value="S3 Gateway Endpoint&#xa;vpce-036c...&#xa;(FREE)&#xa;&#xa;Prefix List: pl-63a5400a&#xa;Route in RT" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#8C4FFF;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;fontStyle=1;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.endpoint;" parent="1" vertex="1">
+          <mxGeometry x="490" y="295" width="50" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="cr_ep" value="S3 Cross-Region PrivateLink&#xa;vpce-041d...&#xa;ENI: 10.0.1.94&#xa;&#xa;--service-name com.amazonaws.us-east-2.s3&#xa;--service-region us-east-2&#xa;--private-dns-enabled" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#8C4FFF;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;fontStyle=1;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.endpoint;" parent="1" vertex="1">
+          <mxGeometry x="500" y="530" width="50" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="ssm_eps" value="SSM Interface Endpoints&#xa;(3x: ssm, ssmmessages, ec2messages)&#xa;For remote access without internet" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#E7157B;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.endpoint;" parent="1" vertex="1">
+          <mxGeometry x="200" y="680" width="50" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="rt" value="Route Table&#xa;10.0.0.0/16 → local&#xa;pl-63a5400a → Gateway EP&#xa;(NO 0.0.0.0/0)" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#8C4FFF;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.route_table;" parent="1" vertex="1">
+          <mxGeometry x="350" y="220" width="40" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="bucket_a" value="Bucket A&#xa;net001-bucket-a-demo&#xa;(us-east-1)" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#3F8624;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.bucket;" parent="1" vertex="1">
+          <mxGeometry x="780" y="290" width="55" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="account_b" value="Account B (us-east-2)" style="points=[[0,0],[0.25,0],[0.5,0],[0.75,0],[1,0],[1,0.25],[1,0.5],[1,0.75],[1,1],[0.75,1],[0.5,1],[0.25,1],[0,1],[0,0.75],[0,0.5],[0,0.25]];outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=13;fontStyle=1;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_account;strokeColor=#CD2264;fillColor=none;verticalAlign=top;align=left;spacingLeft=30;fontColor=#CD2264;dashed=0;" parent="1" vertex="1">
+          <mxGeometry x="1200" y="40" width="550" height="920" as="geometry" />
+        </mxCell>
+        <mxCell id="bucket_b" value="Bucket B&#xa;net001-bucket-b-demo&#xa;(us-east-2)&#xa;&#xa;Bucket Policy:&#xa;• Allow Account A (cross-account)&#xa;• Deny non-TLS requests" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#3F8624;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=1;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.bucket;" parent="1" vertex="1">
+          <mxGeometry x="1420" y="510" width="70" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow_ec2_gw" value="Same-region traffic&#xa;via prefix list route" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#2D7600;strokeWidth=2;fontSize=9;fontColor=#2D7600;labelBackgroundColor=#ffffff;" parent="1" source="ec2" target="gw_ep" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow_gw_a" value="Private&#xa;(FREE)" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#2D7600;strokeWidth=3;fontSize=9;fontColor=#2D7600;labelBackgroundColor=#ffffff;" parent="1" source="gw_ep" target="bucket_a" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow_ec2_cr" value="Cross-region traffic&#xa;DNS: s3.us-east-2.amazonaws.com&#xa;resolves to 10.0.1.94" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#0050ef;strokeWidth=2;fontSize=9;fontColor=#0050ef;labelBackgroundColor=#ffffff;" parent="1" source="ec2" target="cr_ep" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow_cr_b" value="AWS Private Backbone&#xa;Cross-Region PrivateLink&#xa;$0.01/GB + $0.02/GB" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#0050ef;strokeWidth=3;fontSize=10;fontColor=#0050ef;labelBackgroundColor=#ffffff;dashed=0;" parent="1" source="cr_ep" target="bucket_b" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow_ec2_ssm" value="SSM&#xa;(remote access)" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#E7157B;strokeWidth=1;fontSize=8;fontColor=#E7157B;labelBackgroundColor=#ffffff;dashed=1;" parent="1" source="ec2" target="ssm_eps" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="no_internet" value="NO PUBLIC INTERNET&#xa;NO IGW | NO NAT" style="text;html=1;strokeColor=#b85450;fillColor=#f8cecc;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=1;fontSize=12;fontStyle=1;fontColor=#b85450;" parent="1" vertex="1">
+          <mxGeometry x="120" y="130" width="200" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="dns_note" value="Private DNS Override:&#xa;s3.us-east-2.amazonaws.com → 10.0.1.94&#xa;(private hosted zone created by endpoint)" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;size=18;fontSize=9;align=left;spacingLeft=5;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+          <mxGeometry x="600" y="600" width="280" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="pl_note" value="Prefix List pl-63a5400a:&#xa;Contains S3 us-east-1 IPs ONLY&#xa;(52.216.0.0/15, 54.231.0.0/16, etc.)&#xa;Does NOT contain S3 us-east-2 IPs" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;size=18;fontSize=9;align=left;spacingLeft=5;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+          <mxGeometry x="600" y="230" width="270" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="test_results" value="TEST RESULTS:&#xa;&#xa;✅ S3 us-east-1 (same region via Gateway EP) — FREE&#xa;✅ S3 us-east-2 (cross-region via PrivateLink) — $0.03/GB&#xa;✅ SSM remote access (via Interface EPs)&#xa;❌ Internet access — BLOCKED (no route)" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;size=18;fontSize=10;align=left;spacingLeft=5;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+          <mxGeometry x="1200" y="700" width="380" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="insight" value="KEY INSIGHT:&#xa;&#xa;Gateway EP: Only same-region (prefix list match)&#xa;Interface EP (standard): Only same-region DNS override&#xa;Interface EP + --service-region: CROSS-REGION works!" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;size=18;fontSize=10;align=left;spacingLeft=5;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1">
+          <mxGeometry x="1200" y="130" width="380" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="cost" value="COST (1 TB/month):&#xa;&#xa;Option 4 (this): $37.30/month — Private, Simple&#xa;Option 1 (EIGW): $20.00/month — Not private&#xa;Option 7 (NAT): $101.50/month — Expensive" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;size=18;fontSize=10;align=left;spacingLeft=5;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1">
+          <mxGeometry x="1200" y="400" width="380" height="100" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
