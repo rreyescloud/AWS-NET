@@ -8,7 +8,7 @@ Portfolio of real-world AWS networking cases covering VPC connectivity, Route 53
 |---|---|---|---|
 | NET-001 | VPC | [S3 Private Cross-Account Cross-Region Connectivity](cases/VPC/NET-001_s3_crossaccount/) | Fintech |
 | NET-002 | Route 53 | [Resolver Query Logging — Common Issues](cases/R53/NET-002_r53_query_logging/) | General |
-| NET-003 | Route 53 | [ARC Region Switch + Aurora Global Database Failover](cases/R53/NET-003_arc_region_switch_off_fails/) | Financial Services |
+| NET-003 | Route 53 / ARC | [ARC Region Switch + Aurora Global Database Failover](cases/R53/ARC/NET-003_arc_region_switch_off_fails/) | Financial Services |
 
 ## What Each Case Includes
 
@@ -41,4 +41,4 @@ python cleanup.py --profile <your-aws-profile>
 
 ## Author
 
-Rodrigo Chiasro — Cloud Support Engineer, Networking
+Rodrigo Chias — Cloud Network Engineer
