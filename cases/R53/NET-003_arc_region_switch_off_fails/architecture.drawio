@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2026-05-20" type="device">
+  <diagram name="ARC Region Switch - Off Fails" id="arc-off-fails">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Title -->
+        <mxCell id="title" value="NET-003: ARC Region Switch - OFF Step Fails" style="text;html=1;fontSize=18;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="400" y="20" width="500" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- ARC Control Plane -->
+        <mxCell id="arc-box" value="Route 53 ARC - Region Switch Workflow" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14;fontStyle=1;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="350" y="80" width="600" height="160" as="geometry" />
+        </mxCell>
+
+        <!-- Workflow Steps -->
+        <mxCell id="step1" value="Step 1&#xa;Aurora DB Failover&#xa;to us-west-2&#xa;✓ SUCCESS" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="380" y="120" width="150" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="step2" value="Step 2&#xa;Turn Standby ON&#xa;(us-west-2)&#xa;✓ SUCCESS" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="560" y="120" width="150" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="step3" value="Step 3&#xa;Turn Primary OFF&#xa;(us-east-1)&#xa;✗ FAILED" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="740" y="120" width="150" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- Arrows between steps -->
+        <mxCell id="arrow1-2" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="step1" target="step2" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow2-3" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="step2" target="step3" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Execution Role -->
+        <mxCell id="role" value="RegionSwitchExecutionRole-2dcb89383d59&#xa;(evaluator-arc-routing-control)" style="shape=actor;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="100" y="130" width="200" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="role-arrow" value="executes" style="edgeStyle=orthogonalEdgeStyle;dashed=1;" edge="1" source="role" target="arc-box" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Region us-east-1 -->
+        <mxCell id="region-east-box" value="us-east-1 (ex-Primary)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=13;fontStyle=1;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="150" y="340" width="400" height="260" as="geometry" />
+        </mxCell>
+        <mxCell id="rc-east" value="Routing Control&#xa;us-east-1&#xa;&#xa;State: ON ⚠️&#xa;(Should be OFF)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="200" y="390" width="160" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="aurora-east" value="Aurora&#xa;(Read-Only Replica)&#xa;⚠️ NOT writable" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;size=15;" vertex="1" parent="1">
+          <mxGeometry x="400" y="380" width="120" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="traffic-east" value="Traffic still&#xa;arriving here!" style="shape=callout;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;perimeter=calloutPerimeter;position2=0.5;size=20;base=20;" vertex="1" parent="1">
+          <mxGeometry x="180" y="500" width="130" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- Region us-west-2 -->
+        <mxCell id="region-west-box" value="us-west-2 (New Primary)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=13;fontStyle=1;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="650" y="340" width="400" height="260" as="geometry" />
+        </mxCell>
+        <mxCell id="rc-west" value="Routing Control&#xa;us-west-2&#xa;&#xa;State: ON ✓" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="700" y="390" width="160" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="aurora-west" value="Aurora&#xa;(New Primary Writer)&#xa;✓ Writable" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;size=15;" vertex="1" parent="1">
+          <mxGeometry x="900" y="380" width="120" height="100" as="geometry" />
+        </mxCell>
+
+        <!-- ARC Cluster reference -->
+        <mxCell id="arc-cluster" value="ARC Cluster&#xa;Account: 429180371169&#xa;API Region: us-west-2" style="shape=hexagon;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1100" y="100" width="180" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="cluster-arrow-east" style="edgeStyle=orthogonalEdgeStyle;dashed=1;strokeColor=#6c8ebf;" edge="1" source="arc-cluster" target="rc-east" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="cluster-arrow-west" style="edgeStyle=orthogonalEdgeStyle;dashed=1;strokeColor=#6c8ebf;" edge="1" source="arc-cluster" target="rc-west" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Problem annotation -->
+        <mxCell id="problem-box" value="PROBLEM: Split Traffic&#xa;&#xa;Both routing controls ON → DNS resolves&#xa;to BOTH regions → writes hit read-only&#xa;replica in us-east-1 → errors / data loss" style="shape=note;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="350" y="660" width="350" height="100" as="geometry" />
+        </mxCell>
+
+        <!-- Suspect areas -->
+        <mxCell id="suspects" value="Likely Root Causes:&#xa;&#xa;1. IAM policy on execution role allows&#xa;   UpdateRoutingControlState only for&#xa;   RoutingControlState=On (missing Off)&#xa;&#xa;2. ARC Safety Rule blocking the Off&#xa;   (gating rule misconfigured)&#xa;&#xa;3. Timing: Step 3 evaluates before&#xa;   Step 2 propagates to all cluster&#xa;   endpoints (eventual consistency)" style="shape=note;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="800" y="620" width="320" height="180" as="geometry" />
+        </mxCell>
+
+        <!-- Accounts label -->
+        <mxCell id="accounts" value="Workload Account: 970688031697&#xa;TFE Run: run-RsnTqKsXgYnupiG9" style="text;html=1;fontSize=10;align=left;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="20" y="20" width="300" height="40" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
