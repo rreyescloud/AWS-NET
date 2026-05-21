@@ -1,39 +1,44 @@
-# AWS Networking — Troubleshooting Cases & Enterprise Solutions
+# AWS Networking — Enterprise Solutions & Knowledge Base
 
-Portfolio of real-world AWS networking cases covering VPC connectivity, Route 53, WAF, and Network Firewall. Each case includes architecture diagrams, step-by-step implementation, infrastructure-as-code (deploy/cleanup scripts), and lessons learned from production environments.
+Portfolio of real-world AWS networking solutions covering VPC connectivity, Route 53, Network Firewall, and WAF. Each service includes documentation, enterprise case patterns, and reproducible lab scenarios with infrastructure-as-code.
 
-## Cases
+## Services
 
-| ID | Service | Title | Industry |
+| Service | Docs | Scenarios | Focus |
 |---|---|---|---|
-| NET-001 | VPC | [S3 Private Cross-Account Cross-Region Connectivity](cases/VPC/NET-001_s3_crossaccount/) | Fintech |
-| NET-002 | Route 53 | [Resolver Query Logging — Common Issues](cases/R53/NET-002_r53_query_logging/) | General |
-| NET-003 | Route 53 / ARC | [ARC Region Switch + Aurora Global Database Failover](cases/R53/ARC/NET-003_arc_region_switch_off_fails/) | Financial Services |
+| [VPC](services/VPC/) | Endpoints, Connectivity, Components, Troubleshooting | NET-001 | PrivateLink, cross-region, private architectures |
+| [Route 53](services/R53/) | DNS, Resolver, Health Checks, ARC, Region Switch | NET-002, NET-003 | ARC failover, multi-region DR, query logging |
+| [Network Firewall](services/NetworkFirewall/) | Rules, Deployment, TLS Inspection, Logging | NET-004 | Suricata, TLS inspection, centralized inspection |
+| [WAF](services/WAF/) | Rules, Bot Control, Shield, Firewall Manager | — | DDoS protection, rate limiting, compliance |
 
-## What Each Case Includes
+## Structure
 
-- **README.md** — Problem statement, business context, architecture, step-by-step implementation, things not to do, and references
-- **architecture.drawio** — Visual diagrams (open with draw.io or diagrams.net)
-- **deploy.py** — Infrastructure-as-code to reproduce the entire environment
-- **cleanup.py** — Teardown script to avoid ongoing costs
-- **correspondence/** — Example support communications (when applicable)
-
-## Services Covered
-
-- **VPC** — PrivateLink, Gateway/Interface Endpoints, cross-region connectivity, private-only architectures
-- **Route 53** — ARC (Application Recovery Controller), Region Switch, routing controls, health checks, failover DNS, Resolver Query Logging
-- **Aurora** — Global Database, managed switchover/failover, multi-region DR
+```
+services/
+├── <Service>/
+│   ├── README.md              ← Index + Overview
+│   ├── docs/                  ← Knowledge base
+│   │   ├── Cases-Worked.md   ← Enterprise case patterns by industry
+│   │   ├── <Topic>.md        ← Deep-dive per topic
+│   │   └── ...
+│   └── scenarios/             ← Reproducible labs
+│       └── NET-XXX_name/
+│           ├── README.md      ← Problem, architecture, step-by-step
+│           ├── deploy.py      ← Create all infrastructure
+│           ├── cleanup.py     ← Teardown to avoid costs
+│           └── architecture.drawio
+```
 
 ## How to Use
 
-Each case is self-contained. To reproduce:
+Each scenario is self-contained and reproducible:
 
 ```bash
-cd cases/<service>/<case-folder>
+cd services/<Service>/scenarios/<scenario-folder>
 python deploy.py --profile <your-aws-profile> --account-id <your-account-id>
 ```
 
-To clean up after testing:
+To clean up:
 
 ```bash
 python cleanup.py --profile <your-aws-profile>
