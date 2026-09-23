@@ -5,11 +5,18 @@
 
 ## Objective
 
-Replicate and document the most common Global Resolver issues observed in real support cases, producing a re:Post community article with step-by-step troubleshooting guidance.
+Replicate and document the most common Global Resolver failure modes, producing step-by-step
+troubleshooting guidance that stands on its own without access to any particular account.
+
+Global Resolver is a managed public DNS resolver endpoint: you get anycast IPs and a DNS name,
+you attach DNS Views (which carry Private Hosted Zone associations), and you authorise callers by
+source IP per protocol. Most of the confusion in practice comes from three properties that differ
+from the familiar in-VPC `.2` resolver — it is reachable from outside AWS, it authenticates by
+source IP, and it does not forward to anything you own.
 
 ## Lab Environment
 
-- **Account** — `<LAB_ACCOUNT_ID>`, Admin role
+- **Account** — lab account, `<LAB_ACCOUNT_ID>`
 - **Region** — `us-east-2` (control plane)
 
 ## Infrastructure Used
@@ -22,116 +29,139 @@ Replicate and document the most common Global Resolver issues observed in real s
 
 ## Scenarios to Replicate
 
-### Scenario 1: Corporate Firewall Intercepting Do53 (Most Common)
-- Simulate Do53 query failing due to interception
-- Prove DoH/DoT bypasses the interception
-- Document dig vs kdig vs curl DoH outputs
-- **Source case:** CASE-05 (Pharmaceutical)
+### Scenario 1 — A network device intercepting or blocking Do53 (most common)
 
-### Scenario 2: Cross-Account PHZ Association Failure
-- Attempt associate-hosted-zone from a different account
-- Document GR-ERR03603 and GR-ERR03102 errors
-- Show the workaround (same-account PHZ)
-- **Source case:** CASE-09 (Data & Analytics SaaS)
+- Reproduce a Do53 query failing because port 53 egress is not permitted to an arbitrary resolver
+- Prove DoH/DoT succeeds over the same path
+- Document the `dig` vs `kdig` vs `curl` DoH outputs side by side
 
-### Scenario 3: PHZ Shadows Public Zone → NXDOMAIN
-- Associate a PHZ with a common domain (e.g., example.com)
-- Query a subdomain NOT in the PHZ
-- Show unexpected NXDOMAIN instead of public resolution
-- Document the fix
+### Scenario 2 — Cross-account PHZ association failure
 
-### Scenario 4: DoH/DoT TLS Error with Raw IP
-- Attempt DoH query using anycast IP directly
-- Show TLS handshake failure (no SNI)
-- Fix using the dnsName
+- Attempt `associate-hosted-zone` against a PHZ owned by a different account
+- Document the error codes returned
+- Show the supported alternative (PHZ in the same account as the DNS View)
 
-### Scenario 5: GR Does Not Forward to External Resolvers
-- Query a domain that only on-prem DNS can resolve
-- Show that GR returns NXDOMAIN (no forwarding)
-- Document the GR vs VPC Resolver capability matrix
+### Scenario 3 — A PHZ shadows the public zone and produces NXDOMAIN
 
-### Scenario 6: Unexpected Billing
-- Document the pricing model
-- Show how to identify and delete unused GRs
-- **Source cases:** CASE-04, CASE-07, CASE-02
+- Associate a PHZ for a domain that also resolves publicly
+- Query a name that does not exist in the PHZ
+- Show NXDOMAIN instead of public resolution, and explain the fix
 
-## Deliverables
+### Scenario 4 — DoH/DoT TLS failure when using the raw anycast IP
 
-1. **re:Post article** — "How do I troubleshoot common issues with Route 53 Global Resolver?"
-2. **Lab notes** — step-by-step commands and outputs for each scenario
-3. **Architecture diagrams** — drawio for each scenario
-4. **Consolidated case notes** — patterns distilled from all source cases
+- Attempt a DoH query straight to an anycast IP
+- Show the TLS handshake failing because there is no SNI/hostname to validate
+- Fix by using the resolver's DNS name
 
-## Source Cases
+### Scenario 5 — Global Resolver does not forward to external resolvers
 
-| Case | Industry | Issue |
-|---------|----------|-------|
-| CASE-09 | Data & Analytics SaaS | Cross-account PHZ → dns-view not supported |
-| CASE-05 | Pharmaceutical | Corporate firewall intercepting Do53 |
-| CASE-08 | Pharmaceutical | Delegation type / multi-cloud forwarding |
-| CASE-01 | Hardware Manufacturer | Split DNS with GR, DoH requirement |
-| CASE-04 | Individual | Accidental creation, $1,644 bill |
-| CASE-07 | — | Credit request, POC unused |
-| CASE-06 | — | Quota increase |
+- Query a name only an on-premises or third-party resolver can answer
+- Show NXDOMAIN — there is no outbound forwarding rule concept here
+- Contrast with VPC Resolver outbound endpoints and forwarding rules
+
+### Scenario 6 — Unexpected cost
+
+- Document the pricing model (the endpoint is billed while it exists, not only when queried)
+- Show how to find and delete resolvers left behind from a proof of concept
+
+## Case Patterns Behind These Scenarios
+
+Drawn from support cases across several industries; no customer-identifying detail included.
+
+- **Data & analytics SaaS** — cross-account PHZ association rejected by the DNS View
+- **Pharmaceutical** — outbound Do53 blocked by a network control; DoH was the workaround
+- **Pharmaceutical** — delegation model and multi-cloud forwarding expectations
+- **Hardware manufacturing** — split DNS with Global Resolver plus a hard DoH requirement
+- **Individual account** — resolver created accidentally and left running, four-figure monthly bill
+- **Two further cases** — credit request for an unused proof of concept, and a quota increase
+
+The distribution is informative on its own: half of these are not resolution failures at all,
+they are lifecycle and billing surprises caused by a resource that costs money while idle.
 
 ## Lab Results (2026-06-25)
 
-### Scenario 1: Corporate Firewall Intercepting Do53 — REPLICATED ✅
+### Scenario 1 — Do53 blocked, DoH succeeds — REPLICATED
 
-**Setup:**
-- Access sources configured for both `72.21.198.64/32` and `54.240.198.33/32`
-- PHZ records: app/db/api.lab.internal → 10.0.x.x
-- Testing from Amazon corporate network
+**Setup**
 
-**Key finding:** Amazon corporate network uses different egress IPs:
-- `checkip.amazonaws.com` → `72.21.198.64` (intra-AWS routing)
-- `ifconfig.me` → `54.240.198.33` (actual internet egress)
-- GR sees the **internet egress IP**, not the intra-AWS one
+- Access sources configured for the two source prefixes observed during testing
+- PHZ records: `app` / `db` / `api.lab.internal` → RFC 1918 addresses
+- Queries issued from a network whose egress path filters outbound DNS
 
-**Results:**
+**Results**
+
 ```
-Do53 (dig @<anycast-ip> app.lab.internal):
+Do53  (dig @<anycast-ip> app.lab.internal)
   → connection timed out; no servers could be reached
-  → Corporate firewall blocks outbound port 53 to non-authorized DNS
+  → outbound port 53 to a non-approved resolver is not permitted on this path
 
-DoH (HTTPS to GR dns-name):
-  → app.lab.internal  NOERROR  1 answer  ✅ (Private PHZ)
-  → db.lab.internal   NOERROR  1 answer  ✅ (Private PHZ)
-  → api.lab.internal  NOERROR  1 answer  ✅ (Private PHZ)
-  → google.com        NOERROR  1 answer  ✅ (Public DNS)
+DoH   (HTTPS to the Global Resolver DNS name)
+  → app.lab.internal   NOERROR   1 answer      (from the PHZ)
+  → db.lab.internal    NOERROR   1 answer      (from the PHZ)
+  → api.lab.internal   NOERROR   1 answer      (from the PHZ)
+  → example.com        NOERROR   1 answer      (public resolution)
 ```
 
-**Conclusion:** DoH bypasses corporate firewall because it uses port 443 (HTTPS) which is always allowed. This confirms the exact pattern from Pharmaceutical case CASE-05.
+**Conclusion**
 
-### Scenario 3: PHZ Shadows Public Zone — REPLICATED ✅
+DoH survives because it is indistinguishable from ordinary HTTPS on port 443. This is the whole
+reason DoH exists as an option on this service, and it is the first thing to try when Do53 times
+out from a managed corporate network.
+
+### Scenario 3 — PHZ shadows the public zone — REPLICATED
 
 ```
-nonexistent.lab.internal → NXDOMAIN (PHZ "lab.internal" takes precedence, no fallback to public)
+nonexistent.lab.internal → NXDOMAIN
 ```
 
-Since PHZ `lab.internal.` is associated to the DNS View, ALL queries for `*.lab.internal` go to the PHZ first. If the record doesn't exist in the PHZ, the GR returns NXDOMAIN — it does NOT fall back to public DNS resolution.
+Once a PHZ for `lab.internal.` is associated with the DNS View, **every** query under that suffix
+is answered from the PHZ. A name absent from the PHZ returns NXDOMAIN; there is no fallback to
+public DNS. This is the same authoritative-zone precedence rule as the in-VPC resolver, but it
+surprises people more here because the resolver is reachable from the public internet and feels
+like a public resolver.
 
-### Access Source Discovery — DOCUMENTED ✅
+### Access Source behaviour — DOCUMENTED
 
-**REFUSED (RCODE=5)** when IP not in Access Source:
-- Before adding `54.240.198.33/32`: all queries returned REFUSED
-- After adding it: all queries resolved correctly
+Queries from an address not listed as an Access Source return **REFUSED (RCODE=5)** — not a
+timeout, not SERVFAIL. Adding the address resolved it immediately. Authorisation is evaluated
+per protocol, so an address allowed for DoH is not automatically allowed for Do53.
 
-This confirms authentication is IP-based per-protocol. Important: your actual internet egress IP may differ from what `curl checkip.amazonaws.com` shows if you're behind a corporate proxy.
+**Troubleshooting tip that cost real time:** the source address the resolver sees is your actual
+internet egress address, which is not always what a given "what is my IP" endpoint reports. Some
+of those endpoints are reached over a path that makes them report a different address than a
+general internet destination would. Confirm against more than one, and prefer one with no special
+relationship to AWS.
 
-**Troubleshooting tip:** If getting REFUSED, check your actual egress IP with `curl -s https://ifconfig.me` (NOT checkip.amazonaws.com which uses intra-AWS routing).
+## Why REFUSED vs timeout vs NXDOMAIN matters
+
+The three failures look similar in a ticket and have completely different causes:
+
+- **Timeout** — the query never arrived. Path or protocol problem: filtered egress, wrong port,
+  Do53 blocked. Nothing to fix on the resolver.
+- **REFUSED** — the query arrived and was rejected. Access Source problem: your egress address is
+  not authorised for that protocol.
+- **NXDOMAIN** — the query arrived, was authorised, and was answered authoritatively. Zone data
+  problem: a PHZ is authoritative for the suffix and the record does not exist in it.
+
+Establishing which of the three you have narrows the investigation to one of three disjoint areas
+before touching any configuration.
 
 ## TODO
 
-- [x] Update access source to current IP
-- [x] Add A records to PHZ (app.lab.internal, db.lab.internal, api.lab.internal)
-- [x] Replicate Scenario 1 (Do53 vs DoH) ✅
-- [x] Replicate Scenario 3 (PHZ shadow) ✅
-- [x] Document REFUSED behavior (access source mismatch) ✅
-- [ ] Replicate Scenario 2 (cross-account — need second account)
-- [ ] Replicate Scenario 4 (TLS error raw IP)
-- [ ] Replicate Scenario 5 (no forwarding)
-- [ ] Capture all outputs for article screenshots
-- [ ] Draft re:Post article
-- [ ] Peer review TT
-- [ ] Publish
+- [x] Update access source to current egress address
+- [x] Add A records to the PHZ (`app` / `db` / `api.lab.internal`)
+- [x] Replicate Scenario 1 (Do53 vs DoH)
+- [x] Replicate Scenario 3 (PHZ shadowing)
+- [x] Document REFUSED behaviour (access source mismatch)
+- [ ] Replicate Scenario 2 (cross-account — needs a second account)
+- [ ] Replicate Scenario 4 (TLS failure on raw IP)
+- [ ] Replicate Scenario 5 (no outbound forwarding)
+- [ ] Capture outputs for each scenario
+- [ ] Draft the public write-up
+
+## References
+
+- [Route 53 Resolver on the internet (Global Resolver)](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/resolver-global.html)
+- [Private hosted zones](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/hosted-zones-private.html)
+- [Resolving DNS queries between VPCs and your network](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/resolver.html)
+- [DNS over HTTPS — RFC 8484](https://datatracker.ietf.org/doc/html/rfc8484)
