@@ -1,0 +1,109 @@
+<mxfile host="drawio-plugin" modified="2026-09-23T12:00:00.000Z" agent="Mozilla/5.0" version="22.1.22" etag="NET015-hybrid-resolver" type="embed">
+  <diagram name="NET-015: Hybrid DNS — Cross-Region Resolver Forwarding Chain" id="net015-hybrid">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1900" pageHeight="1300" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="title" value="NET-015: Hybrid DNS — the forwarding chain that produces every second SERVFAIL ticket" style="text;html=1;fontSize=17;fontStyle=1;align=center;fontColor=#333333;" parent="1" vertex="1">
+          <mxGeometry x="350" y="15" width="1200" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="subtitle" value="VPC-B (DR, us-west-2) resolves on-prem names by chaining through VPC-A (production, us-east-1). Four forwarding hops. One query log per VPC to locate the break." style="text;html=1;fontSize=11;align=center;fontColor=#666666;" parent="1" vertex="1">
+          <mxGeometry x="350" y="45" width="1200" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- ═══ ON-PREM ═══ -->
+        <mxCell id="onprem-box" value="&quot;On-Premises&quot; (VPC, us-east-1, 192.168.0.0/16)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999999;fontSize=12;fontStyle=1;verticalAlign=top;dashed=1;" parent="1" vertex="1">
+          <mxGeometry x="60" y="90" width="440" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="dnsmasq" value="EC2 + dnsmasq&#xa;192.168.1.100&#xa;&#xa;Serves corp.example.com&#xa;dc1, dc2, filesvr, vpn,&#xa;SRV for _ldap._tcp" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="100" y="130" width="210" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="onprem-note" value="Simulates AD DNS.&#xa;SRV responses are&#xa;large enough to&#xa;trigger TCP fallback&#xa;→ Exercise 3" style="text;html=1;fontSize=10;align=left;fontColor=#666666;" parent="1" vertex="1">
+          <mxGeometry x="330" y="140" width="150" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- ═══ VPC-A PRODUCTION ═══ -->
+        <mxCell id="vpca-box" value="VPC-A  &quot;Production&quot; (us-east-1, 10.0.0.0/16)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f4ff;strokeColor=#6c8ebf;fontSize=13;fontStyle=1;verticalAlign=top;" parent="1" vertex="1">
+          <mxGeometry x="60" y="350" width="860" height="370" as="geometry" />
+        </mxCell>
+
+        <mxCell id="inbound-a" value="Inbound endpoint&#xa;10.0.1.10&#xa;10.0.2.10&#xa;&#xa;Receives queries from&#xa;VPC-B and on-prem" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="100" y="400" width="180" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="resolver-a" value="VPC-A Resolver&#xa;evaluates rules:&#xa;1. System rules&#xa;2. Forwarding rules&#xa;3. PHZ&#xa;4. Recursive" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="360" y="400" width="180" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="outbound-a" value="Outbound endpoint&#xa;10.0.1.20&#xa;10.0.2.20&#xa;&#xa;Forwards to on-prem&#xa;192.168.1.100:53" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="620" y="400" width="180" height="120" as="geometry" />
+        </mxCell>
+
+        <mxCell id="rule-a" value="Forwarding rule:&#xa;corp.example.com → 192.168.1.100" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;fontSize=11;fontFamily=Courier New;" parent="1" vertex="1">
+          <mxGeometry x="100" y="550" width="700" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="phz-prod" value="PHZ: prod.internal&#xa;app → 10.0.10.50&#xa;db  → 10.0.20.100" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="100" y="610" width="180" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="phz-note" value="Associated with VPC-A AND VPC-B&#xa;(cross-region). VPC-B resolves&#xa;prod.internal directly — no&#xa;forwarding needed." style="text;html=1;fontSize=10;align=left;fontColor=#9673a6;" parent="1" vertex="1">
+          <mxGeometry x="300" y="615" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="querylog-a" value="Query log → CW Logs&#xa;/aws/route53/net015-prod" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f4fff4;strokeColor=#82b366;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="620" y="620" width="180" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- ═══ VPC-B DR ═══ -->
+        <mxCell id="vpcb-box" value="VPC-B  &quot;DR&quot; (us-west-2, 10.1.0.0/16)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff8e8;strokeColor=#d6b656;fontSize=13;fontStyle=1;verticalAlign=top;" parent="1" vertex="1">
+          <mxGeometry x="1000" y="350" width="830" height="370" as="geometry" />
+        </mxCell>
+
+        <mxCell id="ec2-dr" value="EC2 test instance&#xa;10.1.10.x" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="1560" y="400" width="150" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="resolver-b" value="VPC-B Resolver&#xa;evaluates rules:&#xa;1. System rules&#xa;2. Forwarding rules&#xa;3. PHZ&#xa;4. Recursive" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="1350" y="400" width="180" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="outbound-b" value="Outbound endpoint&#xa;10.1.1.20&#xa;10.1.2.20&#xa;&#xa;Forwards to VPC-A inbound&#xa;10.0.1.10, 10.0.2.10" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="1100" y="400" width="200" height="120" as="geometry" />
+        </mxCell>
+
+        <mxCell id="rule-b" value="Forwarding rule:&#xa;corp.example.com → 10.0.1.10, 10.0.2.10  (VPC-A inbound)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d6b656;fontSize=11;fontFamily=Courier New;" parent="1" vertex="1">
+          <mxGeometry x="1050" y="550" width="700" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="phz-dr" value="PHZ: dr.internal&#xa;dr-app → 10.1.10.50" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="1050" y="620" width="180" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="querylog-b" value="Query log → CW Logs&#xa;/aws/route53/net015-dr" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f4fff4;strokeColor=#82b366;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="1560" y="620" width="180" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- ═══ ARROWS — the chain ═══ -->
+        <mxCell id="e-query" value="① dig filesvr.corp.example.com" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#6c8ebf;strokeWidth=2;endArrow=block;fontSize=10;" parent="1" source="ec2-dr" target="resolver-b" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="e-fwd-b" value="② forwarding rule matches" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#d6b656;strokeWidth=2;endArrow=block;fontSize=10;" parent="1" source="resolver-b" target="outbound-b" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="e-cross" value="③ cross-region VPC peering" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#b85450;strokeWidth=3;endArrow=block;fontSize=11;fontStyle=1;" parent="1" source="outbound-b" target="inbound-a" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="e-resolve-a" value="④ handed to VPC-A resolver" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#6c8ebf;strokeWidth=2;endArrow=block;fontSize=10;" parent="1" source="inbound-a" target="resolver-a" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="e-fwd-a" value="⑤ forwarding rule matches" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#d6b656;strokeWidth=2;endArrow=block;fontSize=10;" parent="1" source="resolver-a" target="outbound-a" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="e-onprem" value="⑥ VPC peering&#xa;(simulates DX)" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#d79b00;strokeWidth=3;endArrow=block;fontSize=11;fontStyle=1;" parent="1" source="outbound-a" target="dnsmasq" edge="1"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="850" y="200" /></Array></mxGeometry></mxCell>
+
+        <mxCell id="e-response" value="⑦ response: 192.168.10.50" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#82b366;strokeWidth=2;endArrow=block;dashed=1;fontSize=10;" parent="1" source="dnsmasq" target="ec2-dr" edge="1"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="205" y="80" /><mxPoint x="1635" y="80" /></Array></mxGeometry></mxCell>
+
+        <!-- ═══ TROUBLESHOOTING ═══ -->
+        <mxCell id="ts-box" value="Troubleshooting with query logs — where is the break?" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=13;fontStyle=1;verticalAlign=top;" parent="1" vertex="1">
+          <mxGeometry x="60" y="770" width="1770" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="ts-detail" value="SERVFAIL from VPC-B for corp.example.com? Check both query logs:&#xa;&#xa;Query in VPC-B log only, absent from VPC-A log     →  the query never reached VPC-A.  Problem is between VPC-B outbound and VPC-A inbound:&#xa;                                                        cross-region peering route, SG on the inbound endpoint, or the endpoint itself.&#xa;                                                        (Exercise 2 reproduces this.)&#xa;&#xa;Query in BOTH VPC-B and VPC-A logs, VPC-A shows SERVFAIL  →  the query arrived at VPC-A but VPC-A could not resolve it.  Problem is between&#xa;                                                             VPC-A outbound and on-prem: intra-region peering route, SG on the on-prem DNS,&#xa;                                                             or the DNS server itself. (Exercise 5 reproduces this.)&#xa;&#xa;Query in BOTH logs, VPC-A shows NOERROR, VPC-B shows SERVFAIL  →  the response was too large for UDP and TCP 53 is blocked.&#xa;                                                                    (Exercise 3 — the SRV record case.)" style="text;html=1;fontSize=11;align=left;verticalAlign=top;fontColor=#333333;fontFamily=Courier New;" parent="1" vertex="1">
+          <mxGeometry x="80" y="800" width="1740" height="160" as="geometry" />
+        </mxCell>
+
+        <mxCell id="footer" value="Takeaway: one SERVFAIL, three root causes that live in three different places. The query logs tell you which place to look at before you touch anything." style="text;html=1;fontSize=12;fontStyle=2;align=center;fontColor=#333333;" parent="1" vertex="1">
+          <mxGeometry x="200" y="990" width="1500" height="30" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
