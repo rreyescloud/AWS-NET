@@ -4,7 +4,7 @@
 
 Provided VPC networking solutions for clients across multiple industries:
 
-- **Financial Services / Banking** — PrivateLink cross-account connectivity for Databricks and Protegrity ESA data security platforms; Amazon Connect CCP latency optimization through proxy architectures; centralized egress billing for multi-account Landing Zones
+- **Financial Services / Banking** — PrivateLink cross-account connectivity for Data & Analytics SaaS and Protegrity ESA data security platforms; Amazon Connect CCP latency optimization through proxy architectures; centralized egress billing for multi-account Landing Zones
 - **Energy** — Cloud WAN performance optimization for Exadata databases; PDB clone operations bottleneck analysis across AZs
 - **Media / Broadcasting** — S3 Gateway endpoint connectivity for Dynamic Packager fleets; Aurora RDS latency investigation for live broadcast ad-revenue systems
 - **Technology / SaaS** — EKS-to-RDS intermittent connectivity; VPC deletion with orphaned EKS dependencies; Datadog DescribeVpcEndpointServices throttling; IBM PureScale/Valkey endpoint quota limits
@@ -55,9 +55,9 @@ Provided VPC networking solutions for clients across multiple industries:
 - **Date:** 2026-03-06
 - **Problem:** Customer asked if PrivateLink works between Hong Kong and Ningxia regions. Answer: No — cross-region PrivateLink only works within the same partition (Commercial ↔ Commercial, not Commercial ↔ China).
 
-### Cross-Account PrivateLink Inconsistency (Databricks)
+### Cross-Account PrivateLink Inconsistency (Data & Analytics SaaS)
 - **Date:** 2026-02-20
-- **Industry:** Financial/Data (Databricks, Protegrity ESA)
+- **Industry:** Financial/Data (Data & Analytics SaaS, Protegrity ESA)
 - **Problem:** Inconsistent PrivateLink connectivity — Account B works, Account C fails with "policy shared memory is empty." Root causes: AZ ID mismatch, DNS resolution differences, security group configs.
 
 ### VPC Endpoint Quota Limit (ElastiCache)
@@ -164,6 +164,16 @@ Provided VPC networking solutions for clients across multiple industries:
 - **Date:** 2026-05-12
 - **Industry:** Media/Advertising (ad revenue, live broadcasts)
 - **Problem:** Intermittent latency spikes on Aurora queries. Query execution normal (~0.0001s) but total round-trip spiking to 0.28s+. Network-level delay, not database.
+
+### DMS-to-Aurora Storage Bandwidth Saturation + Cross-Region CDC Latency
+- **Date:** 2026-05-22 (ongoing)
+- **Industry:** Enterprise SaaS (financial/accounting)
+- **Case:** CASE-10
+- **Problem:** DMS replication (Aurora MySQL → Kafka) experiencing LOB errors and high CDC latency. Cross-region task peaking at 140s latency vs 6s for local task. Root cause: Aurora Serverless storage layer bandwidth saturation — `storage_bw_out_allowance_exceeded` counter hit 12,540 times. ACU range (6-10) insufficient for storage bandwidth demands.
+- **Actions taken:** The Aurora/DMS specialist identified storage BW saturation via Enhanced Monitoring. Customer increased ACU to 24, local latency improved. Callback scheduled to investigate remaining cross-region latency gap (140s peak).
+- **Key details:** Region eu-central-1, VPC <customer-vpc-id>, Aurora Serverless v2, DMS CDC to Kafka.
+- **Pending:** Investigate cross-region task latency disparity (task <dms-task-cross-region>). Likely related to cross-region network path + remaining storage contention under high CDC load. Callback scheduled for May 22 did not happen — customer waiting 2 days without response to latest inbound (May 20).
+- **Key Lesson:** Aurora Serverless ACU directly controls storage network bandwidth allocation — low ACU = storage BW throttling even with low CPU/memory usage. Monitor `storage_bw_out_allowance_exceeded` via Enhanced Monitoring.
 
 ---
 
