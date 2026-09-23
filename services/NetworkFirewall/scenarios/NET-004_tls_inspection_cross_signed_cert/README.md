@@ -1,6 +1,7 @@
 # NET-004: Network Firewall TLS Inspection — Cross-Signed Certificate Rejection
 
-## Status: In Progress
+**Tier:** Lab — reproducible end to end
+**Status:** Resolved
 
 ## Objective
 
@@ -70,6 +71,42 @@ Network Firewall can't validate cross-signed root certificates, such as Let's En
 Client fixed the chain order, but NF now detects the root is cross-signed.
 
 
+## Root Cause
+
+**Network Firewall does not support cross-signed root certificates for imported certificates.**
+
+NF validates the certificate chain when creating a `TLSInspectionConfiguration`. It expects a simple linear chain that terminates at a self-signed root (Issuer == Subject). When NF encounters a certificate in the chain where Subject != Issuer AND that certificate has `CA:TRUE`, it identifies this as a cross-signed root and rejects it.
+
+NF does NOT maintain a full trust store of public Root CAs. It can only validate:
+1. Self-signed roots (chain terminates cleanly)
+2. AMAZON_ISSUED certificates (hardcoded exception)
+
+The client's cross-account architecture hit both constraints:
+- ACM public certificates (AMAZON_ISSUED) cannot be exported with the private key → cannot import cross-account for inbound TLS inspection
+- Externally-issued certificates with cross-signed roots are rejected by NF
+
+
+## Lab Reproduction
+
+Successfully reproduced in eu-west-1 (account <LAB_ACCOUNT_ID>) on 2026-05-21:
+
+### Test 1: Certificate with direct self-signed root
+```
+Chain: leaf (CN=test.net004-lab.example.com) → Root CA (self-signed)
+Result: ✅ CreateTLSInspectionConfiguration succeeded
+```
+
+### Test 2: Certificate with cross-signed root
+```
+Chain: leaf → Root CA (self-signed) → Root CA (cross-signed by Legacy Root CA)
+Result: ❌ "ServerCertificate has an invalid chain of trust"
+```
+
+Both certificates were accepted by ACM import without issue. The validation and rejection happens exclusively at the Network Firewall `CreateTLSInspectionConfiguration` API call.
+
+Lab code available in `./lab/` directory.
+
+
 ## Key Findings
 
 1. **Network Firewall does not support cross-signed root certificates for IMPORTED certificates.** This includes Let's Encrypt (ISRG Root X1 cross-signed with DST Root CA X3) and any other externally-issued cert with a cross-signed chain.
@@ -86,7 +123,10 @@ Client fixed the chain order, but NF now detects the root is cross-signed.
 
 7. **Cross-signed certificates can cause asynchronous failures** even if they initially work — per AWS documentation. This is an additional risk.
 
-### Certificate Compatibility Matrix
+8. **NF validation logic:** NF walks the certificate chain looking for a self-signed root (Issuer == Subject). If it finds a CA cert where Issuer != Subject and cannot validate the issuer against its internal trust store, it rejects the chain.
+
+
+## Certificate Compatibility Matrix
 
 | Certificate Type | Cross-signed | Works in NF TLS Inspection |
 |---|---|---|
@@ -97,37 +137,56 @@ Client fixed the chain order, but NF now detects the root is cross-signed.
 | ACM Private CA certificate | No | YES |
 
 
-## Open Questions
+## Resolution — Recommended Solutions
 
-- What is the `Type` of the cert in the source account? (AMAZON_ISSUED vs IMPORTED)
-- Who is the issuer of the certificate? (Amazon, Let's Encrypt, DigiCert, etc.)
-- Can the client issue a new ACM public cert directly in the workload account?
-- Does their architecture require cross-account, or can they issue per-account?
+### Option A: Issue ACM public certificate directly in the workload account (Recommended)
 
+```bash
+aws acm request-certificate \
+  --domain-name api.trading.example.com \
+  --validation-method DNS \
+  --region eu-west-1
+```
 
-## Possible Solutions
-
-### Option A: Issue ACM public certificate directly in the target account
 - Simplest path if they own the domain
-- ACM public certs used natively (not imported) work with NF TLS Inspection
+- ACM public certs used natively (AMAZON_ISSUED) work with NF TLS Inspection
+- NF can reference the cert ARN directly; AWS manages the private key internally
 - No cross-account needed
+- Free, auto-renewing
 
-### Option B: ACM Private CA + RAM sharing
-- Create Private CA in central account
-- Share via RAM to workload account
-- Issue certificates directly in the target account
-- Certificates will have a valid non-cross-signed chain
+### Option B: ACM Private CA + RAM sharing (for centralized management)
+
+1. Create Private CA in central account
+2. Share via AWS RAM to workload account
+3. Issue certificates directly in the target account using the shared CA
+4. Certificates have a non-cross-signed chain → NF accepts them
+- Cost: ~$400/month for the Private CA
 
 ### Option C: ACM Private CA + export/import
-- Create Private CA in central account
-- Export cert with private key (passphrase protected)
-- Import into target account ACM
-- Use in NF TLS Inspection
 
-### Option D: External CA (non-cross-signed)
-- Use DigiCert, GlobalSign, Comodo, etc.
+1. Create Private CA in central account
+2. Issue certificate
+3. Export cert with private key (passphrase protected)
+4. Import into target account ACM
+5. Use in NF TLS Inspection
+- Requires automation for rotation
+
+### Option D: External CA with direct root (no cross-signing)
+
+- Use DigiCert, GlobalSign, Sectigo, etc.
+- Verify their chain does NOT include a cross-signed root
 - Import with full chain (leaf + intermediate + direct root)
-- No cross-signed roots in the chain
+- Cost varies by vendor
+
+
+## Recommendation Priority
+
+| Priority | Option | Best for |
+|----------|--------|----------|
+| 1st | A (ACM public in workload) | Most cases — simple, free, automatic |
+| 2nd | B (Private CA + RAM) | Compliance requires centralized cert management |
+| 3rd | D (External CA, direct root) | Existing vendor relationship, no cross-signing |
+| 4th | C (Private CA + export) | RAM sharing not available |
 
 
 ## References
