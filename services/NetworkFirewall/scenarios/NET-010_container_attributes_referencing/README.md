@@ -98,11 +98,9 @@ python3 lab/nfw_container.py delete
 
 ## Resources Created
 
-| Resource | Identifier |
-|---|---|
-| EKS cluster | `arn:aws:eks:us-east-1:<LAB_ACCOUNT_ID>:cluster/nfw-container-lab` |
-| Container association | `arn:aws:network-firewall:us-east-1:<LAB_ACCOUNT_ID>:container-association/eks-payments-monitor` |
-| Stateful rule group | `arn:aws:network-firewall:us-east-1:<LAB_ACCOUNT_ID>:stateful-rulegroup/container-ref-rules` |
+- **EKS cluster** — `arn:aws:eks:us-east-1:<LAB_ACCOUNT_ID>:cluster/nfw-container-lab`
+- **Container association** — `arn:aws:network-firewall:us-east-1:<LAB_ACCOUNT_ID>:container-association/eks-payments-monitor`
+- **Stateful rule group** — `arn:aws:network-firewall:us-east-1:<LAB_ACCOUNT_ID>:stateful-rulegroup/container-ref-rules`
 
 ## Requirements & Constraints (observed / documented)
 
@@ -112,13 +110,22 @@ python3 lab/nfw_container.py delete
 - Up to **5 monitoring configurations** per association.
 - **Delete protection**: an association referenced by a rule group cannot be deleted until the reference is removed — tear down the rule group first.
 
-## Teardown Note
+## Teardown
 
-The EKS cluster (`nfw-container-lab`), the container association, and the rule group are **still running** in account `<LAB_ACCOUNT_ID>` at time of writing. Run the teardown block above, then `eksctl delete cluster --name nfw-container-lab --region us-east-1` to stop node/control-plane charges.
+Order matters, and getting it wrong produces a confusing error rather than a clear one:
+
+```bash
+python3 lab/nfw_container.py delete-rulegroup   # remove the @CONTAINER_IPS reference first
+python3 lab/nfw_container.py delete             # then the association
+eksctl delete cluster --name nfw-container-lab --region us-east-1
+```
+
+The EKS control plane and nodes are the expensive part of this lab and they keep billing whether
+or not the firewall is doing anything — delete the cluster in the same session you finish testing.
 
 ## Files
 
 - `lab/eks-cluster.yaml` — eksctl cluster config (OIDC on, single t3.small nodegroup)
 - `lab/workload.yaml` — `payments` namespace + `web` deployment (the attribute-filter dimensions)
 - `lab/nfw_container.py` — boto3 driver: create / describe / wait-active / rulegroup / delete-rulegroup / delete
-- `lab/eksctl-create.log`, `lab/eksctl-nodegroup.log` — build logs
+- `architecture.drawio` — how the association resolves pod IPs into the rule group, and the `@` vs `$` failure

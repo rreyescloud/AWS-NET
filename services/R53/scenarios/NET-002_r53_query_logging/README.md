@@ -128,13 +128,21 @@ aws iam create-service-linked-role --aws-service-name delivery.logs.amazonaws.co
 
 **A. Confusion between two types of DNS logging:**
 
-| Feature | Public Hosted Zone Query Logging | Resolver Query Logging |
-|---|---|---|
-| What it captures | Queries TO your public hosted zone | ALL queries FROM instances in VPC |
-| Scope | Per hosted zone | Per VPC |
-| Destination | CloudWatch Logs only | S3, CloudWatch Logs, or Firehose |
-| Captures private DNS | No | Yes |
-| Captures external DNS | No (only your zone) | Yes (all queries) |
+**Public Hosted Zone Query Logging**
+- Captures queries **to** your public hosted zone
+- Scoped per hosted zone
+- CloudWatch Logs only
+- Does not capture private DNS, and does not capture queries for names outside your zone
+
+**Resolver Query Logging**
+- Captures **all** queries **from** instances in a VPC
+- Scoped per VPC
+- S3, CloudWatch Logs, or Firehose
+- Captures private DNS and external DNS alike
+
+A customer asking "why isn't my DNS logging working" has usually enabled the one that does not
+answer their question. Establish which direction they care about — queries arriving at their zone,
+or queries leaving their instances — before looking at any configuration.
 
 **B. Custom DNS servers bypass VPC Resolver:**
 
@@ -201,13 +209,15 @@ GROUP BY query_name
 
 **Cost Breakdown:**
 
-| Component | Cost |
-|---|---|
-| Enabling Resolver Query Logging | FREE |
-| Route 53 per-query charge | None additional |
-| Log delivery to S3 | ~$0.25/GB (Vended Logs ingest) + S3 storage |
-| Log delivery to CloudWatch Logs | ~$0.50/GB (Vended Logs ingest) + CW storage |
-| Log delivery to Firehose | Firehose pricing |
+- **Enabling Resolver Query Logging** — no charge for the feature itself
+- **Route 53 per-query charge** — none additional
+- **Delivery to S3** — Vended Logs ingest charge per GB, plus S3 storage (cheapest option)
+- **Delivery to CloudWatch Logs** — Vended Logs ingest charge per GB, roughly double the S3 rate,
+  plus CloudWatch Logs storage
+- **Delivery to Firehose** — standard Firehose pricing
+
+Check current published rates before quoting figures; the ratio between destinations is the stable
+part, the absolute numbers are not.
 
 **Volume estimate:** A moderately active VPC (~100 instances) can generate 1-10 GB of DNS logs per day depending on workload.
 
@@ -251,12 +261,9 @@ GROUP BY query_name
 
 ## Files
 
-| File | Purpose |
-|---|---|
-| `README.md` | This document |
-| `deploy.py` | Creates query logging resources for testing (TBD) |
-| `cleanup.py` | Destroys all resources (TBD) |
-| `architecture.drawio` | Visual diagram (TBD) |
+- `README.md` — this document
+- `architecture.drawio` — the two logging planes, the delivery path, and where each failure mode sits
+- `deploy.py` / `cleanup.py` — not yet written; the labs below are the plan for them
 
 
 ## References
