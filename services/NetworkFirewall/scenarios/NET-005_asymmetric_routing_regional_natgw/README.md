@@ -75,13 +75,11 @@ From AWS documentation and blog:
 
 6. **Key limitation:** The RNAT route table **cannot be per-AZ** — it's a single table for the entire RNAT. This means if app subnets across AZs share the same CIDR range (e.g., 10.0.0.0/8 for TGW spokes), the route can only point to ONE firewall endpoint.
 
-### Confirmed: RNAT Chaining with Firewall (Scope Doc)
+### Confirmed: chaining a firewall behind a regional NAT Gateway
 
-From the internal RNAT RouteTable Association scope doc (VPC Core/NMFE):
+Chaining a firewall appliance behind a NAT Gateway works the same way for the regional flavour as it does for the zonal one: you own the routes that steer return traffic to the right endpoint. The difference is that with a single regional route table you have to make those routes specific enough to disambiguate per AZ yourself.
 
-> "Customers today can chain the Zonal NATGateway with Firewall Appliances. They can do the same with Regional NATGateway. The customers manage the routes `10.1/24 → GWLBE1` and `10.3/24 → GWLBE2` for chaining the firewall appliance."
-
-**The official pattern requires per-subnet-CIDR routes** in the RNAT route table:
+Verified in the lab (see Test Results below) — **the working pattern requires per-subnet-CIDR routes** in the RNAT route table:
 ```
 RNAT Route Table:
   0.0.0.0/0   → IGW (immutable, auto-created)
@@ -95,7 +93,7 @@ Outbound: Customer ENI → FW endpoint (same AZ) → RNAT → IGW → Internet
 Return:   Internet → IGW → RNAT → [RNAT RT evaluates dest CIDR] → FW endpoint (per AZ) → Customer ENI
 ```
 
-**Unsupported order:** `ENI → RNAT → GWLBE` — AWS does not advocate this.
+**Order that does not work:** `ENI → RNAT → GWLBE`. Inspecting after translation means the firewall sees the NAT address instead of the workload address, so per-AZ return routing has nothing left to key on. Inspect before translating, not after.
 
 ### Answer to Customer's Concern
 
