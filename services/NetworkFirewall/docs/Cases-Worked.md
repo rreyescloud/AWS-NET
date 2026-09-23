@@ -16,7 +16,7 @@ Provided Network Firewall solutions for clients across multiple industries:
 
 | Category | Cases | % |
 |---|---|---|
-| Deployment / Architecture | ~12 | 30% |
+| Deployment / Architecture | ~13 | 31% |
 | Rules (Stateful, Suricata, Domain Lists) | ~10 | 25% |
 | Connectivity / Traffic Flow | ~9 | 22% |
 | TLS Inspection | 1 | 3% |
@@ -32,6 +32,7 @@ Provided Network Firewall solutions for clients across multiple industries:
 - 2025-06-16 | Intermittent connectivity after adding Inspection VPC; routing loop identified in subnet with both TGW ENI and NFW ENI in same subnet
 - 2025-07-21 | Enterprise migration from standalone NF to centralized Firewall Manager; comprehensive import process guide
 - 2026-04-16 | Migration from VPC-type to TGW-type (Network Function model) across 6 regions, 90+ spokes; session continuity challenges
+- 2026-05-22 | **(NET-005)** Regional NAT Gateway + NFW asymmetric routing; RNAT route table requires per-AZ spoke subnet routes to maintain symmetric return path — aggregated routes cause blackhole; lab validated in us-west-2
 
 ### Single VPC Deployments
 - 2025-04-22 | Routing verification between CRS router and EC2 with NF in path
@@ -130,6 +131,8 @@ Provided Network Firewall solutions for clients across multiple industries:
 6. **TLS Inspection + packet segmentation** — Suricata may not parse HTTP headers fragmented across TCP boundaries after TLS decryption. Known limitation.
 
 7. **AZ alignment matters for Firewall Manager** — when importing existing NF resources, endpoint mappings must be consistent.
+
+8. **Regional NAT Gateway route table is single/shared across AZs** — must use per-subnet-CIDR routes (not aggregated) pointing to the correct per-AZ firewall endpoint. Missing routes for spoke VPC CIDRs cause return traffic blackhole. Different public IPs per AZ confirm zonal affinity is working.
 
 ---
 
