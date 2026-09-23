@@ -1,0 +1,110 @@
+<mxfile host="drawio-plugin" modified="2026-09-23T12:00:00.000Z" agent="Mozilla/5.0" version="22.1.22" etag="NET002-query-logging" type="embed">
+  <diagram name="NET-002: Resolver query logging — two planes, one delivery path" id="net002-query-logging">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1700" pageHeight="1150" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="title" value="NET-002: Route 53 query logging — what gets captured, and who actually writes the logs" style="text;html=1;fontSize=17;fontStyle=1;align=center;fontColor=#333333;" parent="1" vertex="1">
+          <mxGeometry x="300" y="20" width="1100" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="subtitle" value="Two different features share the name &quot;query logging&quot;. Most tickets are one of them being used to answer the other one's question." style="text;html=1;fontSize=11;align=center;fontColor=#666666;" parent="1" vertex="1">
+          <mxGeometry x="300" y="50" width="1100" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- ============ Plane A: Resolver query logging ============ -->
+        <mxCell id="planeA" value="Resolver query logging — queries LEAVING your instances" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f4ff;strokeColor=#6c8ebf;fontSize=13;fontStyle=1;verticalAlign=top;" parent="1" vertex="1">
+          <mxGeometry x="60" y="100" width="780" height="340" as="geometry" />
+        </mxCell>
+
+        <mxCell id="vpc" value="VPC" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;fontSize=11;fontStyle=1;verticalAlign=top;dashed=1;" parent="1" vertex="1">
+          <mxGeometry x="90" y="145" width="430" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="ec2" value="EC2 / pods / Lambda in VPC" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="110" y="180" width="180" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="r53res" value="VPC DNS Resolver&#xa;the .2 address" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="340" y="180" width="160" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="captured" value="◀── everything crossing this point is logged" style="text;html=1;fontSize=10;align=left;fontColor=#82b366;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="340" y="235" width="180" height="20" as="geometry" />
+        </mxCell>
+
+        <mxCell id="ad" value="Custom DNS server&#xa;(e.g. directory service)&#xa;set via DHCP options" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="110" y="270" width="180" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="bypass" value="NOT logged — never touches the .2 resolver" style="text;html=1;fontSize=10;align=left;fontColor=#b85450;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="300" y="288" width="215" height="20" as="geometry" />
+        </mxCell>
+
+        <mxCell id="eA1" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#82b366;strokeWidth=2;endArrow=block;" parent="1" source="ec2" target="r53res" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="eA2" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#b85450;strokeWidth=2;endArrow=block;dashed=1;" parent="1" source="ec2" target="ad" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="scopeA" value="Scope: per VPC&#xa;Captures: private AND public names&#xa;Destinations: S3, CloudWatch Logs, Firehose&#xa;&#xa;Fix for the bypass case: conditional forwarding&#xa;from the custom server back to the VPC resolver,&#xa;or Resolver endpoints for the zones you care about." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;fontSize=11;align=left;verticalAlign=top;spacingLeft=10;spacingTop=6;" parent="1" vertex="1">
+          <mxGeometry x="545" y="145" width="275" height="200" as="geometry" />
+        </mxCell>
+
+        <mxCell id="noteA" value="This is the one that answers &quot;what did my compromised instance look up?&quot;" style="text;html=1;fontSize=11;fontStyle=2;align=center;fontColor=#6c8ebf;" parent="1" vertex="1">
+          <mxGeometry x="80" y="400" width="740" height="25" as="geometry" />
+        </mxCell>
+
+        <!-- ============ Plane B: PHZ query logging ============ -->
+        <mxCell id="planeB" value="Public hosted zone query logging — queries ARRIVING at your zone" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff8e8;strokeColor=#d6b656;fontSize=13;fontStyle=1;verticalAlign=top;" parent="1" vertex="1">
+          <mxGeometry x="880" y="100" width="760" height="340" as="geometry" />
+        </mxCell>
+
+        <mxCell id="internet" value="Resolvers on the internet" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999999;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="910" y="180" width="180" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="phz" value="Route 53 public&#xa;hosted zone" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="1160" y="180" width="160" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="eB1" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#d6b656;strokeWidth=2;endArrow=block;" parent="1" source="internet" target="phz" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="scopeB" value="Scope: per hosted zone&#xa;Captures: only names in that zone&#xa;Destination: CloudWatch Logs only&#xa;&#xa;Does not see private DNS.&#xa;Does not see what your instances look up.&#xa;Enabling this to audit outbound DNS is the&#xa;single most common wrong turn in these cases." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d6b656;fontSize=11;align=left;verticalAlign=top;spacingLeft=10;spacingTop=6;" parent="1" vertex="1">
+          <mxGeometry x="1350" y="145" width="270" height="200" as="geometry" />
+        </mxCell>
+
+        <mxCell id="noteB" value="This is the one that answers &quot;who is querying my domain?&quot;" style="text;html=1;fontSize=11;fontStyle=2;align=center;fontColor=#d6b656;" parent="1" vertex="1">
+          <mxGeometry x="900" y="400" width="720" height="25" as="geometry" />
+        </mxCell>
+
+        <!-- ============ Delivery path ============ -->
+        <mxCell id="delivery-box" value="The delivery path — where cross-account setups break" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f4fff4;strokeColor=#82b366;fontSize=13;fontStyle=1;verticalAlign=top;" parent="1" vertex="1">
+          <mxGeometry x="60" y="480" width="1580" height="330" as="geometry" />
+        </mxCell>
+
+        <mxCell id="src-acct" value="Source account&#xa;query log config&#xa;+ VPC association" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="110" y="540" width="190" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="slr" value="AWSServiceRoleForLogDelivery&#xa;principal: delivery.logs.amazonaws.com&#xa;&#xa;THIS is what writes your logs.&#xa;Not your IAM role. Not your user." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;fontStyle=1;align=left;verticalAlign=top;spacingLeft=10;spacingTop=6;" parent="1" vertex="1">
+          <mxGeometry x="420" y="530" width="330" height="100" as="geometry" />
+        </mxCell>
+
+        <mxCell id="dest" value="Destination in the logging account&#xa;S3 bucket / CW log group / Firehose stream&#xa;&#xa;Needs a RESOURCE POLICY allowing&#xa;delivery.logs.amazonaws.com, conditioned on&#xa;aws:SourceAccount and aws:SourceArn." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;align=left;verticalAlign=top;spacingLeft=10;spacingTop=6;" parent="1" vertex="1">
+          <mxGeometry x="870" y="530" width="360" height="100" as="geometry" />
+        </mxCell>
+
+        <mxCell id="eD1" value="vended logs v2" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#d79b00;strokeWidth=2;endArrow=block;fontSize=10;" parent="1" source="src-acct" target="slr" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="eD2" value="writes" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#82b366;strokeWidth=2;endArrow=block;fontSize=10;" parent="1" source="slr" target="dest" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="fail-box" value="Failure modes and what they actually mean" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff4f4;strokeColor=#b85450;fontSize=12;fontStyle=1;verticalAlign=top;" parent="1" vertex="1">
+          <mxGeometry x="110" y="655" width="1120" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="fail-detail" value="ACCESS_DENIED on create               →  destination resource policy missing the delivery service principal&#xa;logs:CreateLogDelivery is missing     →  the service-linked role does not exist yet in that account&#xa;Association status FAILED             →  read the Error field; it is almost always the resource policy&#xa;Log group exists but stays empty      →  either nothing is querying, or the custom-DNS bypass above&#xa;Intermittent failures from Terraform  →  IAM eventual consistency; pre-create the SLR and add depends_on" style="text;html=1;fontSize=11;align=left;verticalAlign=top;fontColor=#333333;fontFamily=Courier New;" parent="1" vertex="1">
+          <mxGeometry x="130" y="685" width="1090" height="100" as="geometry" />
+        </mxCell>
+
+        <mxCell id="hard-limits" value="Hard limits&#xa;&#xa;•  Destination must be in the&#xa;    same Region as the config.&#xa;•  Cross-Region delivery is not&#xa;    supported natively.&#xa;•  The console does not support&#xa;    cross-account setup — CLI or&#xa;    API only.&#xa;•  Nothing is retroactive: no data&#xa;    exists before you enable it." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#b85450;fontSize=11;align=left;verticalAlign=top;spacingLeft=10;spacingTop=6;" parent="1" vertex="1">
+          <mxGeometry x="1270" y="530" width="340" height="265" as="geometry" />
+        </mxCell>
+
+        <mxCell id="footer" value="Takeaway: nothing here is written by your credentials. Debug it as a resource-policy problem on the destination, not as an IAM problem on the caller." style="text;html=1;fontSize=12;fontStyle=2;align=center;fontColor=#333333;" parent="1" vertex="1">
+          <mxGeometry x="200" y="840" width="1300" height="30" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

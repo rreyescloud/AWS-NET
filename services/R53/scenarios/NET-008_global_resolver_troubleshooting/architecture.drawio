@@ -1,0 +1,104 @@
+<mxfile host="drawio-plugin" modified="2026-09-23T12:00:00.000Z" agent="Mozilla/5.0" version="22.1.22" etag="NET008-global-resolver" type="embed">
+  <diagram name="NET-008: Global Resolver failure modes" id="net008-global-resolver">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1700" pageHeight="1150" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="title" value="NET-008: Route 53 Global Resolver — three failures that look alike and are not" style="text;html=1;fontSize=17;fontStyle=1;align=center;fontColor=#333333;" parent="1" vertex="1">
+          <mxGeometry x="300" y="20" width="1100" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="subtitle" value="Timeout, REFUSED and NXDOMAIN each fail at a different stage. Which one you got narrows the cause to one of three disjoint areas." style="text;html=1;fontSize=11;align=center;fontColor=#666666;" parent="1" vertex="1">
+          <mxGeometry x="300" y="50" width="1100" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- Client side -->
+        <mxCell id="client" value="Client outside AWS&#xa;laptop, on-prem host, another cloud" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="80" y="230" width="220" height="70" as="geometry" />
+        </mxCell>
+
+        <mxCell id="netdev" value="Network control on the egress path&#xa;firewall, proxy, DNS policy" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="380" y="230" width="230" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- Two transports -->
+        <mxCell id="do53" value="Do53 — UDP/TCP 53&#xa;to an anycast IP" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="680" y="170" width="200" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="doh" value="DoH / DoT — TCP 443/853&#xa;to the resolver DNS name" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="680" y="305" width="200" height="55" as="geometry" />
+        </mxCell>
+
+        <mxCell id="do53-fate" value="commonly blocked&#xa;→ TIMEOUT" style="text;html=1;fontSize=10;align=center;fontColor=#b85450;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="600" y="140" width="140" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="doh-fate" value="indistinguishable&#xa;from normal HTTPS" style="text;html=1;fontSize=10;align=center;fontColor=#82b366;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="600" y="362" width="150" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- Global Resolver -->
+        <mxCell id="gr-box" value="Global Resolver" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=13;fontStyle=1;verticalAlign=top;" parent="1" vertex="1">
+          <mxGeometry x="960" y="140" width="330" height="330" as="geometry" />
+        </mxCell>
+        <mxCell id="access" value="Access Sources&#xa;source-IP allowlist, evaluated&#xa;PER PROTOCOL&#xa;&#xa;not listed → REFUSED (RCODE 5)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d79b00;fontSize=11;align=left;verticalAlign=top;spacingLeft=10;spacingTop=6;fontStyle=0;" parent="1" vertex="1">
+          <mxGeometry x="985" y="180" width="280" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="dnsview" value="DNS View&#xa;carries the PHZ associations.&#xa;Same-account PHZ only." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d79b00;fontSize=11;align=left;verticalAlign=top;spacingLeft=10;spacingTop=6;" parent="1" vertex="1">
+          <mxGeometry x="985" y="290" width="280" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="resolve" value="Resolution&#xa;PHZ first if authoritative,&#xa;otherwise public DNS.&#xa;No forwarding to your resolvers." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d79b00;fontSize=11;align=left;verticalAlign=top;spacingLeft=10;spacingTop=6;" parent="1" vertex="1">
+          <mxGeometry x="985" y="375" width="280" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- Outcomes -->
+        <mxCell id="phz" value="Private Hosted Zone&#xa;lab.internal.&#xa;&#xa;Authoritative for the whole suffix" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;align=center;" parent="1" vertex="1">
+          <mxGeometry x="1370" y="290" width="230" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="public" value="Public DNS&#xa;for every other suffix" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999999;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="1370" y="400" width="230" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="noforward" value="On-prem / third-party resolver&#xa;UNREACHABLE — no outbound&#xa;forwarding concept exists here" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;dashed=1;" parent="1" vertex="1">
+          <mxGeometry x="1370" y="180" width="230" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- Edges -->
+        <mxCell id="c1" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#6c8ebf;strokeWidth=2;endArrow=block;" parent="1" source="client" target="netdev" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="c2" value="dropped" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#b85450;strokeWidth=2;endArrow=cross;dashed=1;fontSize=10;fontColor=#b85450;" parent="1" source="netdev" target="do53" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="c3" value="passes" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#82b366;strokeWidth=2;endArrow=block;fontSize=10;fontColor=#82b366;" parent="1" source="netdev" target="doh" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="c4" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#d79b00;strokeWidth=2;endArrow=block;" parent="1" source="doh" target="access" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="c5" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#9673a6;strokeWidth=2;endArrow=block;" parent="1" source="resolve" target="phz" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="c6" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#999999;strokeWidth=2;endArrow=block;" parent="1" source="resolve" target="public" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="c7" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#b85450;strokeWidth=2;endArrow=cross;dashed=1;" parent="1" source="resolve" target="noforward" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- Triage -->
+        <mxCell id="triage-box" value="Triage by response code — pick the area before touching config" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f4fff4;strokeColor=#82b366;fontSize=13;fontStyle=1;verticalAlign=top;" parent="1" vertex="1">
+          <mxGeometry x="80" y="520" width="1520" height="220" as="geometry" />
+        </mxCell>
+        <mxCell id="triage-detail" value="TIMEOUT      the query never arrived.        Path or protocol.  Egress filtering, wrong port, Do53 blocked.&#xa;                                                                  Nothing to change on the resolver — switch to DoH and retest.&#xa;&#xa;REFUSED      the query arrived, was rejected.  Access Sources.    Your real egress address is not authorised for that&#xa;                                                                  protocol. Authorisation is per protocol, not per resolver.&#xa;&#xa;NXDOMAIN     the query arrived, was answered.  Zone data.         A PHZ is authoritative for the suffix and the record is&#xa;                                                                  absent. There is no fallback to public for that suffix.&#xa;&#xa;TLS failure  handshake never completed.        Wrong target.      You used a raw anycast IP for DoH/DoT. Use the resolver&#xa;                                                                  DNS name so there is a hostname to validate." style="text;html=1;fontSize=11;align=left;verticalAlign=top;fontColor=#333333;fontFamily=Courier New;" parent="1" vertex="1">
+          <mxGeometry x="100" y="550" width="1490" height="180" as="geometry" />
+        </mxCell>
+
+        <!-- Egress IP trap -->
+        <mxCell id="trap-box" value="The trap that costs the most time" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff4f4;strokeColor=#b85450;fontSize=12;fontStyle=1;verticalAlign=top;" parent="1" vertex="1">
+          <mxGeometry x="80" y="765" width="740" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="trap-detail" value="The address the resolver evaluates is your real internet egress address. Some &quot;what is my IP&quot;&#xa;endpoints are reached over a path that makes them report a different address than a general&#xa;internet destination would. Allowlist the wrong one and every query comes back REFUSED while&#xa;your configuration looks correct. Confirm against more than one endpoint." style="text;html=1;fontSize=11;align=left;verticalAlign=top;fontColor=#333333;" parent="1" vertex="1">
+          <mxGeometry x="100" y="795" width="710" height="90" as="geometry" />
+        </mxCell>
+
+        <!-- Cost -->
+        <mxCell id="cost-box" value="Half of the real cases are not resolution failures" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999999;fontSize=12;fontStyle=1;verticalAlign=top;" parent="1" vertex="1">
+          <mxGeometry x="860" y="765" width="740" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="cost-detail" value="The resolver endpoint bills while it exists, not only while it answers queries. A proof of&#xa;concept left running produces a four-figure surprise with zero symptoms in DNS. When&#xa;triaging, check whether the question is &quot;why does this not resolve&quot; or &quot;why am I paying for&#xa;this&quot; — the second one is answered by listing resolvers, not by running dig." style="text;html=1;fontSize=11;align=left;verticalAlign=top;fontColor=#333333;" parent="1" vertex="1">
+          <mxGeometry x="880" y="795" width="710" height="90" as="geometry" />
+        </mxCell>
+
+        <mxCell id="footer" value="Takeaway: this resolver is reachable from the internet, authenticates by source IP, and forwards to nothing you own. Every failure mode above follows from one of those three properties." style="text;html=1;fontSize=12;fontStyle=2;align=center;fontColor=#333333;" parent="1" vertex="1">
+          <mxGeometry x="150" y="920" width="1400" height="30" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
