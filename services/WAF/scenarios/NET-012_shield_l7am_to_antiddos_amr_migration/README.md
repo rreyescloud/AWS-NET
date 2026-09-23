@@ -236,8 +236,9 @@ This alone could explain wave 2. Must confirm via `list-resources-for-web-acl` b
 
 ## Open items
 
-- [ ] Confirm internally whether a hard end-of-life date exists for L7AM beyond the 2026-03-26
-      supersession. Public docs state the legacy solution remains available to existing subscribers.
+- [ ] Establish whether a hard end-of-life date exists for L7AM beyond the 2026-03-26 supersession.
+      Public documentation states only that the legacy solution remains available to existing
+      subscribers, which is not the same as a commitment to keep it.
 - [ ] Confirm regional Web ACL resource associations (ALB vs API Gateway stage).
 - [ ] Pull Shield event detail once event IDs are provided.
 - [ ] Reproduce in lab: AMR label emission at low RPS vs. high RPS on an ALB, to demonstrate the

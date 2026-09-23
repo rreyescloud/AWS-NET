@@ -1,130 +1,128 @@
-# NET-009 — EKS Zonal Shift Recovery Delay (~24 min post-expiry)
+# NET-009 — EKS Zonal Shift Recovery Delay (~24 min after expiry)
 
 **Tier:** Case analysis — no deploy script
-**Status:** Root cause established, lab replication planned
+**Status:** Root cause established from customer-observable evidence, lab replication planned
 
 ## Business Context
 
-A financial services company (New Zealand) uses Amazon EKS with Karpenter for container orchestration across multiple Availability Zones. They are evaluating ARC Zonal Shift for production disaster recovery, specifically to automate traffic steering away from impaired AZs.
+A financial services organization running Amazon EKS with Karpenter across three Availability Zones was evaluating ARC Zonal Shift for production disaster recovery, to steer traffic away from an impaired AZ automatically.
 
-During pre-production validation, they performed a 1-minute manual zonal shift to verify end-to-end functionality. While ARC correctly started and expired the shift, the Kubernetes-level recovery (node uncordon + endpoint slice restoration) took approximately 24 minutes — far exceeding expectations and blocking their production adoption decision.
-
-The team needs confidence that recovery time is pgeneredictable and bounded before enabling zonal shift in production clusters serving end users.
+During pre-production validation they ran a **1-minute manual zonal shift** to confirm the mechanism worked end to end. ARC started and expired the shift correctly, but the Kubernetes-level recovery — nodes uncordoned, pod endpoints restored to EndpointSlices, scheduling re-enabled — took roughly **24 minutes**. That blocked the production adoption decision: they needed recovery time to be predictable and bounded before enabling zonal shift on clusters serving end users.
 
 ## Problem Statement
 
-After a zonal shift expires in ARC, EKS takes significantly longer than expected to restore the shifted AZ to full operational state (uncordon nodes, re-add pod endpoints to EndpointSlices, allow scheduling).
+After a zonal shift expires, EKS takes far longer than expected to return the shifted AZ to full operation.
 
-**Expected:** Recovery within seconds/low minutes after shift expiry
-**Actual:** ~24 minutes before nodes were uncordoned and endpoint slices updated
+- **Expected** — recovery within seconds to a couple of minutes after expiry
+- **Observed** — ~24 minutes before nodes were uncordoned and EndpointSlices updated
+
+The gap matters because a DR control you cannot time is a DR control you cannot rely on.
 
 ## Root Cause
 
-The EKS zonal shift recovery mechanism is entirely **polling-based** — there is no event-driven push from ARC to EKS. Recovery requires traversing 5 sequential polling stages, each with its own interval:
+Zonal shift recovery in EKS is **polling-driven, not event-driven**. Nothing pushes a notification from ARC to the cluster when a shift expires. Instead, several independent components each discover the change on their own schedule, and every hop in that chain contributes its own latency:
 
-1. **ARC (PeRC)** marks shift expired (~0s)
-2. **EKS Weight Shift Poller** detects via polling (interval: 30s)
-3. **EKS Weight Shift Executor** processes (interval: 15s)
-4. **EKS Control Plane (KCP)** polls S3 config + uncordons (budget: ~150s)
-5. **Karpenter Controller** detects cleared state (interval: 30s)
-6. **AsyncEtcdIR Reconciler** final reconciliation (interval: 10 min) ← likely cause of extended delay
+1. **ARC** marks the shift expired — this happens server-side and immediately
+2. **EKS** discovers the expiry by polling and begins removing the AZ restriction
+3. **EKS control plane** applies the change: node taints removed, nodes uncordoned
+4. **Karpenter** independently reconciles, sees the zone is no longer restricted, and resumes provisioning there
+5. **Reconciliation loops** run on longer intervals than the steps above, so a change missed by one pass waits for the next
 
-Internal SLA: 5 minutes (WSS + KCP). Karpenter adds ~30s. The 24 minutes exceeds SLA and indicates the AsyncEtcd reconciler or multiple reconciliation passes were involved.
+Because these are serial and independent, the worst case is not the slowest step — it is the sum of every interval, plus any loop that has to wait a full cycle. That is what turns "a few minutes" into tens of minutes.
 
-Additionally, a 1-minute shift is an edge case — AWS documentation recommends "at least 60 seconds between zonal shift operations due to the current polling mechanism."
+Two factors made this particular test worse than a production shift would be:
+
+**The 1-minute shift is an edge case.** The shift expired before the chain had finished reacting to its start, so recovery work overlapped with activation work. AWS documentation explicitly recommends allowing at least 60 seconds between zonal shift operations precisely because of the polling mechanism — a 1-minute shift sits right at that boundary.
+
+**Recovery exceeded the shift duration.** When a shift lasts less time than the system takes to converge, the measurement no longer describes steady-state recovery; it describes two overlapping transitions.
 
 ## Architecture
 
 ```
-Customer Environment:
-- EKS Cluster (ap-southeast-2) with Karpenter v1.12+
-- Multi-AZ deployment (apse2-az1, apse2-az2, apse2-az3)
-- Zonal Shift registered on the EKS cluster resource
-- No Managed Node Groups (Karpenter manages all compute)
+EKS cluster, three AZs, Karpenter-provisioned compute (no managed node groups)
+Zonal shift registered against the EKS cluster resource
+
+        ARC Zonal Shift
+              │  (expiry is server-side, no event emitted)
+              ▼
+        EKS  ── polls ──▶ removes AZ restriction
+              │
+              ▼
+        EKS control plane ──▶ remove taints, uncordon nodes
+              │
+              ▼
+        Karpenter ── polls ──▶ resume provisioning in the AZ
+              │
+              ▼
+        EndpointSlices repopulated ──▶ traffic returns
 ```
 
-## Key Technical Details
+Each arrow is a separate polling loop. The total is additive.
 
-| Component | Detail |
-|-----------|--------|
-| Service | Amazon EKS + ARC Zonal Shift |
-| Region | ap-southeast-2 |
-| Cluster provisioner | Karpenter v1.12+ |
-| Shift type | Manual, 1-minute expiry |
-| Shifted AZ | apse2-az3 |
-| Recovery time | ~24 minutes |
-| Internal SLA | 5 minutes |
-| Recovery model | Polling-based (NOT event-driven) |
+## Key Details
 
-## Recovery Chain Timing
-
-| Stage | Component | Polling Interval | Worst Case |
-|-------|-----------|-----------------|------------|
-| 1 | PeRC marks expired | — | ~0s |
-| 2 | WSS Poller detects | 30s | 30s |
-| 3 | WSS Executor processes | 15s | 15s |
-| 4 | KCP polls S3 + executes | — | ~150s |
-| 5 | Karpenter reconciles | 30s | 30s |
-| 6 | AsyncEtcdIR (if triggered) | 10 min | 600s |
-| **Total (normal)** | | | **~5 min** |
-| **Total (with Etcd IR)** | | | **~15 min** |
+- **Services** — Amazon EKS with ARC Zonal Shift
+- **Compute** — Karpenter v1.12+ provisioning all nodes, no managed node groups
+- **Shift type** — manual, 1-minute expiry
+- **Observed recovery** — ~24 minutes to full restoration
+- **Recovery model** — polling-based, not event-driven
 
 ## CloudTrail Events to Monitor
 
-| Event Source | Event Name | What it tells you |
-|-------------|------------|-------------------|
-| arc-zonal-shift.amazonaws.com | StartZonalShift | When shift began |
-| arc-zonal-shift.amazonaws.com | GetManagedResource | Karpenter polling (every 30s) |
-| eks.amazonaws.com | UpdateNodegroupConfig | When EKS re-enabled AZ |
-| autoscaling.amazonaws.com | ResumeProcesses | When ASG AZ rebalance restored |
-| autoscaling.amazonaws.com | SuspendProcesses | When ASG AZ was suspended |
-| ec2.amazonaws.com | RunInstances | Karpenter launching new nodes |
+These are the customer-visible signals that let you time each stage yourself:
 
-**Note:** Natural shift expiry does NOT generate a CloudTrail event. PeRC removes it server-side.
+- **`StartZonalShift`** (`arc-zonal-shift.amazonaws.com`) — when the shift began
+- **`GetManagedResource`** (`arc-zonal-shift.amazonaws.com`) — recurring polls; the cadence reveals the polling interval in play
+- **`UpdateNodegroupConfig`** (`eks.amazonaws.com`) — when EKS re-enabled the AZ
+- **`SuspendProcesses`** / **`ResumeProcesses`** (`autoscaling.amazonaws.com`) — when AZ rebalance was suspended and restored
+- **`RunInstances`** (`ec2.amazonaws.com`) — Karpenter launching replacement nodes
+
+**Important gotcha:** natural shift expiry does **not** generate a CloudTrail event. The shift is removed server-side, so if you are building a timeline, the expiry is the one moment you have to infer rather than read. Anchor on `StartZonalShift` plus the configured duration instead.
 
 ## Kubernetes Observability
 
 ```bash
-# Watch endpoint slices during shift
+# Watch endpoint slices during the shift
 kubectl get endpointslices --all-namespaces \
-  -l 'eks-arc-zonal-shift/impaired-zone=ap-southeast-2a'
+  -l 'eks-arc-zonal-shift/impaired-zone=<az-id>'
 
-# Watch node taints
+# Watch node taints appear and clear
 kubectl get nodes -o custom-columns=\
-  NAME:.metadata.name,\
-  TAINTS:.spec.taints \
+NAME:.metadata.name,\
+TAINTS:.spec.taints \
   | grep "eks-arc-zonal-shift/impaired-zone"
 
-# Karpenter logs
+# Karpenter reconciliation
 kubectl logs -n kube-system -l app.kubernetes.io/name=karpenter \
-  | grep -i "zonal\|shift\|cleared\|reconcil"
+  | grep -iE "zonal|shift|cleared|reconcil"
 
-# Kubernetes events
+# Cluster events, newest last
 kubectl get events --all-namespaces --sort-by='.lastTimestamp' \
-  | grep -i "cordon\|taint\|zonal"
+  | grep -iE "cordon|taint|zonal"
 ```
 
 ## Recommendations
 
-1. **Test with minimum 30-minute shifts** — avoids edge case of recovery > shift duration
-2. **Use zonal autoshift practice runs** — purpose-built for validation testing
-3. **If 24 min reproduces with longer shifts** — escalate to EKS Harbor team (Weight Shift Service owners)
-4. **For production:** set alerts on EndpointSlice label removal as recovery indicator
+1. **Test with shifts of 30 minutes or more.** This removes the edge case where recovery outlasts the shift itself and lets you measure steady-state convergence.
+2. **Use zonal autoshift practice runs.** They exist for exactly this kind of validation and exercise the same path without an arbitrary short expiry.
+3. **Alert on EndpointSlice label removal, not on shift expiry.** The label clearing is the signal that traffic is genuinely back; the expiry only means ARC has stopped advertising the shift.
+4. **Budget recovery as additive, not parallel.** When sizing your RTO, sum the polling intervals in the chain rather than assuming the slowest single step dominates.
+5. **If a long shift still takes ~24 minutes,** open a support case with the CloudTrail timeline and Karpenter logs attached — the per-stage timestamps are what make the delay actionable.
 
 ## Lab Replication Plan
 
-- [ ] Create EKS cluster with Karpenter in test account
-- [ ] Enable zonal shift on cluster
-- [ ] Perform manual shift (30 min expiry) and measure exact recovery time
-- [ ] Capture all CloudTrail events during window
-- [ ] Capture Kubernetes events timeline
-- [ ] Compare with internal SLA (5 min)
-- [ ] Document findings
+- [ ] Create an EKS cluster with Karpenter in a test account
+- [ ] Register zonal shift on the cluster resource
+- [ ] Run a manual shift with 30-minute expiry and measure recovery precisely
+- [ ] Capture the CloudTrail timeline across the full window
+- [ ] Capture the Kubernetes event and EndpointSlice timeline
+- [ ] Repeat with a 1-minute shift to confirm the short-shift edge case
+- [ ] Publish the measured per-stage breakdown
 
 ## References
 
 - [ARC Zonal Shift in EKS](https://docs.aws.amazon.com/eks/latest/userguide/zone-shift.html)
 - [How a zonal shift works](https://docs.aws.amazon.com/r53recovery/latest/dg/arc-zonal-shift.how-it-works.html)
 - [Best practices for zonal shifts](https://docs.aws.amazon.com/r53recovery/latest/dg/route53-arc-best-practices.zonal-shifts.html)
-- [Karpenter v1.12+ zonal shift support](https://github.com/aws/karpenter-provider-aws)
-- [Operating resilient workloads on EKS](https://aws.amazon.com/blogs/containers/operating-resilient-workloads-on-amazon-eks)
+- [Karpenter AWS provider](https://github.com/aws/karpenter-provider-aws)
+- [Operating resilient workloads on Amazon EKS](https://aws.amazon.com/blogs/containers/operating-resilient-workloads-on-amazon-eks)
