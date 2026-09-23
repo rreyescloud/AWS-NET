@@ -74,6 +74,6 @@ python cleanup.py --profile <your-aws-profile>
 
 Account IDs, resource IDs and public IPs are placeholders throughout. Deployed-state files and run logs are deliberately excluded from this repository.
 
-## Author
+## About
 
-Rreyes Cloud — Network & Cloud Security Engineer
+**Rreyes Cloud** — Networking & Security Solutions on AWS

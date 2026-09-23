@@ -57,16 +57,18 @@ All infrastructure fixes attempted (ACU increase, ParallelApplyBufferSize 100→
 
 ## Investigation Timeline
 
-| Date | Finding | Action |
-|------|---------|--------|
-| May 15 | Storage BW saturated (12,540 exceeded events) | Recommended ACU increase |
-| May 18 | Customer increased ACU to 24 | Local latency improved temporarily |
-| May 19 | the network engineer took over networking case | Scheduled callback |
-| May 20 | Remote Kafka spikes to 140s | the DMS specialist identified batch idle + cross-VPC |
-| May 21 | the DMS specialist recommended ParallelApplyBufferSize 500 | Customer applied |
-| May 22 | the network engineer confirmed network OK | Offered VPC Peering |
-| May 22 | Customer: "NOT WORKING" — 14 min local, 27 min remote | - |
-| May 23 | Same in PROD with only 2 tables + buffer=1000 | All infra fixes exhausted |
+- **Day 1** — storage bandwidth saturated (12,540 exceeded events) → recommended an ACU increase
+- **Day 4** — ACU raised to 24 → local latency improved, but only temporarily
+- **Day 5** — networking engagement opened alongside the database one
+- **Day 6** — remote Kafka latency spiked to 140s → batch idle plus cross-VPC amplification identified
+- **Day 7** — `ParallelApplyBufferSize` raised to 500 → applied, no improvement
+- **Day 8** — network path cleared and VPC peering offered as an alternative
+- **Day 8** — reported worse: 14 min local, 27 min remote
+- **Day 9** — same behaviour in production with only 2 tables and buffer at 1000 → every
+  infrastructure fix exhausted, leaving the replication engine itself as the remaining suspect
+
+Dates are relative and the engineers who worked each stage are not named; what matters for the
+diagnosis is the order in which each layer was cleared.
 
 
 ## Key Finding — Network Layer Cleared
@@ -88,7 +90,8 @@ Network evidence:
 
 1. **DMS SOURCE_CAPTURE behavior** — How DMS reads binlog during large transactions. If a transaction writes 5M+ records, DMS waits for COMMIT before processing → appears as latency spike.
 
-2. **LOB handling** — Customer has JSON columns. LobMaxSize reduced to 32KB may cause extra lookups back to source for large JSON values (the DMS specialist flagged this risk).
+2. **LOB handling** — Customer has JSON columns. LobMaxSize reduced to 32KB may cause extra lookups back to source for large JSON values — flagged as a risk during the
+   database-side review.
 
 3. **DMS internal batching** — TARGET_APPLY batching to Kafka may be accumulating too many records before flushing. ParallelApplyBufferSize=1000 might be TOO HIGH for this workload.
 
@@ -100,7 +103,8 @@ Network evidence:
 ## Next Steps
 
 - [x] Respond to customer acknowledging the issue is NOT network
-- [ ] Coordinate with the DMS specialist — DMS needs deeper investigation (task logs, SOURCE vs TARGET timing)
+- [ ] Hand off to the database specialty — DMS needs deeper investigation (task logs, SOURCE vs
+      TARGET timing)
 - [ ] Suggest DMS service team escalation if tuning doesn't resolve
 - [ ] Close networking case with summary
 

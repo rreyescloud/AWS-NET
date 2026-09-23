@@ -93,7 +93,7 @@
         </mxCell>
 
         <!-- Timeline -->
-        <mxCell id="timeline" value="TIMELINE:&#xa;&#xa;May 15: the database engineer identifies storage BW saturation (12,540 exceeded)&#xa;May 18: Customer increases ACU to 24&#xa;May 19: Local latency improves, remote still 50s peaks&#xa;May 20: Remote spikes to 140s&#xa;May 21: the DMS specialist identifies batch idle + cross-VPC amplification&#xa;May 22: the network engineer confirms network OK, offers VPC Peering&#xa;May 22: Customer says NOT WORKING — now 14 min local, 27 min remote&#xa;May 23: Same in PROD with only 2 tables, ParallelApplyBuffer=1000&#xa;         → All network/storage fixes exhausted&#xa;         → DMS internal behavior is the remaining suspect" style="shape=note;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;align=left;spacingLeft=8;" parent="1" vertex="1">
+        <mxCell id="timeline" value="TIMELINE (relative days):&#xa;&#xa;Day 1: storage bandwidth saturation identified (12,540 exceeded)&#xa;Day 4: ACU raised to 24&#xa;Day 5: local latency improves, remote still peaking at 50s&#xa;Day 6: remote spikes to 140s&#xa;Day 7: batch idle + cross-VPC amplification identified&#xa;Day 8: network path cleared, VPC Peering offered&#xa;Day 8: reported worse — 14 min local, 27 min remote&#xa;Day 9: same in PROD with only 2 tables, ParallelApplyBuffer=1000&#xa;         → all network and storage fixes exhausted&#xa;         → the replication engine itself is the remaining suspect" style="shape=note;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;align=left;spacingLeft=8;" parent="1" vertex="1">
           <mxGeometry x="1030" y="870" width="430" height="200" as="geometry" />
         </mxCell>
 
