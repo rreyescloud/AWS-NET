@@ -1,0 +1,80 @@
+<mxfile host="drawio-plugin" modified="2026-09-23T12:00:00.000Z" agent="Mozilla/5.0" version="22.1.22" etag="NET010-container-attrs" type="embed">
+  <diagram name="NET-010: Container attributes referencing on EKS" id="net010-container-attrs">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1700" pageHeight="1150" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="title" value="NET-010: Network Firewall rules that follow the workload, not the subnet" style="text;html=1;fontSize=17;fontStyle=1;align=center;fontColor=#333333;" parent="1" vertex="1">
+          <mxGeometry x="350" y="20" width="1000" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="subtitle" value="A container association turns namespace + label selectors into a live IP set the stateful engine can reference." style="text;html=1;fontSize=11;align=center;fontColor=#666666;" parent="1" vertex="1">
+          <mxGeometry x="350" y="50" width="1000" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- EKS cluster -->
+        <mxCell id="eks" value="EKS cluster    nfw-container-lab" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999999;fontSize=12;fontStyle=1;verticalAlign=top;dashed=1;" parent="1" vertex="1">
+          <mxGeometry x="80" y="110" width="520" height="330" as="geometry" />
+        </mxCell>
+        <mxCell id="ns" value="namespace: payments      (label team=payments)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;fontStyle=1;verticalAlign=top;" parent="1" vertex="1">
+          <mxGeometry x="110" y="155" width="460" height="200" as="geometry" />
+        </mxCell>
+
+        <mxCell id="pod1" value="pod web-1&#xa;app=web&#xa;tier=frontend" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="130" y="195" width="120" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="pod2" value="pod web-2&#xa;app=web&#xa;tier=frontend" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="270" y="195" width="120" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="pod3" value="pod web-3&#xa;app=web&#xa;tier=frontend" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="410" y="195" width="120" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="podnote" value="Each pod holds a real VPC address, because external SNAT is disabled.&#xa;That is why the firewall can see the pod and not just the node." style="text;html=1;fontSize=10;align=center;fontColor=#666666;" parent="1" vertex="1">
+          <mxGeometry x="120" y="280" width="440" height="40" as="geometry" />
+        </mxCell>
+
+        <mxCell id="cni" value="VPC CNI&#xa;AWS_VPC_K8S_CNI_EXTERNALSNAT = true" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="140" y="375" width="400" height="45" as="geometry" />
+        </mxCell>
+
+        <!-- Association -->
+        <mxCell id="assoc" value="Network Firewall&#xa;container association&#xa;&#xa;Type = EKS  (immutable)&#xa;ClusterArn = the cluster above&#xa;AttributeFilters:&#xa;   namespace = payments&#xa;   app = web" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;align=left;verticalAlign=top;spacingLeft=12;spacingTop=8;fontStyle=0;" parent="1" vertex="1">
+          <mxGeometry x="690" y="140" width="280" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="assoc-status" value="Status = ACTIVE&#xa;ResolvedCidrCount = 3&#xa;&#xa;The count is the assertion:&#xa;3 filters matched, 3 pods running.&#xa;Scale the deployment and it tracks." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f4fff4;strokeColor=#82b366;fontSize=11;align=left;verticalAlign=top;spacingLeft=12;spacingTop=8;" parent="1" vertex="1">
+          <mxGeometry x="690" y="340" width="280" height="120" as="geometry" />
+        </mxCell>
+
+        <!-- Rule group -->
+        <mxCell id="rg" value="Stateful rule group&#xa;&#xa;ReferenceSets.IPSetReferences:&#xa;   CONTAINER_IPS.ReferenceArn = association ARN&#xa;&#xa;Suricata rule:&#xa;   alert tcp @CONTAINER_IPS any -&gt; any any (...)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;fontSize=11;align=left;verticalAlign=top;spacingLeft=12;spacingTop=8;fontFamily=Courier New;" parent="1" vertex="1">
+          <mxGeometry x="1060" y="140" width="560" height="180" as="geometry" />
+        </mxCell>
+
+        <!-- The gotcha -->
+        <mxCell id="gotcha-box" value="The one-character gotcha" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=13;fontStyle=1;verticalAlign=top;" parent="1" vertex="1">
+          <mxGeometry x="1060" y="340" width="560" height="230" as="geometry" />
+        </mxCell>
+        <mxCell id="gotcha-detail" value="@NAME   dynamic IP-set reference  — resource groups and container associations&#xa;$NAME   static rule variable      — RuleVariables.IPSets, a literal CIDR list&#xa;&#xa;Write $CONTAINER_IPS and the create call fails with:&#xa;&#xa;   InvalidRequestException: CONTAINER_IPS cannot be null or empty,&#xa;   context: RuleVariables.IPSets.CONTAINER_IPS&#xa;&#xa;The error points at RuleVariables — a section you never wrote. It is telling&#xa;you that $ made it look for a static variable, not that your reference is wrong." style="text;html=1;fontSize=11;align=left;verticalAlign=top;fontColor=#333333;fontFamily=Courier New;" parent="1" vertex="1">
+          <mxGeometry x="1080" y="370" width="530" height="190" as="geometry" />
+        </mxCell>
+
+        <!-- Arrows -->
+        <mxCell id="e1" value="watches cluster state&#xa;via the attribute filters" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#d79b00;strokeWidth=2;endArrow=block;fontSize=10;" parent="1" source="ns" target="assoc" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e2" value="resolves to a live CIDR set" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#82b366;strokeWidth=2;endArrow=block;fontSize=10;" parent="1" source="assoc" target="rg" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- Constraints -->
+        <mxCell id="cons-box" value="Constraints worth knowing before you build" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999999;fontSize=12;fontStyle=1;verticalAlign=top;" parent="1" vertex="1">
+          <mxGeometry x="80" y="480" width="900" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="cons-detail" value="•  EKS requires external SNAT disabled. With SNAT on, the firewall sees node addresses and the&#xa;    whole premise collapses — the association would resolve pods the firewall can never match.&#xa;&#xa;•  Type (ECS or EKS) is fixed at creation. Changing it means a new association.&#xa;&#xa;•  ECS needs awsvpc networking mode, for the same addressing reason.&#xa;&#xa;•  Up to 5 monitoring configurations per association.&#xa;&#xa;•  Delete protection: an association referenced by a rule group cannot be deleted. Remove the&#xa;    reference first — tear down the rule group, then the association, then the cluster.&#xa;&#xa;•  The API ships in the SDK ahead of the CLI, so drive it from boto3, not the aws command." style="text;html=1;fontSize=11;align=left;verticalAlign=top;fontColor=#333333;" parent="1" vertex="1">
+          <mxGeometry x="100" y="510" width="870" height="165" as="geometry" />
+        </mxCell>
+
+        <mxCell id="footer" value="Takeaway: the association is the interesting part. It converts a Kubernetes selector into something the network layer can enforce, which is what makes microsegmentation survive a rolling deploy." style="text;html=1;fontSize=12;fontStyle=2;align=center;fontColor=#333333;" parent="1" vertex="1">
+          <mxGeometry x="150" y="710" width="1400" height="30" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
