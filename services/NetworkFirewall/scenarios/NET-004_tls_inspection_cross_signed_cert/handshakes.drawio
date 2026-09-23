@@ -1,0 +1,453 @@
+<mxfile host="drawio-plugin" modified="2026-05-21T21:38:16.872Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36" etag="fMnDiochB66f5dvdSODY" version="22.1.22" type="embed" pages="5">
+  <diagram id="tcp-handshake" name="1. TCP Handshake">
+    <mxGraphModel dx="1824" dy="685" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="t1" value="&lt;b&gt;TCP Three-Way Handshake (Capa 4 — Transporte)&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=16;" parent="1" vertex="1">
+          <mxGeometry x="300" y="20" width="500" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="t1sub" value="Establece conexión confiable antes de cualquier dato. Sin cifrado." style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;fontColor=#666666;" parent="1" vertex="1">
+          <mxGeometry x="320" y="55" width="460" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="c1" value="&lt;b&gt;Cliente&lt;/b&gt;&lt;br&gt;(Browser / App)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="150" y="100" width="140" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="c1line" value="" style="endArrow=none;dashed=1;html=1;dashPattern=5 5;strokeColor=#999999;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="220" y="150" as="sourcePoint" />
+            <mxPoint x="220" y="550" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="s1" value="&lt;b&gt;Servidor&lt;/b&gt;&lt;br&gt;(Puerto 443)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="750" y="100" width="140" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="s1line" value="" style="endArrow=none;dashed=1;html=1;dashPattern=5 5;strokeColor=#999999;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="820" y="150" as="sourcePoint" />
+            <mxPoint x="820" y="550" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="syn" value="&lt;b&gt;SYN&lt;/b&gt; (seq=100)&lt;br&gt;&lt;i&gt;«¿Puedo conectarme?»&lt;/i&gt;" style="edgeStyle=orthogonalEdgeStyle;html=1;align=center;verticalAlign=bottom;endArrow=block;endFill=1;strokeColor=#0066CC;fontSize=11;fontColor=#0066CC;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="220" y="220" as="sourcePoint" />
+            <mxPoint x="820" y="220" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="syn_num" value="①" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=18;fontColor=#0066CC;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="160" y="200" width="40" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="synack" value="&lt;b&gt;SYN-ACK&lt;/b&gt; (seq=300, ack=101)&lt;br&gt;&lt;i&gt;«Sí, adelante»&lt;/i&gt;" style="edgeStyle=orthogonalEdgeStyle;html=1;align=center;verticalAlign=bottom;endArrow=block;endFill=1;strokeColor=#009900;fontSize=11;fontColor=#009900;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="820" y="310" as="sourcePoint" />
+            <mxPoint x="220" y="310" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="synack_num" value="②" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=18;fontColor=#009900;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="850" y="290" width="40" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="ack" value="&lt;b&gt;ACK&lt;/b&gt; (seq=101, ack=301)&lt;br&gt;&lt;i&gt;«Confirmado, estamos conectados»&lt;/i&gt;" style="edgeStyle=orthogonalEdgeStyle;html=1;align=center;verticalAlign=bottom;endArrow=block;endFill=1;strokeColor=#0066CC;fontSize=11;fontColor=#0066CC;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="220" y="400" as="sourcePoint" />
+            <mxPoint x="820" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ack_num" value="③" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=18;fontColor=#0066CC;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="160" y="380" width="40" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="conn" value="" style="endArrow=none;html=1;strokeColor=#00CC00;strokeWidth=3;dashed=1;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="220" y="470" as="sourcePoint" />
+            <mxPoint x="820" y="470" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="conn_label" value="✓ Conexión TCP establecida — listo para TLS Handshake" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=#d5e8d4;fontSize=12;fontColor=#009900;fontStyle=1;rounded=1;" parent="1" vertex="1">
+          <mxGeometry x="320" y="480" width="400" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="note1" value="&lt;b&gt;Notas:&lt;/b&gt;&lt;br&gt;• Todo en texto plano (sin cifrado)&lt;br&gt;• Define IP origen/destino y puertos&lt;br&gt;• Network Firewall ve: IPs + puertos&lt;br&gt;• Puede filtrar con reglas stateful/stateless" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;size=15;fillColor=#FFF2CC;strokeColor=#d6b656;align=left;fontSize=11;verticalAlign=top;" parent="1" vertex="1">
+          <mxGeometry x="380" y="560" width="300" height="100" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="tls-handshake" name="2. TLS 1.2 Handshake">
+    <mxGraphModel dx="1520" dy="570" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="t2" value="&lt;b&gt;TLS 1.2 Handshake (Capa 6 — Presentación)&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=16;" parent="1" vertex="1">
+          <mxGeometry x="300" y="20" width="480" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="t2sub" value="Negocia cifrado. 2 round trips. Certificado visible en plano." style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;fontColor=#666666;" parent="1" vertex="1">
+          <mxGeometry x="330" y="55" width="400" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="c2" value="&lt;b&gt;Cliente&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="150" y="90" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="c2line" value="" style="endArrow=none;dashed=1;html=1;dashPattern=5 5;strokeColor=#999999;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="210" y="130" as="sourcePoint" />
+            <mxPoint x="210" y="850" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="s2" value="&lt;b&gt;Servidor&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="780" y="90" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="s2line" value="" style="endArrow=none;dashed=1;html=1;dashPattern=5 5;strokeColor=#999999;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="840" y="130" as="sourcePoint" />
+            <mxPoint x="840" y="850" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="phase1" value="EN TEXTO PLANO" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=10;fontColor=#CC0000;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="30" y="150" width="110" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="ch" value="&lt;b&gt;ClientHello&lt;/b&gt;&lt;br&gt;• SNI: api.example.com&lt;br&gt;• Cipher suites [AES-GCM, ChaCha20...]&lt;br&gt;• Random number (client)&lt;br&gt;• TLS version: 1.2" style="html=1;align=center;verticalAlign=middle;endArrow=block;endFill=1;strokeColor=#0066CC;fontSize=10;fontColor=#0066CC;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="210" y="180" as="sourcePoint" />
+            <mxPoint x="840" y="180" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="sni_call" value="⚠️ SNI visible sin cifrar&lt;br&gt;NF puede filtrar por dominio aquí" style="shape=callout;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;size=10;position=0.5;base=15;fillColor=#FFF2CC;strokeColor=#d6b656;fontSize=10;align=center;" parent="1" vertex="1">
+          <mxGeometry x="420" y="130" width="220" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="sh" value="&lt;b&gt;ServerHello&lt;/b&gt;&lt;br&gt;• Cipher suite elegido: TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384&lt;br&gt;• Random number (server)" style="html=1;align=center;verticalAlign=middle;endArrow=block;endFill=1;strokeColor=#009900;fontSize=10;fontColor=#009900;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="840" y="270" as="sourcePoint" />
+            <mxPoint x="210" y="270" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="cert" value="&lt;b&gt;Certificate&lt;/b&gt;&lt;br&gt;• Leaf cert (servidor)&lt;br&gt;• Intermediate CA&lt;br&gt;• Root CA (o cross-signed root ← PROBLEMA NET-004)" style="html=1;align=center;verticalAlign=middle;endArrow=block;endFill=1;strokeColor=#009900;fontSize=10;fontColor=#009900;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="840" y="350" as="sourcePoint" />
+            <mxPoint x="210" y="350" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="cert_call" value="🔑 Aquí el cliente valida la cadena de confianza.&lt;br&gt;NF hace lo mismo al crear TLSInspectionConfig.&lt;br&gt;Si el root es cross-signed → ❌ RECHAZADO" style="shape=callout;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;size=10;position=0.5;base=15;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;align=center;" parent="1" vertex="1">
+          <mxGeometry x="370" y="365" width="320" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="shd" value="&lt;b&gt;ServerHelloDone&lt;/b&gt;" style="html=1;align=center;verticalAlign=middle;endArrow=block;endFill=1;strokeColor=#009900;fontSize=10;fontColor=#009900;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="840" y="440" as="sourcePoint" />
+            <mxPoint x="210" y="440" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="cke" value="&lt;b&gt;ClientKeyExchange&lt;/b&gt;&lt;br&gt;• Pre-master secret (cifrado con public key del cert)" style="html=1;align=center;verticalAlign=middle;endArrow=block;endFill=1;strokeColor=#0066CC;fontSize=10;fontColor=#0066CC;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="210" y="520" as="sourcePoint" />
+            <mxPoint x="840" y="520" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="phase2" value="CIFRADO DESDE AQUÍ ↓" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=10;fontColor=#009900;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="30" y="570" width="150" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="enc_line" value="" style="endArrow=none;html=1;strokeColor=#00CC00;strokeWidth=2;dashed=1;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="140" y="590" as="sourcePoint" />
+            <mxPoint x="920" y="590" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ccs1" value="&lt;b&gt;ChangeCipherSpec + Finished&lt;/b&gt;" style="html=1;align=center;verticalAlign=middle;endArrow=block;endFill=1;strokeColor=#0066CC;fontSize=10;fontColor=#0066CC;dashed=1;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="210" y="630" as="sourcePoint" />
+            <mxPoint x="840" y="630" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ccs2" value="&lt;b&gt;ChangeCipherSpec + Finished&lt;/b&gt;" style="html=1;align=center;verticalAlign=middle;endArrow=block;endFill=1;strokeColor=#009900;fontSize=10;fontColor=#009900;dashed=1;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="840" y="700" as="sourcePoint" />
+            <mxPoint x="210" y="700" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="enc_traffic" value="" style="endArrow=none;html=1;strokeColor=#00CC00;strokeWidth=4;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="210" y="770" as="sourcePoint" />
+            <mxPoint x="840" y="770" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="enc_label" value="🔒 Tráfico de aplicación cifrado (HTTP requests/responses)" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=#d5e8d4;fontSize=11;fontColor=#009900;fontStyle=1;rounded=1;" parent="1" vertex="1">
+          <mxGeometry x="330" y="780" width="400" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="key_note" value="&lt;b&gt;Derivación de claves:&lt;/b&gt;&lt;br&gt;Master Secret = PRF(pre-master, client_random, server_random)&lt;br&gt;→ Se generan claves simétricas para cifrar/descifrar tráfico" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;size=15;fillColor=#E6E6E6;strokeColor=#999999;align=left;fontSize=10;verticalAlign=top;" parent="1" vertex="1">
+          <mxGeometry x="350" y="540" width="380" height="50" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="tls13-handshake" name="3. TLS 1.3 Handshake">
+    <mxGraphModel dx="1277" dy="479" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="750" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="t3" value="&lt;b&gt;TLS 1.3 Handshake (1 Round Trip — Más rápido)&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=16;" parent="1" vertex="1">
+          <mxGeometry x="300" y="20" width="480" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="t3sub" value="El cliente envía key share en el primer mensaje → menos latencia. Certificado va cifrado." style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;fontColor=#666666;" parent="1" vertex="1">
+          <mxGeometry x="270" y="55" width="560" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="c3" value="&lt;b&gt;Cliente&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="150" y="90" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="c3line" value="" style="endArrow=none;dashed=1;html=1;dashPattern=5 5;strokeColor=#999999;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="210" y="130" as="sourcePoint" />
+            <mxPoint x="210" y="650" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="s3" value="&lt;b&gt;Servidor&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="780" y="90" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="s3line" value="" style="endArrow=none;dashed=1;html=1;dashPattern=5 5;strokeColor=#999999;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="840" y="130" as="sourcePoint" />
+            <mxPoint x="840" y="650" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="plain13" value="PLANO" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=10;fontColor=#CC0000;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="50" y="155" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="ch13" value="&lt;b&gt;ClientHello&lt;/b&gt;&lt;br&gt;• SNI: api.example.com (plano)&lt;br&gt;• Supported versions: [1.3, 1.2]&lt;br&gt;• Key Share: x25519 public key ← ¡adelanta la negociación!&lt;br&gt;• Cipher suites" style="html=1;align=center;verticalAlign=middle;endArrow=block;endFill=1;strokeColor=#0066CC;fontSize=10;fontColor=#0066CC;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="210" y="180" as="sourcePoint" />
+            <mxPoint x="840" y="180" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="enc13_line" value="" style="endArrow=none;html=1;strokeColor=#00CC00;strokeWidth=2;dashed=1;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="140" y="270" as="sourcePoint" />
+            <mxPoint x="920" y="270" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="enc13_label" value="CIFRADO DESDE AQUÍ ↓" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=10;fontColor=#009900;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="50" y="260" width="150" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="sh13" value="&lt;b&gt;ServerHello&lt;/b&gt; + Key Share&lt;br&gt;• Server&#39;s x25519 public key" style="html=1;align=center;verticalAlign=middle;endArrow=block;endFill=1;strokeColor=#009900;fontSize=10;fontColor=#009900;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="840" y="320" as="sourcePoint" />
+            <mxPoint x="210" y="320" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="cert13" value="&lt;b&gt;Certificate&lt;/b&gt; (CIFRADO — no visible en la red)&lt;br&gt;• Leaf + Intermediate + Root" style="html=1;align=center;verticalAlign=middle;endArrow=block;endFill=1;strokeColor=#009900;fontSize=10;fontColor=#009900;dashed=1;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="840" y="400" as="sourcePoint" />
+            <mxPoint x="210" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="cert13_call" value="En TLS 1.3 el certificado va cifrado.&lt;br&gt;Un observador pasivo NO puede ver qué cert usa el servidor.&lt;br&gt;(Mejora de privacidad vs TLS 1.2)" style="shape=callout;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;size=10;position=0.5;base=15;fillColor=#E6F3FF;strokeColor=#6c8ebf;fontSize=10;align=center;" parent="1" vertex="1">
+          <mxGeometry x="370" y="415" width="320" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="fin13s" value="&lt;b&gt;Finished&lt;/b&gt;" style="html=1;align=center;verticalAlign=middle;endArrow=block;endFill=1;strokeColor=#009900;fontSize=10;fontColor=#009900;dashed=1;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="840" y="490" as="sourcePoint" />
+            <mxPoint x="210" y="490" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="fin13c" value="&lt;b&gt;Finished&lt;/b&gt;" style="html=1;align=center;verticalAlign=middle;endArrow=block;endFill=1;strokeColor=#0066CC;fontSize=10;fontColor=#0066CC;dashed=1;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="210" y="550" as="sourcePoint" />
+            <mxPoint x="840" y="550" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="enc13_traffic" value="" style="endArrow=none;html=1;strokeColor=#00CC00;strokeWidth=4;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="210" y="610" as="sourcePoint" />
+            <mxPoint x="840" y="610" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="enc13_traf_label" value="🔒 Tráfico de aplicación cifrado" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=#d5e8d4;fontSize=11;fontColor=#009900;fontStyle=1;rounded=1;" parent="1" vertex="1">
+          <mxGeometry x="400" y="620" width="260" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="comp13" value="&lt;b&gt;vs TLS 1.2:&lt;/b&gt;&lt;br&gt;• Solo 1 round trip (vs 2)&lt;br&gt;• Certificado cifrado (vs plano)&lt;br&gt;• Forward secrecy obligatorio&lt;br&gt;• Cipher suites legacy eliminados" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;size=15;fillColor=#FFF2CC;strokeColor=#d6b656;align=left;fontSize=10;verticalAlign=top;" parent="1" vertex="1">
+          <mxGeometry x="30" y="530" width="170" height="100" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="nf-tls-inspection" name="4. NF TLS Inspection (MITM)">
+    <mxGraphModel dx="1277" dy="479" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="t4" value="&lt;b&gt;Network Firewall TLS Inspection — Man-in-the-Middle (Inbound)&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=16;" parent="1" vertex="1">
+          <mxGeometry x="350" y="20" width="600" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="t4sub" value="NF mantiene DOS sesiones TLS separadas. Necesita el cert + private key para actuar como servidor." style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;fontColor=#666666;" parent="1" vertex="1">
+          <mxGeometry x="330" y="55" width="640" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="c4" value="&lt;b&gt;Cliente&lt;/b&gt;&lt;br&gt;(Broker/Custodian)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="50" y="100" width="140" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="c4line" value="" style="endArrow=none;dashed=1;html=1;dashPattern=5 5;strokeColor=#999999;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="120" y="150" as="sourcePoint" />
+            <mxPoint x="120" y="820" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="nf4" value="&lt;b&gt;AWS Network Firewall&lt;/b&gt;&lt;br&gt;TLS Inspection Engine" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE6CC;strokeColor=#d79b00;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="530" y="100" width="200" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="nf4line" value="" style="endArrow=none;dashed=1;html=1;dashPattern=5 5;strokeColor=#d79b00;strokeWidth=2;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="630" y="150" as="sourcePoint" />
+            <mxPoint x="630" y="820" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="s4" value="&lt;b&gt;Servidor&lt;/b&gt;&lt;br&gt;(ALB → ECS)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="1100" y="100" width="140" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="s4line" value="" style="endArrow=none;dashed=1;html=1;dashPattern=5 5;strokeColor=#999999;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1170" y="150" as="sourcePoint" />
+            <mxPoint x="1170" y="820" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="sess1" value="SESIÓN TLS #1" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=#FFE6CC;fontSize=11;fontColor=#d79b00;fontStyle=1;rounded=1;" parent="1" vertex="1">
+          <mxGeometry x="290" y="170" width="110" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="tcp1" value="TCP Handshake (SYN/SYN-ACK/ACK)" style="html=1;align=center;verticalAlign=middle;endArrow=block;endFill=1;strokeColor=#999999;fontSize=9;fontColor=#999999;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="120" y="210" as="sourcePoint" />
+            <mxPoint x="630" y="210" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ch4" value="&lt;b&gt;ClientHello&lt;/b&gt; (SNI: api.trading.example.com)" style="html=1;align=center;verticalAlign=middle;endArrow=block;endFill=1;strokeColor=#0066CC;fontSize=10;fontColor=#0066CC;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="120" y="260" as="sourcePoint" />
+            <mxPoint x="630" y="260" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="nf_cert" value="NF presenta el certificado&lt;br&gt;(usa la PRIVATE KEY configurada)" style="shape=callout;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;size=10;position=0.2;base=15;fillColor=#FFE6CC;strokeColor=#d79b00;fontSize=10;align=center;" parent="1" vertex="1">
+          <mxGeometry x="650" y="250" width="200" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="sh4" value="&lt;b&gt;ServerHello + Certificate&lt;/b&gt; (NF actúa COMO el servidor)" style="html=1;align=center;verticalAlign=middle;endArrow=block;endFill=1;strokeColor=#CC6600;fontSize=10;fontColor=#CC6600;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="630" y="320" as="sourcePoint" />
+            <mxPoint x="120" y="320" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ke4" value="Key Exchange → Session keys generadas" style="html=1;align=center;verticalAlign=middle;endArrow=block;endFill=1;strokeColor=#0066CC;fontSize=10;fontColor=#0066CC;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="120" y="380" as="sourcePoint" />
+            <mxPoint x="630" y="380" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="enc4_1" value="═══ Sesión TLS #1 establecida (Cliente ↔ NF) ═══" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=10;fontColor=#CC6600;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="220" y="410" width="320" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="http_req" value="&lt;b&gt;HTTP Request (cifrado)&lt;/b&gt;&lt;br&gt;GET /api/trades HTTP/1.1" style="html=1;align=center;verticalAlign=middle;endArrow=block;endFill=1;strokeColor=#0066CC;fontSize=10;fontColor=#0066CC;dashed=1;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="120" y="460" as="sourcePoint" />
+            <mxPoint x="630" y="460" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="inspect" value="🔍 NF DESCIFRA E INSPECCIONA&lt;br&gt;• Suricata rules&lt;br&gt;• Detecta malware, injection, C2&lt;br&gt;• Si OK → re-cifra y reenvía" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;align=center;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="560" y="490" width="240" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="sess2" value="SESIÓN TLS #2" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=#FFE6CC;fontSize=11;fontColor=#d79b00;fontStyle=1;rounded=1;" parent="1" vertex="1">
+          <mxGeometry x="850" y="570" width="110" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="tcp2" value="TCP Handshake" style="html=1;align=center;verticalAlign=middle;endArrow=block;endFill=1;strokeColor=#999999;fontSize=9;fontColor=#999999;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="630" y="610" as="sourcePoint" />
+            <mxPoint x="1170" y="610" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="tls2" value="TLS Handshake (NF como cliente → Servidor real)" style="html=1;align=center;verticalAlign=middle;endArrow=block;endFill=1;strokeColor=#CC6600;fontSize=10;fontColor=#CC6600;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="630" y="660" as="sourcePoint" />
+            <mxPoint x="1170" y="660" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="fwd" value="&lt;b&gt;HTTP Request (re-cifrado)&lt;/b&gt;&lt;br&gt;GET /api/trades HTTP/1.1" style="html=1;align=center;verticalAlign=middle;endArrow=block;endFill=1;strokeColor=#CC6600;fontSize=10;fontColor=#CC6600;dashed=1;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="630" y="720" as="sourcePoint" />
+            <mxPoint x="1170" y="720" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="resp" value="&lt;b&gt;HTTP Response (cifrado)&lt;/b&gt;&lt;br&gt;200 OK {trades:[...]}" style="html=1;align=center;verticalAlign=middle;endArrow=block;endFill=1;strokeColor=#009900;fontSize=10;fontColor=#009900;dashed=1;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1170" y="780" as="sourcePoint" />
+            <mxPoint x="120" y="780" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pk_note" value="&lt;b&gt;¿Por qué NF necesita la private key?&lt;/b&gt;&lt;br&gt;&lt;br&gt;Porque en la Sesión #1 actúa como el servidor real.&lt;br&gt;El cliente hace key exchange usando la public key del cert.&lt;br&gt;Sin la private key, NF no puede descifrar el pre-master secret&lt;br&gt;→ no puede generar session keys → no puede descifrar tráfico.&lt;br&gt;&lt;br&gt;&lt;b&gt;NET-004:&lt;/b&gt; El cert importado tiene root cross-signed → NF lo&lt;br&gt;rechaza al crear TLSInspectionConfiguration (ni llega a usarlo)." style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;align=left;fontSize=10;verticalAlign=top;" parent="1" vertex="1">
+          <mxGeometry x="30" y="600" width="420" height="150" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="full-flow" name="5. Flujo Completo HTTPS">
+    <mxGraphModel dx="3192" dy="1198" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="700" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="t5" value="&lt;b&gt;Flujo Completo: HTTPS = TCP + TLS + HTTP&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=16;" parent="1" vertex="1">
+          <mxGeometry x="330" y="20" width="430" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="tcp_phase" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#999999;dashed=1;" parent="1" vertex="1">
+          <mxGeometry x="100" y="80" width="900" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="tcp_title" value="&lt;b&gt;FASE 1: TCP (Capa 4)&lt;/b&gt; — Conexión" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=12;fontColor=#666666;" parent="1" vertex="1">
+          <mxGeometry x="110" y="85" width="260" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="tcp_syn" value="&lt;b&gt;SYN&lt;/b&gt;&lt;br&gt;→" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;align=center;" parent="1" vertex="1">
+          <mxGeometry x="200" y="120" width="80" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="tcp_sa" value="&lt;b&gt;SYN-ACK&lt;/b&gt;&lt;br&gt;←" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;align=center;" parent="1" vertex="1">
+          <mxGeometry x="320" y="120" width="80" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="tcp_a" value="&lt;b&gt;ACK&lt;/b&gt;&lt;br&gt;→" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;align=center;" parent="1" vertex="1">
+          <mxGeometry x="440" y="120" width="80" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="tcp_vis" value="NF ve: IPs + Puertos" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=#FFE6CC;fontSize=10;fontColor=#CC6600;fontStyle=1;rounded=1;" parent="1" vertex="1">
+          <mxGeometry x="700" y="135" width="150" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="tls_phase" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#999999;dashed=1;" parent="1" vertex="1">
+          <mxGeometry x="100" y="220" width="900" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="tls_title" value="&lt;b&gt;FASE 2: TLS (Capa 6)&lt;/b&gt; — Cifrado" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=12;fontColor=#666666;" parent="1" vertex="1">
+          <mxGeometry x="110" y="225" width="270" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="tls_ch" value="&lt;b&gt;ClientHello&lt;/b&gt;&lt;br&gt;SNI + Ciphers&lt;br&gt;→" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;align=center;" parent="1" vertex="1">
+          <mxGeometry x="150" y="265" width="100" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="tls_sh" value="&lt;b&gt;ServerHello&lt;/b&gt;&lt;br&gt;+ Certificate&lt;br&gt;←" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;align=center;" parent="1" vertex="1">
+          <mxGeometry x="290" y="265" width="100" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="tls_ke" value="&lt;b&gt;Key&lt;br&gt;Exchange&lt;/b&gt;&lt;br&gt;→" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;align=center;" parent="1" vertex="1">
+          <mxGeometry x="430" y="265" width="100" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="tls_fin" value="&lt;b&gt;Finished&lt;/b&gt;&lt;br&gt;↔" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E6E6E6;strokeColor=#999999;fontSize=10;align=center;" parent="1" vertex="1">
+          <mxGeometry x="570" y="265" width="80" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="tls_vis" value="NF ve: SNI (dominio)&lt;br&gt;Sin TLS Insp: solo filtra dominio&lt;br&gt;Con TLS Insp: termina el handshake" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=#FFE6CC;fontSize=10;fontColor=#CC6600;fontStyle=1;rounded=1;" parent="1" vertex="1">
+          <mxGeometry x="680" y="268" width="240" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="tls_note" value="Resultado: ambos tienen session keys para cifrar/descifrar" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=10;fontColor=#009900;fontStyle=2;" parent="1" vertex="1">
+          <mxGeometry x="150" y="340" width="350" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="http_phase" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#999999;dashed=1;" parent="1" vertex="1">
+          <mxGeometry x="100" y="400" width="900" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="http_title" value="&lt;b&gt;FASE 3: HTTP (Capa 7)&lt;/b&gt; — Datos de aplicación (CIFRADOS)" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=12;fontColor=#666666;" parent="1" vertex="1">
+          <mxGeometry x="110" y="405" width="400" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="http_req5" value="&lt;b&gt;Request&lt;/b&gt;&lt;br&gt;GET /api/trades&lt;br&gt;Headers + Body&lt;br&gt;→" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;align=center;" parent="1" vertex="1">
+          <mxGeometry x="200" y="445" width="120" height="65" as="geometry" />
+        </mxCell>
+        <mxCell id="http_resp5" value="&lt;b&gt;Response&lt;/b&gt;&lt;br&gt;200 OK&lt;br&gt;{trades: [....]}&lt;br&gt;←" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;align=center;" parent="1" vertex="1">
+          <mxGeometry x="380" y="445" width="120" height="65" as="geometry" />
+        </mxCell>
+        <mxCell id="http_vis" value="Sin TLS Insp: ❌ NO ve nada&lt;br&gt;Con TLS Insp: ✅ Ve TODO&lt;br&gt;URLs, headers, body, payload" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=#FFE6CC;fontSize=10;fontColor=#CC6600;fontStyle=1;rounded=1;" parent="1" vertex="1">
+          <mxGeometry x="680" y="450" width="240" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="legend" value="&lt;b&gt;Leyenda:&lt;/b&gt; 🔵 Cliente → Servidor | 🟢 Servidor → Cliente | 🟠 Lo que NF puede ver/hacer" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=10;fontColor=#666666;" parent="1" vertex="1">
+          <mxGeometry x="260" y="570" width="560" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="time" value="&lt;b&gt;Latencia típica:&lt;/b&gt; TCP ~1 RTT | TLS 1.2 ~2 RTT | TLS 1.3 ~1 RTT | HTTP variable" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=#E6E6E6;fontSize=10;fontColor=#333333;rounded=1;" parent="1" vertex="1">
+          <mxGeometry x="280" y="600" width="500" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,103 +1,69 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<mxfile host="app.diagrams.net" modified="2026-05-21" type="device">
+<mxfile host="drawio-plugin" modified="2026-05-21T21:25:27.225Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36" version="22.1.22" etag="DK-GrsZjHjBjDyt1quHd" type="embed">
   <diagram name="NET-004: TLS Inspection Cross-Account Architecture" id="tls-insp">
-    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000" math="0" shadow="0">
+    <mxGraphModel dx="947" dy="562" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-
-        <!-- Title -->
-        <mxCell id="title" value="NET-004: Network Firewall TLS Inspection — Cross-Account Certificate Architecture" style="text;html=1;fontSize=16;fontStyle=1;align=center;" vertex="1" parent="1">
+        <mxCell id="title" value="NET-004: Network Firewall TLS Inspection — Cross-Account Certificate Architecture" style="text;html=1;fontSize=16;fontStyle=1;align=center;" parent="1" vertex="1">
           <mxGeometry x="300" y="20" width="600" height="30" as="geometry" />
         </mxCell>
-
-        <!-- Account A: Central Certificates -->
-        <mxCell id="account-a" value="Account A — Central Certificates" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;fontStyle=1;verticalAlign=top;" vertex="1" parent="1">
+        <mxCell id="account-a" value="Account A — Central Certificates" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;fontStyle=1;verticalAlign=top;" parent="1" vertex="1">
           <mxGeometry x="80" y="80" width="350" height="280" as="geometry" />
         </mxCell>
-
-        <mxCell id="acm-a" value="ACM&#xa;(Certificate Store)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+        <mxCell id="acm-a" value="ACM&#xa;(Certificate Store)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" parent="1" vertex="1">
           <mxGeometry x="150" y="130" width="200" height="50" as="geometry" />
         </mxCell>
-
-        <mxCell id="cert-type" value="Certificate Type: ?&#xa;AMAZON_ISSUED or IMPORTED?&#xa;&#xa;If AMAZON_ISSUED:&#xa;  → Private key NOT exportable&#xa;  → Cannot use cross-account&#xa;&#xa;If IMPORTED (Let's Encrypt):&#xa;  → Has cross-signed root&#xa;  → NF rejects it" style="shape=note;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=9;align=left;spacingLeft=8;" vertex="1" parent="1">
+        <mxCell id="cert-type" value="Certificate Type: ?&#xa;AMAZON_ISSUED or IMPORTED?&#xa;&#xa;If AMAZON_ISSUED:&#xa;  → Private key NOT exportable&#xa;  → Cannot use cross-account&#xa;&#xa;If IMPORTED (Let&#39;s Encrypt):&#xa;  → Has cross-signed root&#xa;  → NF rejects it" style="shape=note;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=9;align=left;spacingLeft=8;" parent="1" vertex="1">
           <mxGeometry x="110" y="200" width="230" height="140" as="geometry" />
         </mxCell>
-
-        <!-- Arrow: Export attempt -->
-        <mxCell id="export-arrow" value="Export cert + key?&#xa;❌ Not possible for&#xa;ACM public certs" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#b85450;fontColor=#b85450;fontSize=9;fontStyle=1;" edge="1" parent="1">
+        <mxCell id="export-arrow" value="Export cert + key?&#xa;❌ Not possible for&#xa;ACM public certs" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#b85450;fontColor=#b85450;fontSize=9;fontStyle=1;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="430" y="200" as="sourcePoint" />
             <mxPoint x="570" y="200" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-
-        <!-- Account B: Workload -->
-        <mxCell id="account-b" value="Account B — Workload (738605694480)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=13;fontStyle=1;verticalAlign=top;" vertex="1" parent="1">
+        <mxCell id="account-b" value="Account B — Workload (<CUSTOMER_ACCOUNT_ID>)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=13;fontStyle=1;verticalAlign=top;" parent="1" vertex="1">
           <mxGeometry x="530" y="80" width="500" height="550" as="geometry" />
         </mxCell>
-
-        <!-- ACM in Account B -->
-        <mxCell id="acm-b" value="ACM (Account B)&#xa;Imported cert:&#xa;1c59e759-e4ed-495c-b959-ac57488fdd59" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" vertex="1" parent="1">
+        <mxCell id="acm-b" value="ACM (Account B)&#xa;Imported cert:&#xa;1c59e759-e4ed-495c-b959-ac57488fdd59" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" parent="1" vertex="1">
           <mxGeometry x="600" y="120" width="250" height="55" as="geometry" />
         </mxCell>
-
-        <!-- VPC -->
-        <mxCell id="vpc" value="VPC (eu-west-1)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;verticalAlign=top;dashed=1;" vertex="1" parent="1">
+        <mxCell id="vpc" value="VPC (eu-west-1)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;verticalAlign=top;dashed=1;" parent="1" vertex="1">
           <mxGeometry x="560" y="200" width="440" height="400" as="geometry" />
         </mxCell>
-
-        <!-- Internet -->
-        <mxCell id="internet" value="Internet&#xa;(Clients)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;" vertex="1" parent="1">
+        <mxCell id="internet" value="Internet&#xa;(Clients)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;" parent="1" vertex="1">
           <mxGeometry x="700" y="220" width="100" height="50" as="geometry" />
         </mxCell>
-
-        <!-- IGW -->
-        <mxCell id="igw" value="IGW" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=9;" vertex="1" parent="1">
+        <mxCell id="igw" value="IGW" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=9;" parent="1" vertex="1">
           <mxGeometry x="720" y="290" width="60" height="30" as="geometry" />
         </mxCell>
-
-        <!-- Network Firewall -->
-        <mxCell id="nfw" value="AWS Network Firewall&#xa;TLS Inspection (Inbound)&#xa;&#xa;gba-traffic-inspection&#xa;❌ FAILS HERE" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+        <mxCell id="nfw" value="AWS Network Firewall&#xa;TLS Inspection (Inbound)&#xa;&#xa;gba-traffic-inspection&#xa;❌ FAILS HERE" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;fontStyle=1;" parent="1" vertex="1">
           <mxGeometry x="640" y="340" width="220" height="90" as="geometry" />
         </mxCell>
-
-        <!-- App Subnets -->
-        <mxCell id="app-subnets" value="Application Subnets&#xa;10.100.36.0/24&#xa;10.100.37.0/24&#xa;10.100.38.0/24" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="1">
+        <mxCell id="app-subnets" value="Application Subnets&#xa;10.100.36.0/24&#xa;10.100.37.0/24&#xa;10.100.38.0/24" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" parent="1" vertex="1">
           <mxGeometry x="660" y="470" width="180" height="70" as="geometry" />
         </mxCell>
-
-        <!-- ALB -->
-        <mxCell id="alb" value="ALB / App" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="1">
+        <mxCell id="alb" value="ALB / App" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" parent="1" vertex="1">
           <mxGeometry x="700" y="560" width="100" height="30" as="geometry" />
         </mxCell>
-
-        <!-- Arrows -->
-        <mxCell id="inet-igw" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="internet" target="igw" parent="1">
+        <mxCell id="inet-igw" style="edgeStyle=orthogonalEdgeStyle;" parent="1" source="internet" target="igw" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="igw-nfw" value="HTTPS :443" style="edgeStyle=orthogonalEdgeStyle;fontSize=9;" edge="1" source="igw" target="nfw" parent="1">
+        <mxCell id="igw-nfw" value="HTTPS :443" style="edgeStyle=orthogonalEdgeStyle;fontSize=9;" parent="1" source="igw" target="nfw" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="nfw-app" value="Decrypted&#xa;traffic" style="edgeStyle=orthogonalEdgeStyle;fontSize=9;" edge="1" source="nfw" target="app-subnets" parent="1">
+        <mxCell id="nfw-app" value="Decrypted&#xa;traffic" style="edgeStyle=orthogonalEdgeStyle;fontSize=9;" parent="1" source="nfw" target="app-subnets" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-
-        <!-- NF to ACM -->
-        <mxCell id="nfw-acm" value="Uses cert for&#xa;TLS termination" style="edgeStyle=orthogonalEdgeStyle;dashed=1;strokeColor=#b85450;fontSize=9;" edge="1" source="nfw" target="acm-b" parent="1">
+        <mxCell id="nfw-acm" value="Uses cert for&#xa;TLS termination" style="edgeStyle=orthogonalEdgeStyle;dashed=1;strokeColor=#b85450;fontSize=9;" parent="1" source="nfw" target="acm-b" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-
-        <!-- Error Box -->
-        <mxCell id="error-box" value="ERROR:&#xa;&#xa;1st attempt: Chain invalid&#xa;2nd attempt: Cross-signed root&#xa;&#xa;NF cannot validate the root CA&#xa;of the imported certificate" style="shape=note;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;align=left;spacingLeft=8;" vertex="1" parent="1">
+        <mxCell id="error-box" value="ERROR:&#xa;&#xa;1st attempt: Chain invalid&#xa;2nd attempt: Cross-signed root&#xa;&#xa;NF cannot validate the root CA&#xa;of the imported certificate" style="shape=note;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;align=left;spacingLeft=8;" parent="1" vertex="1">
           <mxGeometry x="880" y="330" width="200" height="110" as="geometry" />
         </mxCell>
-
-        <!-- Solutions -->
-        <mxCell id="solutions" value="SOLUTIONS:&#xa;&#xa;A. Issue ACM public cert directly&#xa;   in Account B (no cross-account)&#xa;&#xa;B. ACM Private CA + RAM sharing&#xa;   (central CA, local issuance)&#xa;&#xa;C. ACM Private CA + export&#xa;   (export with key, import in B)&#xa;&#xa;D. External CA (non-cross-signed)&#xa;   DigiCert, GlobalSign, etc." style="shape=note;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;align=left;spacingLeft=8;" vertex="1" parent="1">
+        <mxCell id="solutions" value="SOLUTIONS:&#xa;&#xa;A. Issue ACM public cert directly&#xa;   in Account B (no cross-account)&#xa;&#xa;B. ACM Private CA + RAM sharing&#xa;   (central CA, local issuance)&#xa;&#xa;C. ACM Private CA + export&#xa;   (export with key, import in B)&#xa;&#xa;D. External CA (non-cross-signed)&#xa;   DigiCert, GlobalSign, etc." style="shape=note;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;align=left;spacingLeft=8;" parent="1" vertex="1">
           <mxGeometry x="80" y="420" width="280" height="190" as="geometry" />
         </mxCell>
-
       </root>
     </mxGraphModel>
   </diagram>
