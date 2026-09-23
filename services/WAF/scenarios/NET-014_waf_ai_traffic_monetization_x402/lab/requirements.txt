@@ -1,0 +1,5 @@
+# NET-010 x402 lab — install in a venv (system Python 3.14 breaks some deps; use 3.10-3.13 or a venv)
+x402>=2.16
+eth-account>=0.13
+web3>=6
+requests>=2.31
