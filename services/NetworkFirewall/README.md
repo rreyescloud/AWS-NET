@@ -19,23 +19,27 @@ Key highlights:
 
 ## Documentation
 
-| Topic | Description |
-|---|---|
-| [NF Overview](docs/NF.md) | Architecture, packet flow, stateless vs stateful, TCP/TLS diagram |
-| [Rules](docs/Rules.md) | Stateless, stateful, Suricata syntax, domain lists, evaluation order |
-| [Deployment Models](docs/Deployment-Models.md) | Single-AZ, Multi-AZ, TGW centralized, asymmetric routing |
-| [TLS Inspection](docs/TLS-Inspection.md) | Inbound/outbound, certificate matrix, cross-account, NF Proxy |
-| [Logging](docs/Logging.md) | FLOW/ALERT types, destinations, CloudWatch resource policy, checklist |
-| [Troubleshooting](docs/Troubleshooting.md) | Layer 3-7 checklist, TCP idle timeout, stream exceptions |
-| [Labs](docs/Labs.md) | Domain list, performance comparison, IDS/IPS, Multi-AZ TGW |
-| [Business Cases](docs/Business-Cases.md) | Financial sector: PCI-DSS, segmentation, trading, CI/CD |
-| [Cases Worked](docs/Cases-Worked.md) | Enterprise patterns by industry |
+- **[NF Overview](docs/NF.md)** — architecture, packet flow, stateless vs stateful, TCP/TLS diagram
+- **[Rules](docs/Rules.md)** — stateless, stateful, Suricata syntax, domain lists, evaluation order
+- **[Deployment Models](docs/Deployment-Models.md)** — single-AZ, multi-AZ, TGW centralized, asymmetric routing
+- **[Deployment Models Blog](docs/Deployment-Models-Blog.md)** — breakdown of the published deployment-model guidance
+- **[Centralized Egress with NAT + NFW](docs/Centralized-Egress-NAT-NFW-Whitepaper.md)** — whitepaper notes on the centralized egress pattern
+- **[Best Practices](docs/Best-Practices.md)** — operational and rule-design guidance
+- **[TLS Inspection](docs/TLS-Inspection.md)** — inbound/outbound, certificate matrix, cross-account, NF Proxy
+- **[Logging](docs/Logging.md)** — FLOW/ALERT types, destinations, CloudWatch resource policy, checklist
+- **[Troubleshooting](docs/Troubleshooting.md)** — layer 3-7 checklist, TCP idle timeout, stream exceptions
+- **[Labs](docs/Labs.md)** — domain list, performance comparison, IDS/IPS, multi-AZ TGW
+- **[Business Cases](docs/Business-Cases.md)** — financial sector: PCI-DSS, segmentation, trading, CI/CD
+- **[Cases Worked](docs/Cases-Worked.md)** — enterprise patterns by industry
 
 ## Scenarios
 
-| ID | Title | Industry |
-|---|---|---|
-| [NET-004](scenarios/NET-004_tls_inspection_cross_signed_cert/) | TLS Inspection — Cross-Signed Certificate Rejection | Capital Markets |
+All four are Lab tier — each ships a deploy script with a `teardown` path.
+
+- **[NET-004](scenarios/NET-004_tls_inspection_cross_signed_cert/)** — TLS inspection rejects a cross-signed certificate · Capital Markets
+- **[NET-005](scenarios/NET-005_asymmetric_routing_regional_natgw/)** — asymmetric routing with regional NAT Gateway and multi-AZ firewall · Airlines
+- **[NET-010](scenarios/NET-010_container_attributes_referencing/)** — container attributes referencing on EKS · Technology
+- **[NET-011](scenarios/NET-011_suricata_domain_allowlist_syn_drop/)** — Suricata domain allowlist never matches, catch-all drop kills the SYN · Regulated Financial Services
 
 ## Industries Served
 

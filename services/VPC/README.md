@@ -18,22 +18,19 @@ Key highlights:
 
 ## Documentation
 
-| Topic | Description |
-|---|---|
-| [VPC Core Concepts](docs/VPC.md) | Subnets, route tables, IGW, NAT, NACL vs SG, CIDR planning |
-| [Endpoints](docs/Endpoints.md) | Gateway vs Interface, PrivateLink, cross-region, AZ alignment |
-| [Connectivity](docs/Connectivity.md) | VPC Peering, VPN, Direct Connect, Transit Gateway |
-| [Components](docs/Components.md) | ENI, EIP, IPAM, MTU, BYOIP, NAT Gateway |
-| [Troubleshooting](docs/Troubleshooting.md) | Layer 3-7 checklist, Flow Logs, common issues |
-| [Integrations](docs/Integrations.md) | ELB, ECS, Lambda, RDS, API Gateway |
-| [Commands](docs/Commands.md) | CLI reference for VPC operations |
-| [Cases Worked](docs/Cases-Worked.md) | Enterprise patterns by industry |
+- **[VPC Core Concepts](docs/VPC.md)** — subnets, route tables, IGW, NAT, NACL vs SG, CIDR planning
+- **[Endpoints](docs/Endpoints.md)** — Gateway vs Interface, PrivateLink, cross-region, AZ alignment
+- **[Connectivity](docs/Connectivity.md)** — VPC Peering, VPN, Direct Connect, Transit Gateway
+- **[Components](docs/Components.md)** — ENI, EIP, IPAM, MTU, BYOIP, NAT Gateway
+- **[Troubleshooting](docs/Troubleshooting.md)** — layer 3-7 checklist, Flow Logs, common issues
+- **[Integrations](docs/Integrations.md)** — ELB, ECS, Lambda, RDS, API Gateway
+- **[Commands](docs/Commands.md)** — CLI reference for VPC operations
+- **[Cases Worked](docs/Cases-Worked.md)** — enterprise patterns by industry
 
 ## Scenarios
 
-| ID | Title | Industry |
-|---|---|---|
-| [NET-001](scenarios/NET-001_s3_crossaccount/) | S3 Private Cross-Account Cross-Region Connectivity | Fintech |
+- **[NET-001](scenarios/NET-001_s3_crossaccount/)** — S3 private cross-account cross-region connectivity · Fintech · *Lab*
+- **[NET-007](scenarios/NET-007_dms_aurora_kafka_latency/)** — DMS CDC latency from Aurora MySQL to Kafka · Accounting SaaS · *Case analysis*
 
 ## Industries Served
 

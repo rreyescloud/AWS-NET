@@ -1,5 +1,8 @@
 # NET-001: S3 Private Cross-Account Cross-Region Connectivity
 
+**Tier:** Lab — reproducible end to end
+**Status:** Resolved — validated in the lab account
+
 ## Objective
 
 Design and validate a fully private S3 connectivity solution between two AWS accounts in different regions, ensuring data never traverses the public internet. The solution must meet the strict network security requirements of a regulated fintech platform.
