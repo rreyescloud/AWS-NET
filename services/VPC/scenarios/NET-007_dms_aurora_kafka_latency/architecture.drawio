@@ -1,0 +1,103 @@
+<mxfile host="drawio-plugin" modified="2026-05-23T16:00:00.000Z" agent="Mozilla/5.0" version="22.1.22" etag="NET007" type="embed">
+  <diagram name="NET-007: DMS Aurora→Kafka CDC Latency" id="dms-latency">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1200" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Title -->
+        <mxCell id="title" value="NET-007: DMS CDC Latency — Aurora MySQL → Kafka (Local + Cross-VPC)" style="text;html=1;fontSize=16;fontStyle=1;align=center;" parent="1" vertex="1">
+          <mxGeometry x="300" y="20" width="800" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="subtitle" value="Customer: Enterprise SaaS (financial/accounting) | Region: eu-central-1" style="text;html=1;fontSize=10;align=center;fontColor=#666666;" parent="1" vertex="1">
+          <mxGeometry x="450" y="50" width="500" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- SANDBOX ENVIRONMENT -->
+        <mxCell id="sandbox-box" value="SANDBOX Environment (Account <CUSTOMER_SANDBOX_ACCOUNT_ID>)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;fontStyle=1;verticalAlign=top;dashed=1;" parent="1" vertex="1">
+          <mxGeometry x="100" y="90" width="1500" height="450" as="geometry" />
+        </mxCell>
+
+        <!-- Source: Aurora MySQL -->
+        <mxCell id="aurora" value="Aurora MySQL&#xa;(Serverless v2, ACU=24)&#xa;&#xa;Source DB&#xa;- LedgerEntries&#xa;- LedgerAccountDayBalances&#xa;- LedgerAccountYearBalances&#xa;- LedgerAccounts_Template&#xa;- (+9 more tables)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="150" y="200" width="250" height="160" as="geometry" />
+        </mxCell>
+
+        <!-- Storage layer note -->
+        <mxCell id="storage-note" value="Storage Layer:&#xa;storage_bw_out_allowance_exceeded&#xa;was 12,540 → NOW 0 after ACU↑24&#xa;(no longer the bottleneck)" style="shape=note;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=9;align=left;spacingLeft=5;" parent="1" vertex="1">
+          <mxGeometry x="150" y="380" width="250" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- DMS Replication Instance -->
+        <mxCell id="dms" value="DMS Replication Instance&#xa;dms.c5.4xlarge (sandbox)&#xa;dms.r7i.4xlarge (prod)&#xa;&#xa;13 tasks (1 per table)&#xa;CDC mode (binlog)&#xa;&#xa;ParallelApplyBufferSize: 1000&#xa;ParallelApplyThreads: 8&#xa;ParallelApplyQueuesPerThread: 16" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="550" y="180" width="280" height="180" as="geometry" />
+        </mxCell>
+
+        <!-- CDC flow -->
+        <mxCell id="aurora-dms" value="binlog CDC&#xa;(SOURCE_CAPTURE)" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#9673a6;strokeWidth=2;fontSize=9;" parent="1" source="aurora" target="dms" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Local Kafka (same VPC) -->
+        <mxCell id="kafka-local" value="MSK — Local Kafka&#xa;(SAME VPC)&#xa;&#xa;Target: same account&#xa;Latency: peaks 14 min ❌&#xa;(was 6 sec, then 140s)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="1000" y="150" width="220" height="100" as="geometry" />
+        </mxCell>
+
+        <!-- Remote Kafka (cross-VPC) -->
+        <mxCell id="kafka-remote" value="MSK — Remote Kafka&#xa;(CROSS-VPC / Cross-Account)&#xa;&#xa;Target: different account&#xa;Latency: peaks 27 min ❌&#xa;(was 50s, then 140s)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="1000" y="300" width="240" height="100" as="geometry" />
+        </mxCell>
+
+        <!-- DMS to Local -->
+        <mxCell id="dms-local" value="TARGET_APPLY&#xa;(same VPC)" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#82b366;strokeWidth=2;fontSize=9;" parent="1" source="dms" target="kafka-local" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- DMS to Remote -->
+        <mxCell id="dms-remote" value="TARGET_APPLY&#xa;(cross-VPC)" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#b85450;strokeWidth=2;fontSize=9;" parent="1" source="dms" target="kafka-remote" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- PRODUCTION ENVIRONMENT -->
+        <mxCell id="prod-box" value="PRODUCTION Environment (Case CASE-11)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;fontStyle=1;verticalAlign=top;dashed=1;" parent="1" vertex="1">
+          <mxGeometry x="100" y="580" width="1500" height="250" as="geometry" />
+        </mxCell>
+
+        <mxCell id="aurora-prod" value="Aurora MySQL&#xa;db.r6x.8xlarge (provisioned)&#xa;&#xa;Source DB&#xa;(reduced to 2 tables for testing)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="150" y="640" width="250" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="dms-prod" value="DMS Replication Instance&#xa;dms.r7i.4xlarge&#xa;&#xa;Task: <dms-task-prod>&#xa;Only 2 tables → STILL 14 min peaks" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="550" y="630" width="280" height="100" as="geometry" />
+        </mxCell>
+
+        <mxCell id="kafka-prod" value="MSK express.m7g.4xlarge&#xa;&#xa;Latency: peaks 14 min ❌&#xa;(even with only 2 tables)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="1000" y="640" width="220" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="ap-dms-prod" value="binlog" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#9673a6;strokeWidth=2;fontSize=9;" parent="1" source="aurora-prod" target="dms-prod" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dms-kafka-prod" value="CDC" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#b85450;strokeWidth=2;fontSize=9;" parent="1" source="dms-prod" target="kafka-prod" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Problem summary -->
+        <mxCell id="problem" value="THE PROBLEM:&#xa;&#xa;1. Storage BW fixed (ACU 24) → not the issue anymore&#xa;2. Network verified OK → not packet loss&#xa;3. ParallelApplyBufferSize 100→500→1000 → didn't help&#xa;4. SAME issue in local AND remote Kafka → NOT a network problem&#xa;5. SAME issue with only 2 tables in PROD → NOT a table count issue&#xa;6. Peaks went from 140s → 14 MINUTES → getting WORSE&#xa;&#xa;Root cause likely:&#xa;• DMS internal batching/flushing behavior&#xa;• Source binlog read pattern (large transactions)&#xa;• LOB handling overhead (JSON columns)&#xa;• MSK producer config (batch.size, linger.ms)" style="shape=note;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;align=left;spacingLeft=8;" parent="1" vertex="1">
+          <mxGeometry x="100" y="870" width="450" height="220" as="geometry" />
+        </mxCell>
+
+        <!-- What we know -->
+        <mxCell id="findings" value="KEY INSIGHT:&#xa;&#xa;The latency is the SAME for local and remote Kafka.&#xa;This ELIMINATES network as the root cause.&#xa;&#xa;If it were a network issue:&#xa;  Local (same VPC): would be fine&#xa;  Remote (cross-VPC): would be worse&#xa;&#xa;But BOTH are 14 min → the bottleneck is at:&#xa;  • DMS SOURCE_CAPTURE (binlog read)&#xa;  • DMS internal buffering/batching&#xa;  • OR TARGET_APPLY to Kafka (producer config)&#xa;&#xa;This is a DMS case, NOT a networking case.&#xa;Needs escalation to DMS service team." style="shape=note;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;align=left;spacingLeft=8;" parent="1" vertex="1">
+          <mxGeometry x="600" y="870" width="380" height="220" as="geometry" />
+        </mxCell>
+
+        <!-- Timeline -->
+        <mxCell id="timeline" value="TIMELINE:&#xa;&#xa;May 15: Jorge identifies storage BW saturation (12,540 exceeded)&#xa;May 18: Customer increases ACU to 24&#xa;May 19: Local latency improves, remote still 50s peaks&#xa;May 20: Remote spikes to 140s&#xa;May 21: Gaurav identifies batch idle + cross-VPC amplification&#xa;May 22: Rodrigo confirms network OK, offers VPC Peering&#xa;May 22: Customer says NOT WORKING — now 14 min local, 27 min remote&#xa;May 23: Same in PROD with only 2 tables, ParallelApplyBuffer=1000&#xa;         → All network/storage fixes exhausted&#xa;         → DMS internal behavior is the remaining suspect" style="shape=note;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;align=left;spacingLeft=8;" parent="1" vertex="1">
+          <mxGeometry x="1030" y="870" width="430" height="200" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

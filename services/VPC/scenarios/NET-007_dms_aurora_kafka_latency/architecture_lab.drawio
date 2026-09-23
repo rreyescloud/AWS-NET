@@ -1,0 +1,91 @@
+<mxfile host="drawio-plugin" modified="2026-05-23T17:00:00.000Z" agent="Mozilla/5.0" version="22.1.22" etag="NET007-lab" type="embed">
+  <diagram name="NET-007 Lab: Aurora → DMS → Kafka (eu-central-1)" id="lab-arch">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Title -->
+        <mxCell id="title" value="NET-007 Lab: DMS CDC — Aurora MySQL → Kafka (eu-central-1)" style="text;html=1;fontSize=16;fontStyle=1;align=center;" parent="1" vertex="1">
+          <mxGeometry x="350" y="15" width="700" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="subtitle" value="Account: <LAB_ACCOUNT_ID> | VPC: vpc-0acf48c3502fd873b (10.0.0.0/16)" style="text;html=1;fontSize=10;align=center;fontColor=#666666;" parent="1" vertex="1">
+          <mxGeometry x="450" y="42" width="500" height="18" as="geometry" />
+        </mxCell>
+
+        <!-- VPC -->
+        <mxCell id="vpc" value="VPC: vpc-0acf48c3502fd873b (10.0.0.0/16)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;fontStyle=1;verticalAlign=top;dashed=1;" parent="1" vertex="1">
+          <mxGeometry x="100" y="70" width="1500" height="600" as="geometry" />
+        </mxCell>
+
+        <!-- AZ1 -->
+        <mxCell id="az1-box" value="eu-central-1a" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999999;fontSize=11;fontStyle=5;verticalAlign=top;dashed=1;" parent="1" vertex="1">
+          <mxGeometry x="140" y="100" width="680" height="540" as="geometry" />
+        </mxCell>
+
+        <!-- AZ2 -->
+        <mxCell id="az2-box" value="eu-central-1b" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999999;fontSize=11;fontStyle=5;verticalAlign=top;dashed=1;" parent="1" vertex="1">
+          <mxGeometry x="880" y="100" width="680" height="540" as="geometry" />
+        </mxCell>
+
+        <!-- Subnet AZ1 -->
+        <mxCell id="sub1" value="Subnet: subnet-0fa719e968c394039&#xa;10.0.1.0/24 (eu-central-1a)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=9;verticalAlign=top;" parent="1" vertex="1">
+          <mxGeometry x="160" y="130" width="640" height="490" as="geometry" />
+        </mxCell>
+
+        <!-- Subnet AZ2 -->
+        <mxCell id="sub2" value="Subnet: subnet-0d091c88bf133aa76&#xa;10.0.2.0/24 (eu-central-1b)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=9;verticalAlign=top;" parent="1" vertex="1">
+          <mxGeometry x="900" y="130" width="640" height="490" as="geometry" />
+        </mxCell>
+
+        <!-- Aurora Writer (AZ2) -->
+        <mxCell id="aurora" value="Aurora MySQL (Serverless v2)&#xa;net007-lab-aurora&#xa;&#xa;Endpoint: net007-lab-aurora.cluster-cb6i428eiy86&#xa;          .eu-central-1.rds.amazonaws.com&#xa;&#xa;ENI: 10.0.2.165 (eu-central-1b)&#xa;DB: ledger&#xa;ACU: 2-16&#xa;Version: 8.0 (3.08.2)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="940" y="180" width="320" height="170" as="geometry" />
+        </mxCell>
+
+        <!-- DMS Instance (AZ1) -->
+        <mxCell id="dms" value="DMS Replication Instance&#xa;net007-lab-dms (dms.t3.medium)&#xa;&#xa;ENI: 10.0.1.17 (eu-central-1a)&#xa;&#xa;CDC Task:&#xa;SOURCE_CAPTURE → reads binlog&#xa;TARGET_APPLY → writes to Kafka" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="220" y="280" width="280" height="150" as="geometry" />
+        </mxCell>
+
+        <!-- MSK Kafka (Serverless, both AZs) -->
+        <mxCell id="kafka" value="MSK Serverless (Kafka)&#xa;net007-lab-kafka&#xa;&#xa;VPC Endpoints:&#xa;  10.0.1.204 (eu-central-1a)&#xa;  10.0.2.208 (eu-central-1b)&#xa;&#xa;Auth: IAM (SASL)&#xa;Topic: ledger-cdc (to create)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="220" y="490" width="300" height="150" as="geometry" />
+        </mxCell>
+
+        <!-- Traffic Flow: Aurora → DMS -->
+        <mxCell id="flow-aurora-dms" value="① binlog CDC (TCP 3306)&#xa;SOURCE_CAPTURE reads&#xa;from Aurora binlog" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#9673a6;strokeWidth=3;fontSize=9;fontColor=#9673a6;" parent="1" source="aurora" target="dms" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="850" y="265" /><mxPoint x="850" y="355" /></Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Traffic Flow: DMS → Kafka -->
+        <mxCell id="flow-dms-kafka" value="② TARGET_APPLY (TCP 9098)&#xa;DMS writes CDC events&#xa;to Kafka topic" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#82b366;strokeWidth=3;fontSize=9;fontColor=#82b366;" parent="1" source="dms" target="kafka" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Route Table -->
+        <mxCell id="rt" value="Route Table: rtb-0ad2c7ca18a8d26b0&#xa;&#xa;10.0.0.0/16 → local&#xa;(no IGW, no NAT — private only)" style="shape=note;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;align=left;spacingLeft=8;" parent="1" vertex="1">
+          <mxGeometry x="940" y="400" width="280" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- Security Group -->
+        <mxCell id="sg" value="Security Group: net007-lab-sg&#xa;&#xa;Inbound: ALL traffic from 10.0.0.0/16&#xa;Outbound: ALL traffic (default)&#xa;&#xa;Allows: DMS↔Aurora (3306), DMS↔Kafka (9098)" style="shape=note;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;align=left;spacingLeft=8;" parent="1" vertex="1">
+          <mxGeometry x="940" y="510" width="300" height="100" as="geometry" />
+        </mxCell>
+
+        <!-- Flow description -->
+        <mxCell id="flow-desc" value="TRAFFIC FLOW:&#xa;&#xa;① Aurora (10.0.2.165:3306) → DMS (10.0.1.17)&#xa;   DMS reads MySQL binlog via CDC&#xa;   Cross-AZ traffic (az1b → az1a)&#xa;&#xa;② DMS (10.0.1.17) → MSK (10.0.1.204:9098)&#xa;   DMS writes events to Kafka topic&#xa;   Same-AZ traffic (both in az1a)&#xa;&#xa;All private, no internet needed.&#xa;Single VPC, single route table." style="shape=note;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;align=left;spacingLeft=8;" parent="1" vertex="1">
+          <mxGeometry x="570" y="380" width="300" height="190" as="geometry" />
+        </mxCell>
+
+        <!-- Lab test plan -->
+        <mxCell id="test-plan" value="LAB TEST PLAN:&#xa;&#xa;1. Create table in Aurora (ledger_entries)&#xa;2. Create DMS source endpoint (Aurora)&#xa;3. Create DMS target endpoint (Kafka)&#xa;4. Create DMS task (CDC mode)&#xa;5. Insert 10K rows → measure CDCLatencyTarget&#xa;6. Insert 1M rows in single transaction&#xa;   → observe latency spike (reproduce client issue)&#xa;7. Tune ParallelApplyBufferSize → compare&#xa;8. Check CloudWatch: NetworkTransmitThroughput" style="shape=note;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;align=left;spacingLeft=8;" parent="1" vertex="1">
+          <mxGeometry x="570" y="590" width="350" height="170" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
