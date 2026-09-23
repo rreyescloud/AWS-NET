@@ -9,7 +9,7 @@
         <mxCell id="title" value="NET-005: PROBLEM — Missing Spoke Routes in RNAT RT = Return Traffic Blackholed" style="text;html=1;fontSize=16;fontStyle=1;align=center;fontColor=#b85450;" parent="1" vertex="1">
           <mxGeometry x="300" y="20" width="800" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="subtitle" value="Lab reproduction: account <LAB_ACCOUNT_ID>, us-west-2" style="text;html=1;fontSize=10;align=center;fontColor=#666666;" parent="1" vertex="1">
+        <mxCell id="subtitle" value="Lab reproduction: account &lt;LAB_ACCOUNT_ID&gt;, us-west-2" style="text;html=1;fontSize=10;align=center;fontColor=#666666;" parent="1" vertex="1">
           <mxGeometry x="500" y="50" width="400" height="20" as="geometry" />
         </mxCell>
 
@@ -17,30 +17,30 @@
         <mxCell id="internet" value="Internet" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=12;fontStyle=1;" parent="1" vertex="1">
           <mxGeometry x="720" y="80" width="120" height="50" as="geometry" />
         </mxCell>
-        <mxCell id="igw" value="IGW&#xa;igw-0cc281ae6fb32e1c5" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=9;" parent="1" vertex="1">
+        <mxCell id="igw" value="IGW" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=9;" parent="1" vertex="1">
           <mxGeometry x="725" y="155" width="110" height="35" as="geometry" />
         </mxCell>
 
         <!-- Inspection VPC -->
-        <mxCell id="insp-vpc" value="Inspection VPC — vpc-054472ae65ba407aa (10.100.0.0/16)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;fontStyle=1;verticalAlign=top;dashed=1;" parent="1" vertex="1">
+        <mxCell id="insp-vpc" value="Inspection VPC (10.100.0.0/16)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;fontStyle=1;verticalAlign=top;dashed=1;" parent="1" vertex="1">
           <mxGeometry x="180" y="210" width="1200" height="400" as="geometry" />
         </mxCell>
 
         <!-- RNAT -->
-        <mxCell id="rnat" value="Regional NAT Gateway&#xa;nat-12aae68cdb2b14489 (regional mode)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+        <mxCell id="rnat" value="Regional NAT Gateway (regional mode)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;fontStyle=1;" parent="1" vertex="1">
           <mxGeometry x="580" y="240" width="400" height="40" as="geometry" />
         </mxCell>
 
         <!-- WRONG RNAT RT -->
-        <mxCell id="rnat-rt-wrong" value="RNAT Route Table (rtb-07f9609a04cf3a305):&#xa;&#xa;10.100.10.0/24 → vpce-fw-az1&#xa;10.100.20.0/24 → vpce-fw-az2&#xa;10.100.0.0/16  → local&#xa;0.0.0.0/0      → IGW&#xa;&#xa;❌ NO ROUTE for 10.200.0.0/16 (spoke)!" style="shape=note;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;align=left;spacingLeft=8;fontStyle=0;" parent="1" vertex="1">
+        <mxCell id="rnat-rt-wrong" value="RNAT Route Table:&#xa;&#xa;10.100.10.0/24 → vpce-fw-az1&#xa;10.100.20.0/24 → vpce-fw-az2&#xa;10.100.0.0/16  → local&#xa;0.0.0.0/0      → IGW&#xa;&#xa;❌ NO ROUTE for 10.200.0.0/16 (spoke)!" style="shape=note;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;align=left;spacingLeft=8;fontStyle=0;" parent="1" vertex="1">
           <mxGeometry x="1040" y="230" width="300" height="130" as="geometry" />
         </mxCell>
 
         <!-- FW Endpoints -->
-        <mxCell id="fw-az1" value="NFW Endpoint AZ1&#xa;vpce-0f596c0a9447b0135&#xa;(10.100.1.0/24)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=9;" parent="1" vertex="1">
+        <mxCell id="fw-az1" value="NFW Endpoint AZ1&#xa;(10.100.1.0/24)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=9;" parent="1" vertex="1">
           <mxGeometry x="240" y="350" width="210" height="50" as="geometry" />
         </mxCell>
-        <mxCell id="fw-az2" value="NFW Endpoint AZ2&#xa;vpce-0af3244f33808f82a&#xa;(10.100.2.0/24)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=9;" parent="1" vertex="1">
+        <mxCell id="fw-az2" value="NFW Endpoint AZ2&#xa;(10.100.2.0/24)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=9;" parent="1" vertex="1">
           <mxGeometry x="1100" y="350" width="210" height="50" as="geometry" />
         </mxCell>
 
@@ -53,7 +53,7 @@
         </mxCell>
 
         <!-- TGW -->
-        <mxCell id="tgw" value="Transit Gateway — tgw-0666acd2afe11059f" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;fontStyle=1;" parent="1" vertex="1">
+        <mxCell id="tgw" value="Transit Gateway" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;fontStyle=1;" parent="1" vertex="1">
           <mxGeometry x="540" y="530" width="480" height="35" as="geometry" />
         </mxCell>
 

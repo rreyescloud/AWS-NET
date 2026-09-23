@@ -9,12 +9,12 @@
         <mxCell id="title" value="NET-007 Lab: DMS CDC — Aurora MySQL → Kafka (eu-central-1)" style="text;html=1;fontSize=16;fontStyle=1;align=center;" parent="1" vertex="1">
           <mxGeometry x="350" y="15" width="700" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="subtitle" value="Account: <LAB_ACCOUNT_ID> | VPC: vpc-0acf48c3502fd873b (10.0.0.0/16)" style="text;html=1;fontSize=10;align=center;fontColor=#666666;" parent="1" vertex="1">
+        <mxCell id="subtitle" value="Account: &lt;LAB_ACCOUNT_ID&gt; | VPC (10.0.0.0/16)" style="text;html=1;fontSize=10;align=center;fontColor=#666666;" parent="1" vertex="1">
           <mxGeometry x="450" y="42" width="500" height="18" as="geometry" />
         </mxCell>
 
         <!-- VPC -->
-        <mxCell id="vpc" value="VPC: vpc-0acf48c3502fd873b (10.0.0.0/16)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;fontStyle=1;verticalAlign=top;dashed=1;" parent="1" vertex="1">
+        <mxCell id="vpc" value="VPC (10.0.0.0/16)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;fontStyle=1;verticalAlign=top;dashed=1;" parent="1" vertex="1">
           <mxGeometry x="100" y="70" width="1500" height="600" as="geometry" />
         </mxCell>
 
@@ -29,12 +29,12 @@
         </mxCell>
 
         <!-- Subnet AZ1 -->
-        <mxCell id="sub1" value="Subnet: subnet-0fa719e968c394039&#xa;10.0.1.0/24 (eu-central-1a)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=9;verticalAlign=top;" parent="1" vertex="1">
+        <mxCell id="sub1" value="Subnet&#xa;10.0.1.0/24 (eu-central-1a)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=9;verticalAlign=top;" parent="1" vertex="1">
           <mxGeometry x="160" y="130" width="640" height="490" as="geometry" />
         </mxCell>
 
         <!-- Subnet AZ2 -->
-        <mxCell id="sub2" value="Subnet: subnet-0d091c88bf133aa76&#xa;10.0.2.0/24 (eu-central-1b)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=9;verticalAlign=top;" parent="1" vertex="1">
+        <mxCell id="sub2" value="Subnet&#xa;10.0.2.0/24 (eu-central-1b)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=9;verticalAlign=top;" parent="1" vertex="1">
           <mxGeometry x="900" y="130" width="640" height="490" as="geometry" />
         </mxCell>
 
@@ -66,7 +66,7 @@
         </mxCell>
 
         <!-- Route Table -->
-        <mxCell id="rt" value="Route Table: rtb-0ad2c7ca18a8d26b0&#xa;&#xa;10.0.0.0/16 → local&#xa;(no IGW, no NAT — private only)" style="shape=note;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;align=left;spacingLeft=8;" parent="1" vertex="1">
+        <mxCell id="rt" value="Route Table&#xa;&#xa;10.0.0.0/16 → local&#xa;(no IGW, no NAT — private only)" style="shape=note;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;align=left;spacingLeft=8;" parent="1" vertex="1">
           <mxGeometry x="940" y="400" width="280" height="80" as="geometry" />
         </mxCell>
 
