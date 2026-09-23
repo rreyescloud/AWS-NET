@@ -37,7 +37,7 @@ Key highlights:
 
 ## Industries Served
 
-- **Financial Services / Banking** — PrivateLink for Databricks security platforms, Amazon Connect latency optimization, centralized egress billing
+- **Financial Services / Banking** — PrivateLink for Data & Analytics SaaS security platforms, Amazon Connect latency optimization, centralized egress billing
 - **Energy** — Cloud WAN performance for Exadata databases, cross-AZ bottleneck analysis
 - **Media / Broadcasting** — S3 Gateway endpoint for Dynamic Packager fleets, Aurora latency investigation
 - **Technology / SaaS** — EKS-to-RDS connectivity, VPC deletion with orphaned dependencies, API throttling resolution

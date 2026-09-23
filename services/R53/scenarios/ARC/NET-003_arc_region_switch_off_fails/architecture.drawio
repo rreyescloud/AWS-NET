@@ -69,7 +69,7 @@
         </mxCell>
 
         <!-- ARC Cluster reference -->
-        <mxCell id="arc-cluster" value="ARC Cluster&#xa;Account: 429180371169&#xa;API Region: us-west-2" style="shape=hexagon;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;" vertex="1" parent="1">
+        <mxCell id="arc-cluster" value="ARC Cluster&#xa;Account: <ARC_CLUSTER_ACCOUNT_ID>&#xa;API Region: us-west-2" style="shape=hexagon;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;" vertex="1" parent="1">
           <mxGeometry x="1100" y="100" width="180" height="80" as="geometry" />
         </mxCell>
         <mxCell id="cluster-arrow-east" style="edgeStyle=orthogonalEdgeStyle;dashed=1;strokeColor=#6c8ebf;" edge="1" source="arc-cluster" target="rc-east" parent="1">
@@ -90,7 +90,7 @@
         </mxCell>
 
         <!-- Accounts label -->
-        <mxCell id="accounts" value="Workload Account: 970688031697&#xa;TFE Run: run-RsnTqKsXgYnupiG9" style="text;html=1;fontSize=10;align=left;fontColor=#666666;" vertex="1" parent="1">
+        <mxCell id="accounts" value="Workload Account: <WORKLOAD_ACCOUNT_ID>&#xa;TFE Run: <terraform-run-id>" style="text;html=1;fontSize=10;align=left;fontColor=#666666;" vertex="1" parent="1">
           <mxGeometry x="20" y="20" width="300" height="40" as="geometry" />
         </mxCell>
 
