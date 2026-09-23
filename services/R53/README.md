@@ -19,25 +19,23 @@ Key highlights:
 
 ## Documentation
 
-| Topic | Description |
-|---|---|
-| [R53 Core](docs/R53.md) | Record types, routing policies, hosted zones, alias vs CNAME |
-| [Resolver](docs/Resolver.md) | VPC DNS, inbound/outbound endpoints, forwarding, query logging |
-| [Health Checks](docs/Healthchecks.md) | Types, failover configs, cross-account, calculated |
-| [Domains](docs/Domains.md) | Registration, transfers, DNSSEC, ccTLDs |
-| [Global Resolver](docs/Global%20Resolver.md) | Anycast DNS, DoH/DoT, token auth, troubleshooting |
-| [Integrations](docs/Integrations.md) | ACM, CloudFront, ECS, EKS, SES, Lambda |
-| [Troubleshooting](docs/Troubleshooting.md) | Common issues, SERVFAIL, propagation, TTL |
-| [ARC Overview](docs/ARC/ARC.md) | Clusters, routing controls, safety rules, health checks |
-| [ARC Region Switch](docs/ARC/Region-Switch.md) | Plans, execution blocks, IAM, bidirectional mapping |
-| [Cases Worked](docs/Cases-Worked.md) | Enterprise patterns by industry |
+- **[R53 Core](docs/R53.md)** — record types, routing policies, hosted zones, alias vs CNAME
+- **[Resolver](docs/Resolver.md)** — VPC DNS, inbound/outbound endpoints, forwarding, query logging
+- **[Health Checks](docs/Healthchecks.md)** — types, failover configs, cross-account, calculated
+- **[Domains](docs/Domains.md)** — registration, transfers, DNSSEC, ccTLDs
+- **[Global Resolver](docs/Global%20Resolver.md)** — anycast DNS, DoH/DoT, token auth, troubleshooting
+- **[Integrations](docs/Integrations.md)** — ACM, CloudFront, ECS, EKS, SES, Lambda
+- **[Troubleshooting](docs/Troubleshooting.md)** — common issues, SERVFAIL, propagation, TTL
+- **[ARC Overview](docs/ARC/ARC.md)** — clusters, routing controls, safety rules, health checks
+- **[ARC Region Switch](docs/ARC/Region-Switch.md)** — plans, execution blocks, IAM, bidirectional mapping
+- **[Cases Worked](docs/Cases-Worked.md)** — enterprise patterns by industry
 
 ## Scenarios
 
-| ID | Title | Industry |
-|---|---|---|
-| [NET-002](scenarios/NET-002_r53_query_logging/) | Resolver Query Logging — Common Issues | General |
-| [NET-003](scenarios/ARC/NET-003_arc_region_switch_off_fails/) | ARC Region Switch + Aurora Global Database Failover | Financial Services |
+- **[NET-003](scenarios/ARC/NET-003_arc_region_switch_off_fails/)** — ARC Region Switch + Aurora Global Database failover · Financial Services · *Lab*
+- **[NET-002](scenarios/NET-002_r53_query_logging/)** — Resolver query logging, four recurring problem categories · General · *Case analysis*
+- **[NET-008](scenarios/NET-008_global_resolver_troubleshooting/)** — Global Resolver failure modes · General · *Case analysis*
+- **[NET-009](scenarios/NET-009_eks_zonal_shift_recovery_delay/)** — EKS zonal shift recovery delay after expiry · Financial Services · *Case analysis*
 
 ## Industries Served
 

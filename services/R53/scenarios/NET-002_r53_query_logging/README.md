@@ -1,5 +1,7 @@
 # NET-002: Route 53 Resolver Query Logging — Common Issues and Troubleshooting
 
+**Tier:** Case analysis — no deploy script
+**Status:** Four problem categories documented, labs not yet built
 
 ## Problem Statement
 

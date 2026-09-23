@@ -1,5 +1,8 @@
 # NET-003: Multi-Region Automated Failover with ARC Region Switch + Aurora Global Database
 
+**Tier:** Lab — reproducible end to end
+**Status:** Resolved — full failover executed in the lab account
+
 ## Objective
 
 Design and validate an automated multi-region failover solution for a financial services workload using Amazon Application Recovery Controller (ARC) Region Switch to orchestrate Aurora Global Database switchover and DNS traffic rerouting in a single automated workflow.

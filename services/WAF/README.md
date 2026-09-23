@@ -18,21 +18,21 @@ Key highlights:
 
 ## Documentation
 
-| Topic | Description |
-|---|---|
-| [WAF Overview](docs/WAF.md) | Web ACLs, rules, managed rules, scope, resource association |
-| [Rules](docs/Rules.md) | Rate-based, managed rules, custom rules, labels, Bot Control |
-| [Logging](docs/Logging.md) | Destinations, sampling, metrics, cost estimation |
-| [Integrations](docs/Integrations.md) | CloudFront, ALB, API Gateway, EKS, AppSync |
-| [Troubleshooting](docs/Troubleshooting.md) | False positives, blocking issues, log analysis |
-| [Customer Onboarding](docs/Customer-Onboarding.md) | Migration guide, deployment patterns |
-| [Cases Worked](docs/Cases-Worked.md) | Enterprise patterns by industry |
-| [Shield →](Shield/) | DDoS protection, Shield Advanced, SRT |
-| [Firewall Manager →](FirewallManager/) | Centralized policies, cross-account, import |
+- **[WAF Overview](docs/WAF.md)** — Web ACLs, rules, managed rules, scope, resource association
+- **[Rules](docs/Rules.md)** — rate-based, managed rules, custom rules, labels, Bot Control
+- **[Logging](docs/Logging.md)** — destinations, sampling, metrics, cost estimation
+- **[Integrations](docs/Integrations.md)** — CloudFront, ALB, API Gateway, EKS, AppSync
+- **[Troubleshooting](docs/Troubleshooting.md)** — false positives, blocking issues, log analysis
+- **[Customer Onboarding](docs/Customer-Onboarding.md)** — migration guide, deployment patterns
+- **[Cases Worked](docs/Cases-Worked.md)** — enterprise patterns by industry
+- **[Shield](Shield/)** — DDoS protection, Shield Advanced, SRT
+- **[Firewall Manager](FirewallManager/)** — centralized policies, cross-account, import
 
 ## Scenarios
 
-(Coming soon — WAF labs in development)
+- **[NET-006](scenarios/NET-006_waf_bot_control_api_chatbot/)** — WAF Bot Control for a public API chatbot · Public Sector · *Lab*
+- **[NET-014](scenarios/NET-014_waf_ai_traffic_monetization_x402/)** — AI traffic monetization over x402 · Content and API providers · *Lab*
+- **[NET-012](scenarios/NET-012_shield_l7am_to_antiddos_amr_migration/)** — Shield Advanced L7AM vs the AntiDDoS managed rule set · Financial Services · *Case analysis*
 
 ## Industries Served
 
