@@ -1,0 +1,96 @@
+<mxfile host="drawio-plugin" modified="2026-05-22T17:00:00.000Z" agent="Mozilla/5.0" version="22.1.22" etag="NET005-problem" type="embed">
+  <diagram name="NET-005: PROBLEM — Missing/Aggregated Route = Blackhole" id="asymmetric-problem">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Title -->
+        <mxCell id="title" value="NET-005: PROBLEM — Missing Spoke Routes in RNAT RT = Return Traffic Blackholed" style="text;html=1;fontSize=16;fontStyle=1;align=center;fontColor=#b85450;" parent="1" vertex="1">
+          <mxGeometry x="300" y="20" width="800" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="subtitle" value="Lab reproduction: account <LAB_ACCOUNT_ID>, us-west-2" style="text;html=1;fontSize=10;align=center;fontColor=#666666;" parent="1" vertex="1">
+          <mxGeometry x="500" y="50" width="400" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- Internet + IGW -->
+        <mxCell id="internet" value="Internet" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=12;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="720" y="80" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="igw" value="IGW&#xa;igw-0cc281ae6fb32e1c5" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=9;" parent="1" vertex="1">
+          <mxGeometry x="725" y="155" width="110" height="35" as="geometry" />
+        </mxCell>
+
+        <!-- Inspection VPC -->
+        <mxCell id="insp-vpc" value="Inspection VPC — vpc-054472ae65ba407aa (10.100.0.0/16)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;fontStyle=1;verticalAlign=top;dashed=1;" parent="1" vertex="1">
+          <mxGeometry x="180" y="210" width="1200" height="400" as="geometry" />
+        </mxCell>
+
+        <!-- RNAT -->
+        <mxCell id="rnat" value="Regional NAT Gateway&#xa;nat-12aae68cdb2b14489 (regional mode)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="580" y="240" width="400" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- WRONG RNAT RT -->
+        <mxCell id="rnat-rt-wrong" value="RNAT Route Table (rtb-07f9609a04cf3a305):&#xa;&#xa;10.100.10.0/24 → vpce-fw-az1&#xa;10.100.20.0/24 → vpce-fw-az2&#xa;10.100.0.0/16  → local&#xa;0.0.0.0/0      → IGW&#xa;&#xa;❌ NO ROUTE for 10.200.0.0/16 (spoke)!" style="shape=note;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;align=left;spacingLeft=8;fontStyle=0;" parent="1" vertex="1">
+          <mxGeometry x="1040" y="230" width="300" height="130" as="geometry" />
+        </mxCell>
+
+        <!-- FW Endpoints -->
+        <mxCell id="fw-az1" value="NFW Endpoint AZ1&#xa;vpce-0f596c0a9447b0135&#xa;(10.100.1.0/24)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=9;" parent="1" vertex="1">
+          <mxGeometry x="240" y="350" width="210" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="fw-az2" value="NFW Endpoint AZ2&#xa;vpce-0af3244f33808f82a&#xa;(10.100.2.0/24)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=9;" parent="1" vertex="1">
+          <mxGeometry x="1100" y="350" width="210" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- TGW Subnets -->
+        <mxCell id="tgw-sub-az1" value="TGW Sub AZ1&#xa;10.100.10.0/24" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=9;" parent="1" vertex="1">
+          <mxGeometry x="270" y="440" width="150" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="tgw-sub-az2" value="TGW Sub AZ2&#xa;10.100.20.0/24" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=9;" parent="1" vertex="1">
+          <mxGeometry x="1130" y="440" width="150" height="35" as="geometry" />
+        </mxCell>
+
+        <!-- TGW -->
+        <mxCell id="tgw" value="Transit Gateway — tgw-0666acd2afe11059f" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="540" y="530" width="480" height="35" as="geometry" />
+        </mxCell>
+
+        <!-- Spokes -->
+        <mxCell id="spoke-az1" value="Spoke AZ1 — i-0478a5957c1394179&#xa;10.200.1.168" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=9;" parent="1" vertex="1">
+          <mxGeometry x="260" y="650" width="200" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="spoke-az2" value="Spoke AZ2 — i-0d2f8717ee9bdac3f&#xa;10.200.2.209" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=9;" parent="1" vertex="1">
+          <mxGeometry x="1100" y="650" width="200" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Outbound flow (green, works) -->
+        <mxCell id="out1" value="outbound ✅" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#82b366;strokeWidth=2;fontSize=9;fontColor=#82b366;" parent="1" source="spoke-az1" target="rnat" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="360" y="600" /><mxPoint x="360" y="500" /><mxPoint x="360" y="310" /><mxPoint x="580" y="310" /></Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Return flow (red, FAILS) -->
+        <mxCell id="ret-fail" value="return: dest=10.200.1.168&#xa;NO MATCHING ROUTE&#xa;→ BLACKHOLED ❌" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#b85450;strokeWidth=3;dashed=1;fontSize=10;fontColor=#b85450;fontStyle=1;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="780" y="280" as="sourcePoint" />
+            <mxPoint x="780" y="310" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Blackhole symbol -->
+        <mxCell id="blackhole" value="⬛ BLACKHOLE&#xa;&#xa;RNAT receives return packet&#xa;dest: 10.200.1.168&#xa;No route matches → dropped" style="shape=note;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;align=center;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="620" y="310" width="320" height="90" as="geometry" />
+        </mxCell>
+
+        <!-- Lab result -->
+        <mxCell id="lab-result" value="LAB RESULT (before fix):&#xa;&#xa;  curl https://google.com → HTTP 000 (10s TIMEOUT)&#xa;  ping 8.8.8.8 → 100% packet loss&#xa;  NFW flow logs → empty (return never reaches FW)&#xa;&#xa;DIAGNOSIS: Outbound works (DNS resolves, TCP SYN sent).&#xa;Return traffic arrives at RNAT but has no route for the&#xa;spoke private IP → packet blackholed at RNAT layer." style="shape=note;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;align=left;spacingLeft=8;" parent="1" vertex="1">
+          <mxGeometry x="460" y="750" width="440" height="150" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
