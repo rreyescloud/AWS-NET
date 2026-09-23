@@ -1,0 +1,25 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: nfw-container-lab
+  region: us-east-1
+  version: "1.31"
+
+# Single small EC2 nodegroup — cheapest path to real pod IPs.
+# (Fargate is not used: EKS container associations resolve pod IPs from
+#  lifecycle events regardless of launch type, but a managed EC2 nodegroup
+#  is the simplest way to run pods we control.)
+managedNodeGroups:
+  - name: ng-1
+    instanceType: t3.small
+    desiredCapacity: 1
+    minSize: 1
+    maxSize: 1
+    volumeSize: 20
+
+# VPC CNI must NOT SNAT pod traffic, otherwise the firewall sees the node IP
+# instead of the pod IP and container-association rules never match.
+# We disable SNAT after the cluster comes up (see disable-snat step).
+iam:
+  withOIDC: true
