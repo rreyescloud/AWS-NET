@@ -4,7 +4,7 @@ import boto3
 # NET-001: Cleanup — Destroy all resources created by deploy.py
 # ============================================================
 
-PROFILE = 'rchiasro1'
+PROFILE = 'lab'
 REGION_A = 'us-east-1'
 REGION_B = 'us-east-2'
 BUCKET_A_NAME = 'net001-bucket-a-demo'

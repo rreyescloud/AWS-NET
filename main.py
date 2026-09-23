@@ -1,6 +1,6 @@
 import boto3
 
-session = boto3.Session(profile_name='rchiasro1', region_name='us-east-1')
+session = boto3.Session(profile_name='lab', region_name='us-east-1')
 
 ec2 = session.client('ec2')
 r53 = session.client('route53')

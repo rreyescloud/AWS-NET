@@ -5,12 +5,12 @@ import json
 # NET-001: S3 Private Cross-Account Cross-Region Connectivity
 # ============================================================
 # This script simulates the scenario using a SINGLE account
-# (Isengard) with two regions to demonstrate the concept.
+# (lab) with two regions to demonstrate the concept.
 # For true cross-account, deploy bucket policy on Account B
 # and IAM role on Account A separately.
 # ============================================================
 
-PROFILE = 'rchiasro1'
+PROFILE = 'lab'
 REGION_A = 'us-east-1'
 REGION_B = 'us-east-2'
 BUCKET_A_NAME = 'net001-bucket-a-demo'
