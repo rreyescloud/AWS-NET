@@ -1,0 +1,108 @@
+<mxfile host="drawio-plugin" modified="2026-05-23T14:00:00.000Z" agent="Mozilla/5.0" version="22.1.22" etag="NET006-concepts" type="embed">
+  <diagram name="APIs, HTTP, REST — Conceptos" id="api-concepts">
+    <mxGraphModel dx="1400" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1400" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Title -->
+        <mxCell id="title" value="Conceptos: APIs, HTTP, REST y API Gateway" style="text;html=1;fontSize=18;fontStyle=1;align=center;" parent="1" vertex="1">
+          <mxGeometry x="400" y="20" width="600" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- SECTION 1: What is an API -->
+        <mxCell id="sec1-title" value="1. ¿Qué es una API?" style="text;html=1;fontSize=14;fontStyle=1;align=left;" parent="1" vertex="1">
+          <mxGeometry x="50" y="70" width="300" height="25" as="geometry" />
+        </mxCell>
+
+        <mxCell id="api-analogy" value="API = Application Programming Interface&#xa;&#xa;Es un CONTRATO entre dos programas:&#xa;'Si me mandás ESTO, te devuelvo AQUELLO'&#xa;&#xa;Analogía: un MESERO en un restaurante&#xa;- Vos (cliente) le pedís al mesero&#xa;- El mesero lleva el pedido a la cocina&#xa;- La cocina prepara y devuelve por el mesero&#xa;- Vos nunca entrás a la cocina directamente" style="shape=note;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;align=left;spacingLeft=10;" parent="1" vertex="1">
+          <mxGeometry x="50" y="100" width="350" height="180" as="geometry" />
+        </mxCell>
+
+        <!-- Simple API diagram -->
+        <mxCell id="client" value="Tu App&#xa;(frontend)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="480" y="110" width="100" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="api-box" value="API&#xa;(el contrato)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="650" y="110" width="100" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="server" value="Servidor&#xa;(la cocina)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="820" y="110" width="100" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="c-to-api" value="request" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#6c8ebf;strokeWidth=2;fontSize=9;" parent="1" source="client" target="api-box" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="api-to-s" value="procesa" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#82b366;strokeWidth=2;fontSize=9;" parent="1" source="api-box" target="server" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="s-to-c" value="response" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#82b366;strokeWidth=2;dashed=1;fontSize=9;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="820" y="160" as="sourcePoint" />
+            <mxPoint x="580" y="160" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Example -->
+        <mxCell id="example1" value="Ejemplo real:&#xa;&#xa;Tu chatbot (frontend) manda:&#xa;  POST /chat  {&quot;message&quot;: &quot;Hola&quot;}&#xa;&#xa;API Gateway recibe, pasa a Lambda → Bedrock&#xa;&#xa;Bedrock responde:&#xa;  200 OK  {&quot;response&quot;: &quot;Hola! Soy un bot...&quot;}" style="shape=note;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;align=left;spacingLeft=10;" parent="1" vertex="1">
+          <mxGeometry x="480" y="180" width="350" height="140" as="geometry" />
+        </mxCell>
+
+        <!-- SECTION 2: HTTP -->
+        <mxCell id="sec2-title" value="2. HTTP — El idioma de la web" style="text;html=1;fontSize=14;fontStyle=1;align=left;" parent="1" vertex="1">
+          <mxGeometry x="50" y="340" width="400" height="25" as="geometry" />
+        </mxCell>
+
+        <mxCell id="http-explain" value="HTTP (HyperText Transfer Protocol) es el PROTOCOLO&#xa;que usan browsers y APIs para comunicarse.&#xa;&#xa;Cada request HTTP tiene:&#xa;&#xa;  MÉTODO    URL              HEADERS         BODY&#xa;  POST      /api/chat        Content-Type    {&quot;message&quot;:&quot;hi&quot;}&#xa;  GET       /api/users       Auth: Bearer..  (vacío)&#xa;  DELETE    /api/user/123    ...             (vacío)" style="shape=note;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;align=left;spacingLeft=10;" parent="1" vertex="1">
+          <mxGeometry x="50" y="370" width="450" height="160" as="geometry" />
+        </mxCell>
+
+        <!-- HTTP Methods -->
+        <mxCell id="methods" value="MÉTODOS HTTP (los verbos):&#xa;&#xa;GET     → LEER datos (dame la info)&#xa;POST    → CREAR/ENVIAR datos (toma este mensaje)&#xa;PUT     → ACTUALIZAR completo (reemplaza esto)&#xa;PATCH   → ACTUALIZAR parcial (cambia solo esto)&#xa;DELETE  → BORRAR (elimina esto)&#xa;&#xa;Tu chatbot usa POST porque ENVÍA un mensaje&#xa;al servidor y espera una respuesta nueva." style="shape=note;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;align=left;spacingLeft=10;" parent="1" vertex="1">
+          <mxGeometry x="530" y="370" width="350" height="170" as="geometry" />
+        </mxCell>
+
+        <!-- HTTP Response -->
+        <mxCell id="response-codes" value="RESPUESTAS HTTP (status codes):&#xa;&#xa;200 OK         → Todo bien, acá están tus datos&#xa;201 Created    → Se creó el recurso&#xa;400 Bad Request→ Mandaste algo mal&#xa;401 Unauthorized→ No estás autenticado&#xa;403 Forbidden  → No tenés permiso (WAF block!)&#xa;404 Not Found  → Eso no existe&#xa;429 Too Many   → Rate limit (WAF!)&#xa;500 Server Error→ Algo falló adentro" style="shape=note;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;align=left;spacingLeft=10;" parent="1" vertex="1">
+          <mxGeometry x="910" y="370" width="330" height="170" as="geometry" />
+        </mxCell>
+
+        <!-- SECTION 3: REST API -->
+        <mxCell id="sec3-title" value="3. REST API — Estilo de diseño" style="text;html=1;fontSize=14;fontStyle=1;align=left;" parent="1" vertex="1">
+          <mxGeometry x="50" y="570" width="400" height="25" as="geometry" />
+        </mxCell>
+
+        <mxCell id="rest-explain" value="REST = Representational State Transfer&#xa;&#xa;Es un ESTILO de diseñar APIs. No es un protocolo,&#xa;es un conjunto de reglas/convenciones:&#xa;&#xa;1. Usa HTTP como transporte&#xa;2. URLs representan RECURSOS (cosas)&#xa;3. Métodos HTTP = acciones sobre esos recursos&#xa;4. Respuestas en JSON (generalmente)&#xa;5. Sin estado — cada request es independiente&#xa;&#xa;  GET    /users          → lista de usuarios&#xa;  GET    /users/123      → un usuario específico&#xa;  POST   /users          → crear usuario nuevo&#xa;  POST   /chat           → enviar mensaje al chatbot&#xa;  DELETE /users/123      → borrar usuario 123" style="shape=note;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;align=left;spacingLeft=10;" parent="1" vertex="1">
+          <mxGeometry x="50" y="600" width="400" height="250" as="geometry" />
+        </mxCell>
+
+        <!-- SECTION 4: API Gateway -->
+        <mxCell id="sec4-title" value="4. API Gateway — El middleman de AWS" style="text;html=1;fontSize=14;fontStyle=1;align=left;" parent="1" vertex="1">
+          <mxGeometry x="530" y="570" width="400" height="25" as="geometry" />
+        </mxCell>
+
+        <mxCell id="apigw-explain" value="API Gateway es un servicio de AWS que:&#xa;&#xa;1. RECIBE requests HTTP de internet&#xa;2. Los VALIDA (auth, headers, formato)&#xa;3. Los RUTA al backend correcto (Lambda, EC2, etc.)&#xa;4. TRANSFORMA la respuesta si hace falta&#xa;5. Devuelve la respuesta al cliente&#xa;&#xa;Es como un PORTERO inteligente:&#xa;- Revisa quién sos (autenticación)&#xa;- Revisa qué querés (validación)&#xa;- Te manda al lugar correcto (routing)&#xa;- Controla cuánto pedís (throttling)&#xa;- Cobra por request (metering)" style="shape=note;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;align=left;spacingLeft=10;" parent="1" vertex="1">
+          <mxGeometry x="530" y="600" width="350" height="220" as="geometry" />
+        </mxCell>
+
+        <!-- API GW types -->
+        <mxCell id="apigw-types" value="Tipos de API Gateway:&#xa;&#xa;REST API (lo que usamos en el lab)&#xa;  - Más features (validación, transformación)&#xa;  - Regional o Edge-optimized&#xa;  - Más control, más caro&#xa;&#xa;HTTP API&#xa;  - Más simple y barato&#xa;  - Menos features&#xa;  - Bueno para proxies simples a Lambda&#xa;&#xa;WebSocket API&#xa;  - Conexiones persistentes&#xa;  - Para chat en tiempo real, gaming" style="shape=note;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;align=left;spacingLeft=10;" parent="1" vertex="1">
+          <mxGeometry x="920" y="600" width="280" height="220" as="geometry" />
+        </mxCell>
+
+        <!-- SECTION 5: How it all connects in the lab -->
+        <mxCell id="sec5-title" value="5. En nuestro lab — Todo junto" style="text;html=1;fontSize=14;fontStyle=1;align=left;" parent="1" vertex="1">
+          <mxGeometry x="50" y="880" width="400" height="25" as="geometry" />
+        </mxCell>
+
+        <mxCell id="full-flow" value="Browser abre: https://d21za96d8qf5pb.cloudfront.net&#xa;  → CloudFront sirve index.html (GET, responde 200 + HTML)&#xa;&#xa;Usuario escribe 'Hola' y da Send:&#xa;  → JavaScript hace: POST https://...execute-api.../prod/chat&#xa;     Headers: Content-Type: application/json&#xa;     Body: {&quot;message&quot;: &quot;Hola&quot;}&#xa;&#xa;  → API Gateway recibe el POST&#xa;     Valida que es POST a /chat → OK&#xa;     Invoca Lambda (proxy mode)&#xa;&#xa;  → Lambda ejecuta:&#xa;     bedrock.converse(model='nova-lite', message='Hola')&#xa;     Retorna: {statusCode:200, body:{response:'Hola!...'}}&#xa;&#xa;  → API Gateway devuelve 200 + JSON al browser&#xa;  → JavaScript muestra la respuesta en el chat div&#xa;&#xa;WAF evalúa CADA request antes de que llegue:" style="shape=note;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;align=left;spacingLeft=10;" parent="1" vertex="1">
+          <mxGeometry x="50" y="910" width="500" height="310" as="geometry" />
+        </mxCell>
+
+        <mxCell id="waf-position" value="WAF intercepta ANTES de procesar:&#xa;&#xa;Request → WAF evalúa reglas:&#xa;  ¿IP en lista negra? → 403 Block&#xa;  ¿SQLi en el body? → 403 Block&#xa;  ¿Rate limit excedido? → 429 Block&#xa;  ¿Es un bot? → Label / Count / Block&#xa;  ¿Todo OK? → ALLOW → sigue a API GW&#xa;&#xa;El cliente NUNCA sabe que WAF existe&#xa;(a menos que lo bloqueen — ve un 403)" style="shape=note;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;align=left;spacingLeft=10;" parent="1" vertex="1">
+          <mxGeometry x="600" y="910" width="320" height="190" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
