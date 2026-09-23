@@ -54,6 +54,8 @@ Reported characteristics: sub-2-second settlement, ~$0.0001/tx, immutable on-cha
 
 The CLI-reproducible parts (Web ACL, Bot Control, association, logging) are in `lab/deploy_lab.py`. The monetization config + `Monetize` rule are console-only. The payment client is `lab/x402_pay_client.py`.
 
+[📐 Open diagram in draw.io](https://app.diagrams.net/#Uhttps%3A%2F%2Fraw.githubusercontent.com%2Frreyescloud%2FAWS-NET%2Fmain%2Fservices%2FWAF%2Fscenarios%2FNET-014_waf_ai_traffic_monetization_x402%2Farchitecture.drawio)
+
 ```
 # 1. Create Web ACL + Bot Control + associate + logging (CLI)
 python lab/deploy_lab.py --distribution-id <ID>

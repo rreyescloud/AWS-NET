@@ -39,6 +39,8 @@ After evaluating 7 options (documented below), Cross-Region PrivateLink provides
 
 ## Architecture
 
+[📐 Open diagram in draw.io](https://app.diagrams.net/#Uhttps%3A%2F%2Fraw.githubusercontent.com%2Frreyescloud%2FAWS-NET%2Fmain%2Fservices%2FVPC%2Fscenarios%2FNET-001_s3_crossaccount%2Farchitecture.drawio)
+
 ```
 VPC (us-east-1) — No IGW, No NAT, No Internet
 │

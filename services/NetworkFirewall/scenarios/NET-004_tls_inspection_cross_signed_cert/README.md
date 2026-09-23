@@ -58,6 +58,8 @@ Client wants to:
 ## Investigation Timeline
 
 ### Attempt 1 (12:55:12 UTC)
+[📐 Open diagram in draw.io](https://app.diagrams.net/#Uhttps%3A%2F%2Fraw.githubusercontent.com%2Frreyescloud%2FAWS-NET%2Fmain%2Fservices%2FNetworkFirewall%2Fscenarios%2FNET-004_tls_inspection_cross_signed_cert%2Farchitecture.drawio)
+
 ```
 Error: ServerCertificate chain is invalid and doesn't support the certificate body
 ```

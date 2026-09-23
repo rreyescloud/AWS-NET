@@ -67,6 +67,8 @@ Route 53 Resolver Query Logging uses **AWS Vended Logs V2** mechanism. The key m
     }
   ]
 }
+[📐 Open diagram in draw.io](https://app.diagrams.net/#Uhttps%3A%2F%2Fraw.githubusercontent.com%2Frreyescloud%2FAWS-NET%2Fmain%2Fservices%2FR53%2Fscenarios%2FNET-002_r53_query_logging%2Farchitecture.drawio)
+
 ```
 
 2. Resource Policy on destination (S3 example):

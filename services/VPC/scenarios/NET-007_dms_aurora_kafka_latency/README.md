@@ -30,6 +30,10 @@ DMS CDC replication from Aurora MySQL to Kafka experiencing escalating latency p
 All infrastructure fixes attempted (ACU increase, ParallelApplyBufferSize 100→500→1000, ParallelApplyQueuesPerThread 4→16) have NOT resolved the problem.
 
 
+## Architecture
+
+[📐 Open diagram in draw.io](https://app.diagrams.net/#Uhttps%3A%2F%2Fraw.githubusercontent.com%2Frreyescloud%2FAWS-NET%2Fmain%2Fservices%2FVPC%2Fscenarios%2FNET-007_dms_aurora_kafka_latency%2Farchitecture.drawio)
+
 ## Environment
 
 ### Sandbox (eu-central-1, account <CUSTOMER_SANDBOX_ACCOUNT_ID>)

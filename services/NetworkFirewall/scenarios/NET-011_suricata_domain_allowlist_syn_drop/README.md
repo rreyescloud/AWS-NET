@@ -29,6 +29,8 @@ Outbound HTTPS from the spoke workloads to AWS service endpoints (`iam.amazonaws
 `sts.amazonaws.com`, and similar) timed out. The customer's allowlist rule looked correct and had
 been reviewed twice:
 
+[📐 Open diagram in draw.io](https://app.diagrams.net/#Uhttps%3A%2F%2Fraw.githubusercontent.com%2Frreyescloud%2FAWS-NET%2Fmain%2Fservices%2FNetworkFirewall%2Fscenarios%2FNET-011_suricata_domain_allowlist_syn_drop%2Farchitecture.drawio)
+
 ```
 pass tls $HOME_NET any -> $EXTERNAL_NET 443 (tls.sni; dotprefix; content:".amazonaws.com"; endswith; msg:"Allow AWS service endpoints"; flow:to_server,established; sid:20000; rev:1;)
 ```
