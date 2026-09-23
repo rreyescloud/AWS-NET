@@ -1,0 +1,34 @@
+# Sample workload the container association will track.
+# The namespace + labels are exactly the dimensions EKS container
+# associations can filter on (AttributeFilters: namespace, k8s labels).
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: payments
+  labels:
+    team: payments
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+  namespace: payments
+  labels:
+    app: web
+    tier: frontend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+        tier: frontend
+    spec:
+      containers:
+        - name: web
+          image: public.ecr.aws/nginx/nginx:latest
+          ports:
+            - containerPort: 80
