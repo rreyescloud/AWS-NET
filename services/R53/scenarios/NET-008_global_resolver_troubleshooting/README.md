@@ -2,6 +2,7 @@
 
 **Tier:** Case analysis — partially replicated, no deploy script
 **Status:** 2 of 6 scenarios replicated (2026-06-25)
+**Services:** Route 53 Global Resolver · DNS (Do53, DoH, DoT) · TLS · VPC · IAM (access sources)
 
 ## Objective
 

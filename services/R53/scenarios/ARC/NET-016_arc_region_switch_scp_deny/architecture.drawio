@@ -1,0 +1,102 @@
+<mxfile host="drawio-plugin" modified="2026-09-24T12:00:00.000Z" agent="Mozilla/5.0" version="22.1.22" etag="NET016-arc-scp" type="embed">
+  <diagram name="NET-016: ARC Region Switch blocked by network-perimeter SCP" id="net016-arc-scp">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1900" pageHeight="1200" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="title" value="NET-016: The guardrail that blocks the DR automation it was built to protect" style="text;html=1;fontSize=17;fontStyle=1;align=center;fontColor=#333333;" parent="1" vertex="1">
+          <mxGeometry x="350" y="15" width="1200" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="subtitle" value="A network-perimeter SCP denies route53-recovery-cluster:* unless the call comes from a known network. ARC Region Switch assumes the execution role and calls from outside that perimeter." style="text;html=1;fontSize=11;align=center;fontColor=#666666;" parent="1" vertex="1">
+          <mxGeometry x="300" y="45" width="1300" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- Normal path (human from corporate network) -->
+        <mxCell id="normal-box" value="Normal path — works" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13;fontStyle=1;verticalAlign=top;" parent="1" vertex="1">
+          <mxGeometry x="60" y="90" width="850" height="260" as="geometry" />
+        </mxCell>
+
+        <mxCell id="human" value="Engineer on&#xa;corporate network&#xa;167.107.x.x" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="100" y="140" width="150" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="scp-pass" value="SCP evaluates:&#xa;aws:SourceIp in allowlist? → YES&#xa;&#xa;Deny does NOT fire → ALLOW" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;align=left;spacingLeft=10;" parent="1" vertex="1">
+          <mxGeometry x="340" y="130" width="280" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="rc-ok" value="UpdateRoutingControlStates&#xa;primary=OFF, secondary=ON&#xa;&#xa;✅ Traffic shifts to us-west-2" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="700" y="130" width="180" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="e-n1" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#82b366;strokeWidth=2;endArrow=block;" parent="1" source="human" target="scp-pass" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e-n2" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#82b366;strokeWidth=2;endArrow=block;" parent="1" source="scp-pass" target="rc-ok" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="normal-note" value="This is the path the SCP was designed to allow:&#xa;a known human, from a known network, making a deliberate routing change." style="text;html=1;fontSize=10;align=left;fontColor=#666666;" parent="1" vertex="1">
+          <mxGeometry x="100" y="240" width="500" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- ARC path (blocked) -->
+        <mxCell id="arc-box" value="ARC Region Switch path — blocked" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=13;fontStyle=1;verticalAlign=top;" parent="1" vertex="1">
+          <mxGeometry x="60" y="380" width="850" height="300" as="geometry" />
+        </mxCell>
+
+        <mxCell id="arc" value="ARC Region Switch&#xa;arc-region-switch.amazonaws.com&#xa;&#xa;Calls sts:AssumeRole&#xa;on the execution role" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="100" y="430" width="200" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="role-session" value="Assumed role session&#xa;&#xa;aws:SourceIp = (service domain)&#xa;aws:SourceVpce = null&#xa;aws:ViaAWSService = false&#xa;aws:PrincipalIsAWSService = false&#xa;aws:CalledVia = (not populated)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;align=left;spacingLeft=10;" parent="1" vertex="1">
+          <mxGeometry x="100" y="555" width="230" height="110" as="geometry" />
+        </mxCell>
+
+        <mxCell id="scp-deny" value="SCP evaluates all four conditions:&#xa;&#xa;aws:SourceVpce not vpce-*     → TRUE (null)&#xa;aws:SourceIp not in allowlist  → TRUE (no IP)&#xa;aws:ViaAWSService = false      → TRUE&#xa;aws:PrincipalIsAWSService = false → TRUE&#xa;&#xa;All TRUE → DENY FIRES" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;align=left;spacingLeft=10;fontFamily=Courier New;" parent="1" vertex="1">
+          <mxGeometry x="400" y="420" width="340" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="denied" value="AccessDeniedException&#xa;explicit deny in&#xa;service control policy&#xa;&#xa;❌ Plan fails at step 1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="700" y="430" width="180" height="100" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e-a1" value="AssumeRole" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#d79b00;strokeWidth=2;endArrow=block;fontSize=10;" parent="1" source="arc" target="scp-deny" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e-a2" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#b85450;strokeWidth=3;endArrow=cross;fontSize=10;" parent="1" source="scp-deny" target="denied" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e-a3" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#d6b656;strokeWidth=1;endArrow=block;dashed=1;" parent="1" source="arc" target="role-session" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="arc-note" value="The key insight: ARC uses AssumeRole, not credential forwarding. The call looks like&#xa;it comes FROM the role, not VIA the service. No service context key is populated." style="text;html=1;fontSize=11;fontStyle=1;align=left;fontColor=#b85450;" parent="1" vertex="1">
+          <mxGeometry x="400" y="600" width="480" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Why pre-validation missed it -->
+        <mxCell id="sim-box" value="Why pre-validation passed" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;fontStyle=1;verticalAlign=top;" parent="1" vertex="1">
+          <mxGeometry x="960" y="90" width="870" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="sim-detail" value="Region Switch pre-validates the execution role with iam:SimulatePrincipalPolicy.&#xa;&#xa;That API evaluates:  identity policies ✓   resource policies ✓   permission boundaries ✓&#xa;It does NOT evaluate: Service Control Policies ✗&#xa;&#xa;So the simulation sees AdministratorAccess / full route53-recovery-cluster perms and returns ALLOWED.&#xa;The real call hits the SCP and is denied. This is documented behavior of the simulation API." style="text;html=1;fontSize=11;align=left;verticalAlign=top;fontColor=#333333;" parent="1" vertex="1">
+          <mxGeometry x="980" y="120" width="840" height="140" as="geometry" />
+        </mxCell>
+
+        <!-- The fix -->
+        <mxCell id="fix-box" value="The fix — exempt the execution role by ARN" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13;fontStyle=1;verticalAlign=top;" parent="1" vertex="1">
+          <mxGeometry x="960" y="310" width="870" height="260" as="geometry" />
+        </mxCell>
+        <mxCell id="fix-detail" value="Add to the Condition block of DenyRecoveryClusterUnlessKnownNetwork:&#xa;&#xa;  &quot;ArnNotLike&quot;: {&#xa;    &quot;aws:PrincipalArn&quot;: &quot;arn:aws:iam::*:role/*-region-switch-execution&quot;&#xa;  }&#xa;&#xa;Now when ARC assumes the execution role, the ArnNotLike condition is false&#xa;→ not all conditions are true → deny does NOT fire → call succeeds." style="text;html=1;fontSize=11;align=left;verticalAlign=top;fontColor=#333333;fontFamily=Courier New;" parent="1" vertex="1">
+          <mxGeometry x="980" y="345" width="540" height="170" as="geometry" />
+        </mxCell>
+
+        <!-- What does NOT work -->
+        <mxCell id="nowork-box" value="What does NOT work" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff4f4;strokeColor=#b85450;fontSize=12;fontStyle=1;verticalAlign=top;" parent="1" vertex="1">
+          <mxGeometry x="1540" y="345" width="280" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="nowork-detail" value="aws:CalledVia&#xa;  Not populated. ARC uses&#xa;  AssumeRole, not FAS.&#xa;&#xa;aws:ViaAWSService&#xa;  Already false for these calls.&#xa;&#xa;aws:PrincipalIsAWSService&#xa;  False — principal is the role.&#xa;&#xa;Adding the role to the IP list&#xa;  A role is not an IP address." style="text;html=1;fontSize=10;align=left;verticalAlign=top;fontColor=#b85450;" parent="1" vertex="1">
+          <mxGeometry x="1550" y="375" width="260" height="160" as="geometry" />
+        </mxCell>
+
+        <!-- The two IAM patterns -->
+        <mxCell id="pattern-box" value="Two patterns for how AWS services operate your credentials" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999999;fontSize=12;fontStyle=1;verticalAlign=top;" parent="1" vertex="1">
+          <mxGeometry x="960" y="600" width="870" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="pattern-detail" value="Credential forwarding (CloudFormation, API Gateway, DynamoDB Streams)&#xa;  You call Service A → Service A calls Service B using YOUR credentials (forwarded)&#xa;  aws:ViaAWSService = true, aws:CalledVia = [&quot;serviceA.amazonaws.com&quot;]&#xa;  The call looks like it comes VIA the service. Network conditions on the original caller apply.&#xa;&#xa;Role assumption (ARC Region Switch, CodePipeline, ECS task role)&#xa;  Service A calls sts:AssumeRole on a role YOU configured → uses the role's own session&#xa;  aws:ViaAWSService = false, aws:CalledVia = not populated&#xa;  The call looks like it comes FROM the role. Network conditions on the role apply, and the&#xa;  role has no network — it is a service making the call from AWS infrastructure." style="text;html=1;fontSize=11;align=left;verticalAlign=top;fontColor=#333333;" parent="1" vertex="1">
+          <mxGeometry x="980" y="630" width="840" height="140" as="geometry" />
+        </mxCell>
+
+        <mxCell id="footer" value="Takeaway: a network-perimeter SCP that does not exempt service-assumed roles will block every AWS service that uses AssumeRole to operate on your behalf. The guardrail is correct; the exemption list is incomplete." style="text;html=1;fontSize=12;fontStyle=2;align=center;fontColor=#333333;" parent="1" vertex="1">
+          <mxGeometry x="200" y="810" width="1500" height="30" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

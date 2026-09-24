@@ -2,6 +2,7 @@
 
 **Tier:** Lab — reproducible end to end
 **Status:** Scaffold, ready to deploy
+**Services:** Route 53 Resolver · VPC Peering (cross-region) · EC2 · SSM · IAM · CloudWatch Logs · RAM
 
 ## Business Context
 

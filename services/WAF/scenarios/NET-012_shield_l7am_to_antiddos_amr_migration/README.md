@@ -2,6 +2,7 @@
 
 **Tier:** Case analysis — no deploy script
 **Status:** Answered, open items pending customer data
+**Services:** WAF · Shield Advanced · CloudFront · ALB · API Gateway · CloudWatch Metrics · Route 53 Health Checks
 
 ## Case summary
 

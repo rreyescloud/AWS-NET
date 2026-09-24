@@ -2,6 +2,7 @@
 
 **Tier:** Case analysis — no deploy script
 **Status:** In Progress — network layer cleared, DMS investigation pending
+**Services:** VPC · DMS · Aurora MySQL · MSK (Kafka) · VPC Peering · CloudWatch Metrics
 
 ## Objective
 

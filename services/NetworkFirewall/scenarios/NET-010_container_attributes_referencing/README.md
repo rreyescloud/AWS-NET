@@ -2,6 +2,7 @@
 
 **Tier:** Lab — reproducible end to end
 **Status:** Replicated — working end-to-end
+**Services:** Network Firewall · EKS · VPC CNI · IAM (boto3 SDK, botocore service model) · Suricata
 
 ## Objective
 

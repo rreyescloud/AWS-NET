@@ -2,6 +2,7 @@
 
 **Tier:** Lab — reproducible end to end
 **Status:** Responded + Lab Reproduced
+**Services:** WAF Bot Control · API Gateway · Lambda · Bedrock · CloudFront · CloudWatch Logs
 
 ## Objective
 

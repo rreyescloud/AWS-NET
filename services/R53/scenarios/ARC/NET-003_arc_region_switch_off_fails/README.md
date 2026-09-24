@@ -2,6 +2,7 @@
 
 **Tier:** Lab — reproducible end to end
 **Status:** Resolved — full failover executed in the lab account
+**Services:** Route 53 ARC · Aurora Global Database · IAM (trust policies, Resource: "*" requirement) · CloudTrail · CloudWatch Alarms
 
 ## Objective
 

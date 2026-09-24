@@ -2,6 +2,7 @@
 
 **Tier:** Lab — reproducible end to end
 **Status:** In Progress — lab deployed and tested, customer answer pending
+**Services:** Network Firewall · VPC Regional NAT Gateway · Transit Gateway · VPC Routing · EC2
 
 ## Objective
 

@@ -2,6 +2,7 @@
 
 **Tier:** Lab — reproducible end to end
 **Status:** Resolved — customer confirmed 2026-08-18 · Lab replicated
+**Services:** Network Firewall · Suricata · TLS · Transit Gateway · VPC Routing · CloudWatch Logs
 
 ## Objective
 

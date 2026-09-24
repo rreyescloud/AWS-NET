@@ -2,6 +2,7 @@
 
 **Tier:** Case analysis — no deploy script
 **Status:** Root cause established from customer-observable evidence, lab replication planned
+**Services:** Route 53 ARC Zonal Shift · EKS · Karpenter · CloudTrail · Kubernetes (EndpointSlices, taints)
 
 ## Business Context
 

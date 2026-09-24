@@ -2,6 +2,7 @@
 
 **Tier:** Lab — reproducible end to end
 **Status:** Resolved
+**Services:** Network Firewall · ACM · TLS/PKI · EC2 · ALB · VPC
 
 ## Objective
 

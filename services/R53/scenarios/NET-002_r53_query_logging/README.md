@@ -2,6 +2,7 @@
 
 **Tier:** Case analysis — no deploy script
 **Status:** Four problem categories documented, labs not yet built
+**Services:** Route 53 Resolver · CloudWatch Logs · S3 · Firehose · IAM SLR · RAM · VPC DHCP Options
 
 ## Problem Statement
 

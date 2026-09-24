@@ -2,6 +2,7 @@
 
 **Tier:** Lab — reproducible end to end
 **Status:** Lab Reproduced — full 402 → pay → 200 loop verified on-chain (Base Sepolia)
+**Services:** WAF Bot Control · CloudFront · S3 · Blockchain (EIP-3009, USDC, Base Sepolia) · Python (web3)
 
 ## Objective
 

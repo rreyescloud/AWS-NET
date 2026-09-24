@@ -2,6 +2,7 @@
 
 **Tier:** Lab — reproducible end to end
 **Status:** Resolved — validated in the lab account
+**Services:** VPC Endpoints (Gateway) · S3 · IAM (cross-account bucket policies) · VPC Routing
 
 ## Objective
 
