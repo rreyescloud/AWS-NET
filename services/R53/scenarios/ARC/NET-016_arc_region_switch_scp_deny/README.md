@@ -2,7 +2,7 @@
 
 **Tier:** Lab — reproducible end to end
 **Status:** Deploy ready
-**Services:** Route 53 ARC · IAM Policy Evaluation · Organizations SCPs · STS AssumeRole · API Gateway · CloudTrail
+**Services:** Application Recovery Controller (ARC) · IAM Policy Evaluation · Organizations SCPs · STS AssumeRole · API Gateway · CloudTrail
 
 [📐 Open diagram in draw.io](https://app.diagrams.net/#Uhttps%3A%2F%2Fraw.githubusercontent.com%2Frreyescloud%2FAWS-NET%2Fmain%2Fservices%2FR53%2Fscenarios%2FARC%2FNET-016_arc_region_switch_scp_deny%2Farchitecture.drawio)
 
