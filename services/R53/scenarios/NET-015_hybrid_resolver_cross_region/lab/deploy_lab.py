@@ -278,9 +278,7 @@ def deploy(profile):
          "IpRanges": [{"CidrIp": "0.0.0.0/0", "Description": "DNS UDP"}]},
         # TCP 53 intentionally MISSING
     ])
-    ec2_a.authorize_security_group_egress(GroupId=sg_resolver_a, IpPermissions=[
-        {"IpProtocol": "-1", "IpRanges": [{"CidrIp": "0.0.0.0/0"}]}
-    ])
+    # Default egress (allow all) already exists on new SGs — no need to add it
 
     # VPC-B resolver SG
     sg_resolver_b = ec2_b.create_security_group(
@@ -293,9 +291,7 @@ def deploy(profile):
          "IpRanges": [{"CidrIp": "0.0.0.0/0", "Description": "DNS UDP"}]},
         # TCP 53 intentionally MISSING
     ])
-    ec2_b.authorize_security_group_egress(GroupId=sg_resolver_b, IpPermissions=[
-        {"IpProtocol": "-1", "IpRanges": [{"CidrIp": "0.0.0.0/0"}]}
-    ])
+    # Default egress already present
 
     # Workload SGs (for test EC2s — SSM only, no inbound needed)
     sg_workload_a = ec2_a.create_security_group(
@@ -369,12 +365,16 @@ systemctl start dnsmasq
 """
 
     # On-prem DNS server
+    imds_opts = {"HttpTokens": "required", "HttpEndpoint": "enabled",
+                 "HttpPutResponseHopLimit": 2}
+
     ec2_onprem = ec2_a.run_instances(
         ImageId=ami_a, InstanceType="t3.micro", MinCount=1, MaxCount=1,
         SubnetId=sub_onprem,
         SecurityGroupIds=[sg_onprem],
         IamInstanceProfile={"Name": instance_profile_name},
         UserData=user_data_dns,
+        MetadataOptions=imds_opts,
         TagSpecifications=[{"ResourceType": "instance",
                            "Tags": [{"Key": "Name", "Value": "NET-015-onprem-dns"},
                                     {"Key": "lab", "Value": "NET-015"}]}],
@@ -394,6 +394,7 @@ systemctl start dnsmasq
         SubnetId=sub_a3,
         SecurityGroupIds=[sg_workload_a],
         IamInstanceProfile={"Name": instance_profile_name},
+        MetadataOptions=imds_opts,
         TagSpecifications=[{"ResourceType": "instance",
                            "Tags": [{"Key": "Name", "Value": "NET-015-prod-test"},
                                     {"Key": "lab", "Value": "NET-015"}]}],
@@ -405,6 +406,7 @@ systemctl start dnsmasq
         SubnetId=sub_b3,
         SecurityGroupIds=[sg_workload_b],
         IamInstanceProfile={"Name": instance_profile_name},
+        MetadataOptions=imds_opts,
         TagSpecifications=[{"ResourceType": "instance",
                            "Tags": [{"Key": "Name", "Value": "NET-015-dr-test"},
                                     {"Key": "lab", "Value": "NET-015"}]}],
