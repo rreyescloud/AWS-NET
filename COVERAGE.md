@@ -49,9 +49,14 @@ architecture. This index shows which services appear across the portfolio and in
 - **WAF Bot Control** — NET-006: targeted bot management; NET-014: Monetize action for AI traffic
 - **DNS Firewall** — NET-011: related pattern (domain allowlisting), planned SEC-001
 
+## Directory & Hybrid Identity
+
+- **AWS Managed Microsoft AD** — NET-015: domain join failure caused by missing forwarding rule association and DHCP search domain suffix appending
+- **DHCP Option Sets** — NET-015: search domain suffix corrupting DNS queries, producing intermittent NXDOMAIN during AD domain join
+
 ## Other
 
 - **ACM** — NET-004: cross-signed certificate import rejection, TLS inspection configuration
-- **RAM** — NET-002: sharing query log configs across accounts; NET-015: forwarding rule sharing
+- **RAM** — NET-002: sharing query log configs across accounts; NET-015: forwarding rule sharing and the association gap when a shared rule is replaced
 - **S3** — NET-001: cross-account private access; NET-014: origin for monetized content
 - **Blockchain** — NET-014: EIP-3009 USDC transfer on Base Sepolia, web3.py

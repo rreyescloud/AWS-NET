@@ -2,7 +2,7 @@
 
 **Tier:** Lab — reproducible end to end
 **Status:** Scaffold, ready to deploy
-**Services:** Route 53 Resolver · VPC Peering (cross-region) · EC2 · SSM · IAM · CloudWatch Logs · RAM
+**Services:** Route 53 Resolver · VPC Peering (cross-region) · EC2 · SSM · IAM · CloudWatch Logs · RAM · AWS Directory Service (Managed AD) · DHCP Option Sets
 
 ## Business Context
 
@@ -304,6 +304,67 @@ Now recreate VPC-B's local forwarding rule pointing to a *different* target. Que
 **Expected:** the local rule wins over the shared rule. This is the "local account wins"
 precedence. Delete the local rule to restore the shared behavior.
 
+### Exercise 8 — Forwarding rule exists but is not associated (the silent NXDOMAIN)
+
+This is the most common resolver misconfiguration in multi-account environments, and the
+hardest to spot because every component looks correct when inspected in isolation.
+
+Create a forwarding rule for `ad.corp.example.com` → the on-prem DNS IP, but **do not
+associate it** with VPC-B. Then query `dc1.ad.corp.example.com` from VPC-B.
+
+**Expected:** NXDOMAIN — not SERVFAIL. The rule exists but because it is not associated,
+the resolver never evaluates it. The query falls through to the catch-all `.` forwarding
+rule (if one exists) or to recursive resolution, neither of which knows the name.
+
+**Why this is worse than SERVFAIL:** SERVFAIL tells you "I tried and failed." NXDOMAIN
+tells you "the name does not exist" — which is a lie. The name exists, the rule exists,
+the target DNS server knows the answer. The only thing missing is the association, and
+nothing in the error points at it.
+
+**Diagnostic:** run `list-resolver-rule-associations` filtered by VPC ID. Compare the
+rules that ARE associated against the rules that EXIST. The gap is your answer.
+
+```bash
+# Rules associated to this VPC
+aws route53resolver list-resolver-rule-associations \
+  --filters Name=VPCId,Values=<vpc-b-id> \
+  --query 'ResolverRuleAssociations[*].[Name,ResolverRuleId,Status]'
+
+# All rules in the account/region
+aws route53resolver list-resolver-rules \
+  --query 'ResolverRules[?RuleType==`FORWARD`].[Name,Id,DomainName]'
+```
+
+This pattern comes from a real enterprise case: a global financial institution with three
+networking accounts sharing forwarding rules via RAM to a PoC VPC. A rule was replaced
+(old rule deleted, new rule created with updated target IPs) but the association step was
+missed. The result was intermittent domain join failures for AWS Managed Microsoft AD —
+intermittent because Windows DNS client suffix appending sometimes hit a different rule
+first.
+
+### Exercise 9 — DHCP search domain corrupts the query
+
+Change the DHCP option set on VPC-B to add a search domain: `svc.internal`.
+Then query `filesvr.corp.example.com` from VPC-B **without a trailing period**.
+
+**What happens:** Windows (and some Linux resolvers with `search` configured) appends the
+search domain: `filesvr.corp.example.com.svc.internal`. This suffixed name does not match
+the `corp.example.com` forwarding rule — it matches whatever handles `svc.internal`, or
+falls through to the catch-all. The result depends on the resolver's search order and
+cache state, making the failure **intermittent**.
+
+**Fix options:**
+- Use the FQDN with a trailing period: `filesvr.corp.example.com.` — the period tells the
+  resolver "this is absolute, do not append anything"
+- Remove or correct the search domain in the DHCP option set
+- On Windows: override in DNS client advanced settings → "Append these DNS suffixes"
+
+**Why this matters for domain join:** `nltest /dclist:DOMAIN` and the domain join wizard
+both use unqualified names internally. If the search domain appends a suffix that matches
+a different forwarding rule, the query is answered by the wrong DNS server. This produces
+intermittent failures that look like a connectivity or firewall problem but are purely a
+name resolution path problem.
+
 ## Lab Resources
 
 - **3 VPCs** — on-prem (us-east-1), production (us-east-1), DR (us-west-2)
@@ -344,6 +405,13 @@ precedence. Delete the local rule to restore the shared behavior.
       propagation in a forwarding chain
 - [ ] State the maximum number of IP addresses a forwarding rule can target (6), and the maximum
       number of forwarding rules per VPC/region (currently 1000 via rules + associations)
+- [ ] Explain the difference between a forwarding rule existing and a forwarding rule being
+      associated to a VPC, and why the error for a missing association is NXDOMAIN, not SERVFAIL
+- [ ] Describe how DHCP search domain suffixes interact with forwarding rule matching, and why
+      the resulting failure is intermittent
+- [ ] Explain why AWS Managed Microsoft AD domain join is particularly sensitive to both of
+      these issues (unqualified names, suffix appending, and the rule must be associated to
+      the VPC where the AD directory controllers live)
 
 ## References
 
@@ -355,3 +423,6 @@ precedence. Delete the local rule to restore the shared behavior.
 - [Associating a PHZ with a VPC in a different account](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/hosted-zone-private-associate-vpcs-different-accounts.html)
 - [How DNS traffic is routed for your VPC](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-dns.html#vpc-dns-resolving)
 - [VPC DNS resolver (AmazonProvidedDNS)](https://docs.aws.amazon.com/vpc/latest/userguide/AmazonDNS-concepts.html)
+- [DHCP option sets](https://docs.aws.amazon.com/vpc/latest/userguide/DHCPOptionSet.html)
+- [Associate forwarding rule with VPC](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/resolver-rules-managing.html)
+- [AD network security ports](https://docs.aws.amazon.com/directoryservice/latest/admin-guide/ms_ad_network_security.html)
