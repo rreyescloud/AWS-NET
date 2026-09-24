@@ -21,7 +21,7 @@ Scenarios come in two tiers, declared at the top of every scenario README so you
 **Lab**
 
 - **[NET-001](services/VPC/scenarios/NET-001_s3_crossaccount/)** — S3 private cross-account cross-region connectivity · Fintech
-- **[NET-003](services/R53/scenarios/ApplicationRecoveryController/NET-003_arc_region_switch_off_fails/)** — Multi-region failover with ARC Region Switch + Aurora Global Database · Financial Services
+- **[NET-003](services/R53/ApplicationRecoveryController/scenarios/NET-003_arc_region_switch_off_fails/)** — Multi-region failover with ARC Region Switch + Aurora Global Database · Financial Services
 - **[NET-004](services/NetworkFirewall/scenarios/NET-004_tls_inspection_cross_signed_cert/)** — TLS inspection rejects a cross-signed certificate · Capital Markets
 - **[NET-005](services/NetworkFirewall/scenarios/NET-005_asymmetric_routing_regional_natgw/)** — Asymmetric routing with regional NAT Gateway and multi-AZ firewall · Airlines
 - **[NET-006](services/WAF/scenarios/NET-006_waf_bot_control_api_chatbot/)** — WAF Bot Control for a public API chatbot · Public Sector
