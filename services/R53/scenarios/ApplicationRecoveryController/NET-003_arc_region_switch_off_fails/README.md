@@ -29,7 +29,7 @@ The solution must guarantee that during failover:
 
 ## Architecture
 
-[📐 Open diagram in draw.io](https://app.diagrams.net/#Uhttps%3A%2F%2Fraw.githubusercontent.com%2Frreyescloud%2FAWS-NET%2Fmain%2Fservices%2FR53%2Fscenarios%2FARC%2FNET-003_arc_region_switch_off_fails%2Farchitecture.drawio)
+[📐 Open diagram in draw.io](https://app.diagrams.net/#Uhttps%3A%2F%2Fraw.githubusercontent.com%2Frreyescloud%2FAWS-NET%2Fmain%2Fservices%2FR53%2Fscenarios%2FApplicationRecoveryController%2FNET-003_arc_region_switch_off_fails%2Farchitecture.drawio)
 
 ```
                     End Users

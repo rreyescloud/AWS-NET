@@ -32,7 +32,7 @@ Key highlights:
 
 ## Scenarios
 
-- **[NET-003](scenarios/ARC/NET-003_arc_region_switch_off_fails/)** — ARC Region Switch + Aurora Global Database failover · Financial Services · *Lab*
+- **[NET-003](scenarios/ApplicationRecoveryController/NET-003_arc_region_switch_off_fails/)** — ARC Region Switch + Aurora Global Database failover · Financial Services · *Lab*
 - **[NET-002](scenarios/NET-002_r53_query_logging/)** — Resolver query logging, four recurring problem categories · General · *Case analysis*
 - **[NET-008](scenarios/NET-008_global_resolver_troubleshooting/)** — Global Resolver failure modes · General · *Case analysis*
 - **[NET-009](scenarios/NET-009_eks_zonal_shift_recovery_delay/)** — EKS zonal shift recovery delay after expiry · Financial Services · *Case analysis*

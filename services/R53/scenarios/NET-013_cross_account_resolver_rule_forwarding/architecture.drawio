@@ -1,0 +1,123 @@
+<mxfile host="drawio-plugin" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36" modified="2026-08-19T17:58:38.512Z" version="22.1.22" etag="0SsZJ2cQ9OtGGjwu0TBj" type="embed">
+  <diagram name="NET-013: Cross-Account Resolver Rule Forwarding" id="r53-xacct-resolver">
+    <mxGraphModel dx="1015" dy="706" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1620" pageHeight="1060" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" value="NET-013: Cross-Account Route 53 Resolver Rule Sharing — forwarded queries time out (eu-west-1)" style="text;html=1;fontSize=16;fontStyle=1;align=center;" parent="1" vertex="1">
+          <mxGeometry x="300" y="20" width="1020" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="subtitle" value="Green = verified working · Red = failing / suspected · Yellow = unverified, must be confirmed" style="text;html=1;fontSize=11;fontStyle=2;align=center;fontColor=#666666;" parent="1" vertex="1">
+          <mxGeometry x="300" y="48" width="1020" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="acct-consumer" value="Consumer account — <CONSUMER_ACCOUNT_ID>" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;fontStyle=1;verticalAlign=top;spacingTop=6;" parent="1" vertex="1">
+          <mxGeometry x="40" y="90" width="430" height="390" as="geometry" />
+        </mxCell>
+        <mxCell id="vpc-consumer" value="vpc-008f2ca06864f9fca — 172.17.0.0/18" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#6c8ebf;fontSize=11;fontStyle=1;verticalAlign=top;dashed=1;spacingTop=4;" parent="1" vertex="1">
+          <mxGeometry x="65" y="130" width="380" height="230" as="geometry" />
+        </mxCell>
+        <mxCell id="ec2" value="EC2 probe&#xa;i-0ac8bce1153fdf74c&#xa;172.17.38.54&#xa;/etc/resolv.conf → 172.17.0.2" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="95" y="165" width="320" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="resolver2" value="VPC Resolver  172.17.0.2&#xa;&#xa;api.example.com      → TIMEOUT&#xa;api-dev.example.com  → TIMEOUT&#xa;code.example.com     → 52.59.56.222  OK&#xa;git.example.cloud    → 104.45.30.252 OK" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;align=left;spacingLeft=10;" parent="1" vertex="1">
+          <mxGeometry x="95" y="255" width="320" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="assoc" value="ResolverRuleAssociations — status COMPLETE&#xa;rslvr-rrassoc-85239f59feb04483a&#xa;rslvr-rrassoc-183f76501fa44a909&#xa;&#xa;⚠ Verify each association&#39;s ResolverRuleId&#xa;   still matches the CURRENT rule IDs" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=9;align=left;spacingLeft=10;verticalAlign=top;spacingTop=6;" parent="1" vertex="1">
+          <mxGeometry x="65" y="372" width="380" height="95" as="geometry" />
+        </mxCell>
+        <mxCell id="ram" value="AWS RAM&#xa;resource share&#xa;&#xa;ACTIVE&#xa;&#xa;(rules only —&#xa;endpoints cannot&#xa;be shared)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="495" y="140" width="110" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="acct-owner" value="Rule owner account — <RULE_OWNER_ACCOUNT_ID>" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=13;fontStyle=1;verticalAlign=top;spacingTop=6;" parent="1" vertex="1">
+          <mxGeometry x="640" y="90" width="500" height="560" as="geometry" />
+        </mxCell>
+        <mxCell id="rules" value="Resolver FORWARD rules (owned by DevOps, deployed by CDK)&#xa;&#xa;rslvr-rr-71f32766c0674e6f8   →  api.example.com.&#xa;rslvr-rr-c229e242803b47789   →  api-dev.example.com.&#xa;&#xa;⚠ TargetIps NEVER VERIFIED by the customer" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=9;align=left;spacingLeft=10;verticalAlign=top;spacingTop=6;" parent="1" vertex="1">
+          <mxGeometry x="665" y="130" width="450" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="vpc-owner" value="vpc-0798d9b0f2e26676f — 10.4.0.0/16" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#9673a6;fontSize=11;fontStyle=1;verticalAlign=top;dashed=1;spacingTop=4;" parent="1" vertex="1">
+          <mxGeometry x="665" y="245" width="450" height="380" as="geometry" />
+        </mxCell>
+        <mxCell id="outbound-ep" value="rslvr-out-995c5805246f46aaa   (OUTBOUND)   status OPERATIONAL" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#9673a6;fontSize=10;fontStyle=1;verticalAlign=top;spacingTop=6;" parent="1" vertex="1">
+          <mxGeometry x="685" y="375" width="410" height="230" as="geometry" />
+        </mxCell>
+        <mxCell id="eni-a" value="Subnet AZ-A&#xa;&#xa;ENI 10.4.44.80&#xa;&#xa;✓ verified reachable&#xa;✓ resolves when&#xa;   queried directly" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="700" y="415" width="185" height="175" as="geometry" />
+        </mxCell>
+        <mxCell id="eni-b" value="Subnet AZ-B&#xa;&#xa;ENI 10.4.59.249&#xa;&#xa;❌ NEVER TESTED&#xa;&#xa;Route table to on-prem?&#xa;TGW attachment in AZ?&#xa;NACL inbound UDP&#xa;ephemeral 1024-65535?" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="895" y="415" width="185" height="175" as="geometry" />
+        </mxCell>
+        <mxCell id="onprem" value="On-premises / intranet" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=13;fontStyle=1;verticalAlign=top;spacingTop=6;" parent="1" vertex="1">
+          <mxGeometry x="1230" y="245" width="340" height="290" as="geometry" />
+        </mxCell>
+        <mxCell id="dns-onprem" value="Corporate DNS&#xa;185.46.212.88&#xa;185.46.212.89" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="1265" y="290" width="270" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="records" value="Intranet records returned&#xa;&#xa;api.example.com      → 10.254.28.115&#xa;api-dev.example.com  → 10.254.21.159" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;align=left;spacingLeft=10;" parent="1" vertex="1">
+          <mxGeometry x="1265" y="395" width="270" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="blackhole" value="✕&#xa;silent drop&#xa;no ICMP&#xa;→ client timeout" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;fontStyle=1;dashed=1;" parent="1" vertex="1">
+          <mxGeometry x="1265" y="545" width="150" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="e-ec2-res" value="1  dig @172.17.0.2" style="edgeStyle=orthogonalEdgeStyle;fontSize=9;strokeWidth=2;strokeColor=#b85450;fontColor=#b85450;" parent="1" source="ec2" target="resolver2" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-res-ram" value="2  rule match → forward" style="edgeStyle=orthogonalEdgeStyle;fontSize=9;strokeWidth=2;strokeColor=#b85450;fontColor=#b85450;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" parent="1" source="resolver2" target="ram" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-ram-ep" value="3  Resolver-internal hop&#xa;NO VPC peering / TGW&#xa;required for this leg" style="edgeStyle=orthogonalEdgeStyle;fontSize=9;strokeWidth=2;strokeColor=#82b366;fontColor=#82b366;fontStyle=1;" parent="1" source="inbound-q" target="outbound-ep" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-enia-dns" value="4a  UDP/TCP 53  ✓" style="edgeStyle=orthogonalEdgeStyle;fontSize=9;strokeWidth=2;strokeColor=#82b366;fontColor=#82b366;" parent="1" source="eni-a" target="dns-onprem" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-enib-bh" value="4b  suspected blackhole" style="edgeStyle=orthogonalEdgeStyle;fontSize=9;strokeWidth=2;strokeColor=#b85450;fontColor=#b85450;dashed=1;" parent="1" source="eni-b" target="blackhole" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-ctrl-1" value="CONTROL TEST A&#xa;dig @10.4.44.80 → works&#xa;(does NOT exercise the shared rules)" style="edgeStyle=orthogonalEdgeStyle;fontSize=9;dashed=1;strokeColor=#d6b656;fontColor=#996f00;strokeWidth=2;exitX=1;exitY=0.25;exitDx=0;exitDy=0;entryX=0;entryY=0.15;entryDx=0;entryDy=0;" parent="1" source="ec2" target="eni-a" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="540" y="80" />
+              <mxPoint x="620" y="80" />
+              <mxPoint x="620" y="441" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-ctrl-2" value="CONTROL TEST B — dig @185.46.212.88 → works" style="edgeStyle=orthogonalEdgeStyle;fontSize=9;dashed=1;strokeColor=#82b366;fontColor=#82b366;strokeWidth=2;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="ec2" target="dns-onprem" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="255" y="90" />
+              <mxPoint x="1400" y="90" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="note-timeout" value="WHAT THE TIMEOUT PROVES  —  read this first&#xa;&#xa;Rule-matched names time out, but every other name resolves&#xa;through the SAME 172.17.0.2. Therefore the shared rule IS&#xa;matching in the consumer VPC — if it were not, the query would&#xa;fall through to recursive resolution and return SOMETHING&#xa;(a public answer, NXDOMAIN, or SERVFAIL). Silence means the&#xa;query was matched, forwarded, and no response ever came back.&#xa;&#xa;This eliminates: broken RAM share, unprogrammed association,&#xa;stale rule IDs from the CDK churn, and propagation delay.&#xa;The fault is DOWNSTREAM of the match." style="shape=note;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=9;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;" parent="1" vertex="1">
+          <mxGeometry x="40" y="495" width="430" height="185" as="geometry" />
+        </mxCell>
+        <mxCell id="note-ttl" value="PROPAGATION / NEGATIVE-CACHE TTL — not the cause&#xa;&#xa;· Association is effective once status is COMPLETE.&#xa;  There is no documented propagation TTL to wait out.&#xa;· Negative caching applies to NXDOMAIN / NODATA, keyed to&#xa;  the authoritative SOA minimum. A TIMEOUT is not a response,&#xa;  so there is nothing to cache and nothing to expire.&#xa;· Owner deploy 12:25Z → retest 13:08Z = 43 min elapsed.&#xa;  Far beyond any plausible window. Stop waiting, start testing." style="shape=note;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=9;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;" parent="1" vertex="1">
+          <mxGeometry x="40" y="695" width="430" height="145" as="geometry" />
+        </mxCell>
+        <mxCell id="note-qlog" value="QUERY LOGGING — expected behaviour, not a symptom&#xa;&#xa;Resolver query logging is configured PER VPC and records the&#xa;queries that ORIGINATE in that VPC.&#xa;&#xa;A query born in the consumer VPC and forwarded via the shared&#xa;rule still originates in the CONSUMER VPC. The owner VPC log&#xa;will never show it — the outbound endpoint is only the egress&#xa;vehicle, not the query origin.&#xa;&#xa;→ ACTION: enable query logging on vpc-008f2ca06864f9fca.&#xa;   Resolver logs carry rcode and answers, which separates&#xa;   &quot;never forwarded&quot; from &quot;forwarded, no reply&quot; — precisely&#xa;   the branch the timeout left open." style="shape=note;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=9;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;" parent="1" vertex="1">
+          <mxGeometry x="495" y="670" width="440" height="215" as="geometry" />
+        </mxCell>
+        <mxCell id="note-hyp" value="HYPOTHESES — ordered by probability × cost to check&#xa;&#xa;H1  AZ asymmetry on the outbound endpoint subnets&#xa;    Two ENIs, forwarded queries are spread across both.&#xa;    Only 10.4.44.80 was ever tested. If AZ-B has no route&#xa;    to on-prem, queries landing there blackhole.&#xa;    → dig api.example.com @10.4.59.249     ONE COMMAND&#xa;&#xa;H2  NACL on the endpoint subnets&#xa;    NACLs are stateless. Query egresses from an ephemeral&#xa;    port; if inbound UDP 1024-65535 is not allowed, the&#xa;    REPLY is dropped silently. Textbook timeout.&#xa;&#xa;H3  Rule TargetIps are not what they assume&#xa;    Never verified. An overwriting CDK deploy could have&#xa;    left them pointing at the endpoint&#39;s own IPs — a loop&#xa;    against something that does not answer queries.&#xa;    → aws route53resolver get-resolver-rule --resolver-rule-id ...&#xa;&#xa;H4  Data-plane state after control-plane churn&#xa;    Stack/rules/share recreated repeatedly 11:35Z-12:25Z with&#xa;    two deploys racing. Control plane can report COMPLETE&#xa;    while the data plane holds an older generation.&#xa;    → legitimate escalation path, but LAST. Lead with H4 and&#xa;      H1-H3 come straight back in the next reply." style="shape=note;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=9;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;" parent="1" vertex="1">
+          <mxGeometry x="960" y="670" width="610" height="330" as="geometry" />
+        </mxCell>
+        <mxCell id="note-reqs" value="SHARED-RULE REQUIREMENTS&#xa;&#xa;· Only the RULE is shared. Endpoints cannot be shared.&#xa;· Only the CONSUMER may associate the rule with its own VPC.&#xa;· Consumer VPC needs enableDnsSupport and must use the .2 resolver.&#xa;· Consumer VPC does NOT need routing to the endpoint VPC.&#xa;  ← the usual misdiagnosis: teams debug peering/TGW here for nothing&#xa;· The ENDPOINT VPC does need routing to the rule TargetIps.&#xa;  ← this is where the real network fault lives&#xa;· One rule per domain per VPC; overlaps resolve most-specific-first.&#xa;· Rule, endpoint and VPC must be in the same Region." style="shape=note;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=9;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;" parent="1" vertex="1">
+          <mxGeometry x="1160" y="90" width="410" height="145" as="geometry" />
+        </mxCell>
+        <mxCell id="note-generic" value="Domain names generalised (api.example.com / code.example.com). Resource and account IDs are as reported." style="text;html=1;fontSize=9;fontStyle=2;align=left;fontColor=#999999;" parent="1" vertex="1">
+          <mxGeometry x="40" y="1010" width="700" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="2" value="" style="edgeStyle=orthogonalEdgeStyle;fontSize=9;strokeWidth=2;strokeColor=#82b366;fontColor=#82b366;fontStyle=1;" edge="1" parent="1" source="ram" target="inbound-q">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="605" y="220" as="sourcePoint" />
+            <mxPoint x="890" y="375" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="inbound-q" value="Inbound endpoint — EXISTS?&#xa;A direct dig to 10.4.44.80 returned an answer.&#xa;An OUTBOUND endpoint does not answer queries,&#xa;so either an inbound endpoint is present and&#xa;undeclared, or the control test is invalid." style="shape=note;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=9;align=left;spacingLeft=8;" parent="1" vertex="1">
+          <mxGeometry x="705" y="285" width="410" height="75" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
