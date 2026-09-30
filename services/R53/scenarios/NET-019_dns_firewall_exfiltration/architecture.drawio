@@ -1,0 +1,95 @@
+<mxfile host="drawio-plugin" modified="2026-09-30T12:00:00.000Z" agent="Mozilla/5.0" version="22.1.22" etag="NET019-dns-firewall" type="embed">
+  <diagram name="NET-019: DNS Firewall — block exfiltration, allow lists, and the bypass" id="net019-dns-firewall">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1720" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="title" value="NET-019: DNS Firewall only protects the queries that go through the VPC resolver" style="text;html=1;fontSize=17;fontStyle=1;align=center;fontColor=#333333;" parent="1" vertex="1">
+          <mxGeometry x="260" y="15" width="1200" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="subtitle" value="Rules evaluate by priority and the first match acts. Advanced catches tunneling/DGA behavior no list predicts. A direct query to a public resolver skips all of it." style="text;html=1;fontSize=11;align=center;fontColor=#666666;" parent="1" vertex="1">
+          <mxGeometry x="210" y="45" width="1300" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- VPC -->
+        <mxCell id="vpc" value="VPC 10.60.0.0/16 (us-east-1)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=13;fontStyle=1;verticalAlign=top;" parent="1" vertex="1">
+          <mxGeometry x="40" y="90" width="1100" height="640" as="geometry" />
+        </mxCell>
+        <mxCell id="ec2" value="EC2 client (compromised)&#xa;t3.micro · SSM · no inbound&#xa;public IP" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="80" y="140" width="200" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="queries" value="dig app.company.internal&#xa;dig evil.c2-lab.example&#xa;dig legit.company.internal&#xa;&lt;b32&gt;.&lt;b32&gt;.s12.tunnel-lab.example" style="text;html=1;fontSize=10;align=left;verticalAlign=top;fontColor=#333333;fontFamily=Courier New;" parent="1" vertex="1">
+          <mxGeometry x="80" y="230" width="260" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="sg" value="Security group egress&#xa;open: allow all (default)&#xa;lockdown: UDP/TCP 53 → 10.60.0.2/32 only, 443 → anywhere (SSM, and DoH)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;align=left;spacingLeft=8;" parent="1" vertex="1">
+          <mxGeometry x="80" y="320" width="260" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="resolver" value="VPC resolver&#xa;10.60.0.2 / 169.254.169.253" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="420" y="140" width="200" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- Rule group -->
+        <mxCell id="rg" value="Rule group NET-019-rules · association priority 101 · first match acts" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff4f4;strokeColor=#b85450;fontSize=12;fontStyle=1;verticalAlign=top;" parent="1" vertex="1">
+          <mxGeometry x="700" y="120" width="420" height="330" as="geometry" />
+        </mxCell>
+        <mxCell id="r100" value="100 ALLOW · allow-business&#xa;*.amazonaws.com · company.internal · TRUST redirection" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;align=left;spacingLeft=8;" parent="1" vertex="1">
+          <mxGeometry x="720" y="155" width="380" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="r200" value="200 BLOCK · block-custom · c2-lab.example&#xa;NXDOMAIN | NODATA | OVERRIDE → sinkhole.company.internal" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;align=left;spacingLeft=8;" parent="1" vertex="1">
+          <mxGeometry x="720" y="205" width="380" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="r300" value="300 / 310 BLOCK · AWS managed lists&#xa;Malware domains · Botnet command-and-control" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;align=left;spacingLeft=8;" parent="1" vertex="1">
+          <mxGeometry x="720" y="255" width="380" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="r400" value="400 / 410 ALERT · DNS Firewall Advanced&#xa;DNS_TUNNELING · DGA · confidence LOW (behavioral, no list)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;align=left;spacingLeft=8;" parent="1" vertex="1">
+          <mxGeometry x="720" y="305" width="380" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="rdef" value="no match → allowed · fail open: DISABLED (fail-closed)" style="text;html=1;fontSize=10;align=left;fontColor=#666666;" parent="1" vertex="1">
+          <mxGeometry x="725" y="360" width="380" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="rnote" value="Move the ALLOW below 200 and its exemptions disappear (Exercise 2)." style="text;html=1;fontSize=10;align=left;fontColor=#b85450;" parent="1" vertex="1">
+          <mxGeometry x="725" y="385" width="380" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- PHZ -->
+        <mxCell id="phz" value="PHZ company.internal&#xa;&#xa;app → 10.60.1.50&#xa;sinkhole → 10.60.1.99 (walled garden)&#xa;legit → CNAME cdn.c2-lab.example" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;align=left;spacingLeft=8;" parent="1" vertex="1">
+          <mxGeometry x="420" y="300" width="240" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="cname" value="Exercise 3: an allowed name that redirects to a blocked one.&#xa;TRUST lets the chain through · INSPECT checks every hop." style="text;html=1;fontSize=10;align=left;verticalAlign=top;fontColor=#9673a6;whiteSpace=wrap;" parent="1" vertex="1">
+          <mxGeometry x="420" y="410" width="260" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Logging -->
+        <mxCell id="qlog" value="Resolver query logging → CloudWatch /aws/route53/net019&#xa;query_name · rcode · firewall_rule_action · firewall_domain_list_id" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="420" y="500" width="400" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="igw" value="Internet gateway" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="80" y="620" width="200" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- Outside -->
+        <mxCell id="auth" value="Public DNS / attacker's authoritative server&#xa;(receives the encoded labels if not blocked)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="1200" y="140" width="460" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="google" value="Public resolver 8.8.8.8&#xa;DNS Firewall never sees this query&#xa;no query log entry" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="1200" y="600" width="460" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="bypass" value="Exercise 5 — the bypass&#xa;&#xa;• dig @8.8.8.8 goes out the IGW: no firewall, no log&#xa;• Fix: SG egress DNS only to the VPC resolver&#xa;• Still open: DoH over 443 → needs an egress proxy or Network Firewall SNI rules, not DNS Firewall" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff4f4;strokeColor=#b85450;fontSize=10;align=left;verticalAlign=top;spacingLeft=10;spacingTop=6;" parent="1" vertex="1">
+          <mxGeometry x="1200" y="400" width="460" height="150" as="geometry" />
+        </mxCell>
+
+        <!-- Edges -->
+        <mxCell id="e1" value="UDP/TCP 53" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#82b366;strokeWidth=2;endArrow=block;fontSize=10;" parent="1" source="ec2" target="resolver" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e2" value="evaluate" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#b85450;strokeWidth=2;endArrow=block;fontSize=10;" parent="1" source="resolver" target="rg" edge="1"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="660" y="180" /><mxPoint x="660" y="140" /></Array></mxGeometry></mxCell>
+        <mxCell id="e3" value="private names" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#9673a6;dashed=1;endArrow=block;fontSize=10;" parent="1" source="resolver" target="phz" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e4" value="allowed / alerted → recursive resolution" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#82b366;strokeWidth=2;endArrow=block;fontSize=10;" parent="1" source="rg" target="auth" edge="1"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1160" y="180" /></Array></mxGeometry></mxCell>
+        <mxCell id="e5" value="every decision" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#6c8ebf;dashed=1;endArrow=block;fontSize=10;" parent="1" source="rg" target="qlog" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e6" value="dig @8.8.8.8" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#b85450;strokeWidth=2;dashed=1;endArrow=block;fontSize=10;fontColor=#b85450;" parent="1" source="ec2" target="igw" edge="1"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="60" y="180" /><mxPoint x="60" y="645" /></Array></mxGeometry></mxCell>
+        <mxCell id="e7" value="bypass" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#b85450;strokeWidth=2;dashed=1;endArrow=block;fontSize=10;fontColor=#b85450;" parent="1" source="igw" target="google" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
