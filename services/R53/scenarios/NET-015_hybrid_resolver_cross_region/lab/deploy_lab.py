@@ -253,47 +253,43 @@ def deploy(profile):
     # ── 7. Security groups ─────────────────────────────────────────────────
     print("Creating security groups...")
 
-    # On-prem DNS server SG — DELIBERATELY UDP-ONLY for Exercise 3
+    # SGs start in a working state: UDP + TCP 53, scoped to the VPC CIDRs that actually send DNS.
+    # Exercise 2 removes TCP 53 from the VPC-A resolver SG to break large responses.
+    def dns_rules(cidrs):
+        return [{"IpProtocol": proto, "FromPort": 53, "ToPort": 53,
+                 "IpRanges": [{"CidrIp": c, "Description": f"DNS {proto.upper()}"} for c in cidrs]}
+                for proto in ("udp", "tcp")]
+
+    # On-prem DNS server SG — only VPC-A's outbound endpoint queries it. The instance has a
+    # public IP (package install), so never open 53 to 0.0.0.0/0: open resolvers get scanned
+    # within hours, and account compliance automation may stop the instance. No inbound 443:
+    # the SSM agent only needs outbound.
     sg_onprem = ec2_a.create_security_group(
         GroupName="NET-015-onprem-dns", Description="On-prem DNS server",
         VpcId=vpc_onprem, TagSpecifications=[
             {"ResourceType": "security-group", "Tags": [{"Key": "Name", "Value": "NET-015-onprem-dns"}]}
         ])["GroupId"]
-    ec2_a.authorize_security_group_ingress(GroupId=sg_onprem, IpPermissions=[
-        {"IpProtocol": "udp", "FromPort": 53, "ToPort": 53,
-         "IpRanges": [{"CidrIp": "0.0.0.0/0", "Description": "DNS UDP from anywhere"}]},
-        # TCP 53 intentionally MISSING — Exercise 3
-        {"IpProtocol": "tcp", "FromPort": 443, "ToPort": 443,
-         "IpRanges": [{"CidrIp": "0.0.0.0/0", "Description": "HTTPS for SSM"}]},
-    ])
+    ec2_a.authorize_security_group_ingress(GroupId=sg_onprem, IpPermissions=dns_rules([VPCA_CIDR]))
 
-    # VPC-A resolver SG — also UDP-ONLY for consistency
+    # VPC-A resolver SG (inbound + outbound endpoints) — the inbound endpoint receives from VPC-B
+    # and from VPC-A itself
     sg_resolver_a = ec2_a.create_security_group(
         GroupName="NET-015-resolver-a", Description="Resolver endpoints production",
         VpcId=vpc_a, TagSpecifications=[
             {"ResourceType": "security-group", "Tags": [{"Key": "Name", "Value": "NET-015-resolver-a"}]}
         ])["GroupId"]
-    ec2_a.authorize_security_group_ingress(GroupId=sg_resolver_a, IpPermissions=[
-        {"IpProtocol": "udp", "FromPort": 53, "ToPort": 53,
-         "IpRanges": [{"CidrIp": "0.0.0.0/0", "Description": "DNS UDP"}]},
-        # TCP 53 intentionally MISSING
-    ])
+    ec2_a.authorize_security_group_ingress(GroupId=sg_resolver_a, IpPermissions=dns_rules([VPCA_CIDR, VPCB_CIDR]))
     # Default egress (allow all) already exists on new SGs — no need to add it
 
-    # VPC-B resolver SG
+    # VPC-B resolver SG — outbound endpoint only. SGs are stateful, so replies need no inbound rule.
     sg_resolver_b = ec2_b.create_security_group(
         GroupName="NET-015-resolver-b", Description="Resolver endpoints DR",
         VpcId=vpc_b, TagSpecifications=[
             {"ResourceType": "security-group", "Tags": [{"Key": "Name", "Value": "NET-015-resolver-b"}]}
         ])["GroupId"]
-    ec2_b.authorize_security_group_ingress(GroupId=sg_resolver_b, IpPermissions=[
-        {"IpProtocol": "udp", "FromPort": 53, "ToPort": 53,
-         "IpRanges": [{"CidrIp": "0.0.0.0/0", "Description": "DNS UDP"}]},
-        # TCP 53 intentionally MISSING
-    ])
     # Default egress already present
 
-    # Workload SGs (for test EC2s — SSM only, no inbound needed)
+    # Workload SGs (test EC2s + SSM interface endpoints)
     sg_workload_a = ec2_a.create_security_group(
         GroupName="NET-015-workload-a", Description="Workload production",
         VpcId=vpc_a, TagSpecifications=[
@@ -304,6 +300,13 @@ def deploy(profile):
         VpcId=vpc_b, TagSpecifications=[
             {"ResourceType": "security-group", "Tags": [{"Key": "Name", "Value": "NET-015-workload-b"}]}
         ])["GroupId"]
+    # The SSM interface endpoints use the workload SGs, so they need HTTPS from inside the VPC
+    ec2_a.authorize_security_group_ingress(GroupId=sg_workload_a, IpPermissions=[
+        {"IpProtocol": "tcp", "FromPort": 443, "ToPort": 443,
+         "IpRanges": [{"CidrIp": VPCA_CIDR, "Description": "HTTPS to SSM endpoints"}]}])
+    ec2_b.authorize_security_group_ingress(GroupId=sg_workload_b, IpPermissions=[
+        {"IpProtocol": "tcp", "FromPort": 443, "ToPort": 443,
+         "IpRanges": [{"CidrIp": VPCB_CIDR, "Description": "HTTPS to SSM endpoints"}]}])
 
     r["security_groups"] = {
         "onprem": sg_onprem,

@@ -39,7 +39,7 @@ architecture. This index shows which services appear across the portfolio and in
 
 - **Transit Gateway** — NET-005: centralized inspection with RNAT; NET-011: spoke/inspection VPC topology
 - **VPC Peering** — NET-007: cross-VPC Kafka latency; NET-015: cross-region for resolver forwarding chain
-- **VPC Endpoints** — NET-001: S3 gateway endpoint; NET-015: SSM interface endpoints in private subnets
+- **VPC Endpoints** — NET-001: S3 gateway endpoint; NET-015: SSM interface endpoints in private subnets, endpoint-managed PHZs outranking an `amazonaws.com` forwarding rule
 - **Regional NAT Gateway** — NET-005: zonal affinity, RNAT route table, chaining with firewall
 - **VPC Routing** — NET-005: per-AZ return routing; NET-011: TGW + firewall + NAT insertion order
 
@@ -51,12 +51,11 @@ architecture. This index shows which services appear across the portfolio and in
 
 ## Directory & Hybrid Identity
 
-- **AWS Managed Microsoft AD** — NET-015: domain join failure caused by missing forwarding rule association and DHCP search domain suffix appending
-- **DHCP Option Sets** — NET-015: search domain suffix corrupting DNS queries, producing intermittent NXDOMAIN during AD domain join
+- **DHCP Option Sets** — NET-015: `domain-name` and `ndots` deciding the queried name, short-name NXDOMAIN, EKS `ndots:5` wasted queries, internal names leaking to public DNS
 
 ## Other
 
 - **ACM** — NET-004: cross-signed certificate import rejection, TLS inspection configuration
-- **RAM** — NET-002: sharing query log configs across accounts; NET-015: forwarding rule sharing and the association gap when a shared rule is replaced
+- **RAM** — NET-002: sharing query log configs across accounts
 - **S3** — NET-001: cross-account private access; NET-014: origin for monetized content
 - **Blockchain** — NET-014: EIP-3009 USDC transfer on Base Sepolia, web3.py
