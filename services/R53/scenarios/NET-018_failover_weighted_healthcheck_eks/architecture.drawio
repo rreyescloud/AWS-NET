@@ -1,0 +1,133 @@
+<mxfile host="drawio-plugin" modified="2026-09-30T20:05:32.090Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36" etag="pZ5YJY5nYFl_4B4I5hF-" version="22.1.22" type="embed">
+  <diagram name="NET-018: Failover + weighted routing + health checks with EKS ExternalDNS" id="net018-failover-weighted">
+    <mxGraphModel dx="1376" dy="639" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1720" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" value="NET-018: Two record layers, two owners — failover across regions, weighted inside one" style="text;html=1;fontSize=17;fontStyle=1;align=center;fontColor=#333333;" parent="1" vertex="1">
+          <mxGeometry x="260" y="15" width="1200" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="subtitle" value="A name + type holds one routing policy. The weighted layer lives on regional names written by ExternalDNS; the failover layer and all health checks are owned by IaC." style="text;html=1;fontSize=11;align=center;fontColor=#666666;" parent="1" vertex="1">
+          <mxGeometry x="210" y="45" width="1300" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="zone" value="Route 53 public hosted zone — example.com (delegated lab subdomain)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=13;fontStyle=1;verticalAlign=top;" parent="1" vertex="1">
+          <mxGeometry x="40" y="80" width="1200" height="420" as="geometry" />
+        </mxCell>
+        <mxCell id="failover" value="api.example.com — failover (IaC-owned)&#xa;&#xa;PRIMARY: alias → use1.api.example.com · ETH=yes&#xa;SECONDARY: alias → euw1.api.example.com · ETH=yes" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="380" y="120" width="480" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="use1" value="use1.api.example.com — weighted (ExternalDNS, cluster 1)&#xa;&#xa;set-id=alb1 · weight 70 · alias → ALB-1 · ETH=yes · HC=hc-alb1&#xa;set-id=alb2 · weight 30 · alias → ALB-2 · ETH=yes · HC=hc-alb2" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="80" y="290" width="520" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="euw1" value="euw1.api.example.com — weighted (ExternalDNS, cluster 2)&#xa;&#xa;set-id=alb3 · weight 100 · alias → ALB-3 · ETH=yes · HC=hc-alb3" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="680" y="290" width="520" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="txt" value="TXT registry records per hostname (--txt-prefix, unique --txt-owner-id per cluster). They count toward the 10,000 record-set default quota." style="text;html=1;fontSize=10;align=center;fontColor=#666666;" parent="1" vertex="1">
+          <mxGeometry x="80" y="430" width="1120" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="iac" value="IaC (CloudFormation / Terraform)&#xa;failover records + all health checks" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="1290" y="80" width="380" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="hcs" value="Route 53 health checks&#xa;&#xa;hc-alb1 · hc-alb2 · hc-alb3&#xa;HTTPS /healthz · endpoint = each ALB&#39;s own DNS name · SNI on&#xa;TCP ≤ 4 s, response ≤ 2 s · healthy if &gt;18% of checkers OK&#xa;certificates not validated" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;align=left;spacingLeft=10;" parent="1" vertex="1">
+          <mxGeometry x="1290" y="180" width="380" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="checkers" value="Route 53 health checkers (internet)&#xa;source: ROUTE53_HEALTHCHECKS ranges&#xa;can&#39;t reach private IPs (internal ALB)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="1290" y="340" width="380" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="r1" value="us-east-1 — primary" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=13;fontStyle=1;verticalAlign=top;" parent="1" vertex="1">
+          <mxGeometry x="40" y="560" width="760" height="340" as="geometry" />
+        </mxCell>
+        <mxCell id="eks1" value="EKS cluster 1 · AWS Load Balancer Controller" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;fontStyle=1;verticalAlign=top;" parent="1" vertex="1">
+          <mxGeometry x="60" y="600" width="720" height="280" as="geometry" />
+        </mxCell>
+        <mxCell id="alb1" value="ALB-1&#xa;3 pods (us-east-1a/b)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="90" y="660" width="200" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="alb2" value="ALB-2&#xa;2 pods (us-east-1c)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="330" y="660" width="200" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="xdns1" value="ExternalDNS&#xa;--txt-owner-id=use1&#xa;--domain-filter=use1.api" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="560" y="660" width="190" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="lbc1" value="IngressGroup (alb.ingress.kubernetes.io/group.name) shares one ALB across apps: one app with every pod failing readiness can make the whole ALB unhealthy for ETH (Exercise 3)." style="text;html=1;fontSize=10;align=left;verticalAlign=top;fontColor=#b85450;whiteSpace=wrap;" parent="1" vertex="1">
+          <mxGeometry x="90" y="760" width="670" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="r2" value="eu-west-1 — secondary" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=13;fontStyle=1;verticalAlign=top;" parent="1" vertex="1">
+          <mxGeometry x="840" y="560" width="400" height="340" as="geometry" />
+        </mxCell>
+        <mxCell id="eks2" value="EKS cluster 2" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;fontStyle=1;verticalAlign=top;" parent="1" vertex="1">
+          <mxGeometry x="860" y="600" width="360" height="280" as="geometry" />
+        </mxCell>
+        <mxCell id="alb3" value="ALB-3&#xa;3 pods (eu-west-1a/b)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="880" y="660" width="160" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="xdns2" value="ExternalDNS&#xa;--txt-owner-id=euw1&#xa;--domain-filter=euw1.api" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="1060" y="660" width="150" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="rules" value="Why it&#39;s built this way&#xa;&#xa;• One name + type = one routing policy. A simple api.example.com record plus failover on the same name → InvalidChangeBatch&#xa;• A record with ETH and a health check is unhealthy if either one fails&#xa;• ETH on an ALB: a target group with only unhealthy targets makes the whole ALB unhealthy&#xa;• Nothing healthy → fail-open: failover returns the PRIMARY&#xa;• A disabled health check counts as healthy; use Inverted to force a failure&#xa;• Failover time ≈ interval × threshold + 60 s ELB alias TTL + client caching&#xa;• Teardown: ExternalDNS first, or it recreates the records" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff4f4;strokeColor=#b85450;fontSize=10;align=left;verticalAlign=top;spacingLeft=10;spacingTop=6;" parent="1" vertex="1">
+          <mxGeometry x="1290" y="560" width="380" height="340" as="geometry" />
+        </mxCell>
+        <mxCell id="e-primary" value="PRIMARY" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#82b366;strokeWidth=2;endArrow=block;fontSize=10;fontStyle=1;" parent="1" source="failover" target="use1" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-secondary" value="SECONDARY" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#6c8ebf;strokeWidth=2;dashed=1;endArrow=block;fontSize=10;fontStyle=1;" parent="1" source="failover" target="euw1" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-w1" value="70" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#82b366;strokeWidth=2;endArrow=block;fontSize=10;" parent="1" source="use1" target="alb1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="190" y="520" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-w2" value="30" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#82b366;strokeWidth=2;endArrow=block;fontSize=10;" parent="1" source="use1" target="alb2" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="430" y="520" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-w3" value="100" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#82b366;strokeWidth=2;endArrow=block;fontSize=10;" parent="1" source="euw1" target="alb3" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="960" y="520" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-x1" value="writes" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#82b366;dashed=1;endArrow=open;fontSize=10;fontColor=#82b366;" parent="1" source="xdns1" target="use1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="665" y="540" />
+              <mxPoint x="560" y="540" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-x2" value="writes" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#82b366;dashed=1;endArrow=open;fontSize=10;fontColor=#82b366;" parent="1" source="xdns2" target="euw1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1135" y="540" />
+              <mxPoint x="1135" y="540" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-iac1" value="owns" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#9673a6;dashed=1;endArrow=open;fontSize=10;fontColor=#9673a6;" parent="1" source="iac" target="failover" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-iac2" value="creates" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#9673a6;dashed=1;endArrow=open;fontSize=10;fontColor=#9673a6;" parent="1" source="iac" target="hcs" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-hcref" value="referenced by HC= on each weighted record" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#d79b00;dashed=1;dashPattern=1 3;endArrow=open;fontSize=10;fontColor=#d79b00;" parent="1" source="hcs" target="euw1" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-probe" value="HTTPS /healthz to ALB-1, ALB-2, ALB-3&#xa;(ALB SGs must allow these ranges)" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#d79b00;strokeWidth=2;endArrow=block;fontSize=10;fontColor=#d79b00;" parent="1" source="checkers" target="alb3" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1480" y="540" />
+              <mxPoint x="1000" y="540" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
