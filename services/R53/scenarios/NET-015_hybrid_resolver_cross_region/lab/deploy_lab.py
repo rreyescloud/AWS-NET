@@ -22,7 +22,7 @@ import time
 from pathlib import Path
 
 import boto3
-from botocore.exceptions import ClientError
+from botocore.exceptions import ClientError, WaiterError
 
 RESOURCE_FILE = Path(__file__).parent / "resources.json"
 
@@ -787,198 +787,211 @@ def teardown(profile):
         print("No resources.json found.")
         return
 
-    sess_a = get_session(profile, REGION_A)
-    sess_b = get_session(profile, REGION_B)
-    ec2_a = sess_a.client("ec2")
-    ec2_b = sess_b.client("ec2")
-    r53r_a = sess_a.client("route53resolver")
-    r53r_b = sess_b.client("route53resolver")
-    r53 = sess_a.client("route53")
-    logs_a = sess_a.client("logs")
-    logs_b = sess_b.client("logs")
-    iam = sess_a.client("iam")
+    sess = {REGION_A: get_session(profile, REGION_A), REGION_B: get_session(profile, REGION_B)}
+    ec2 = {reg: s.client("ec2") for reg, s in sess.items()}
+    r53r = {reg: s.client("route53resolver") for reg, s in sess.items()}
+    logs = {reg: s.client("logs") for reg, s in sess.items()}
+    r53 = sess[REGION_A].client("route53")
+    iam = sess[REGION_A].client("iam")
+
+    vpcs = [(REGION_A, r.get("vpc_onprem")), (REGION_A, r.get("vpc_a")), (REGION_B, r.get("vpc_b"))]
+    vpcs = [(reg, v) for reg, v in vpcs if v]
+    failures = []
 
     def safe(fn, *a, **kw):
         try:
-            fn(*a, **kw)
-        except Exception as e:
-            print(f"  (skip: {e})")
+            return fn(*a, **kw)
+        except ClientError as e:
+            code = e.response["Error"]["Code"]
+            if "NotFound" in code or code.startswith("NoSuch"):
+                return None  # already gone
+            print(f"  (failed: {e})")
+            failures.append(str(e))
+        except WaiterError as e:
+            print(f"  (failed: {e})")
+            failures.append(str(e))
+        return None
+
+    def wait_until(desc, done_fn, timeout=600, interval=10):
+        """Poll done_fn() until True; record a failure on timeout instead of raising."""
+        elapsed = 0
+        while elapsed < timeout:
+            try:
+                if done_fn():
+                    return True
+            except ClientError:
+                pass
+            print(f"  waiting for {desc}... ({elapsed}s)")
+            time.sleep(interval)
+            elapsed += interval
+        print(f"  (timed out waiting for {desc})")
+        failures.append(f"timeout: {desc}")
+        return False
 
     # ── Query log associations & configs ───────────────────────────────────
     print("Removing query logging...")
-    for client, cfg_id, vpc_id in [
-        (r53r_a, r.get("query_log_configs", {}).get("prod"), r.get("vpc_a")),
-        (r53r_b, r.get("query_log_configs", {}).get("dr"), r.get("vpc_b")),
-    ]:
-        if cfg_id and vpc_id:
-            # Find and delete the association
-            try:
-                assocs = client.list_resolver_query_log_config_associations(
-                    Filters=[{"Name": "ResolverQueryLogConfigId", "Values": [cfg_id]}]
-                )["ResolverQueryLogConfigAssociations"]
-                for a in assocs:
-                    safe(client.disassociate_resolver_query_log_config,
-                         ResolverQueryLogConfigId=cfg_id, ResourceId=a["ResourceId"])
-                time.sleep(5)
-            except Exception:
-                pass
-            safe(client.delete_resolver_query_log_config, ResolverQueryLogConfigId=cfg_id)
+    for reg, cfg_id in [(REGION_A, r.get("query_log_configs", {}).get("prod")),
+                        (REGION_B, r.get("query_log_configs", {}).get("dr"))]:
+        if not cfg_id:
+            continue
+        client = r53r[reg]
+        list_assocs = lambda c=client, i=cfg_id: c.list_resolver_query_log_config_associations(
+            Filters=[{"Name": "ResolverQueryLogConfigId", "Values": [i]}])["ResolverQueryLogConfigAssociations"]
+        for a in safe(list_assocs) or []:
+            if a["Status"] != "DELETING":
+                safe(client.disassociate_resolver_query_log_config,
+                     ResolverQueryLogConfigId=cfg_id, ResourceId=a["ResourceId"])
+        wait_until(f"query log config {cfg_id} disassociation", lambda f=list_assocs: not f())
+        safe(client.delete_resolver_query_log_config, ResolverQueryLogConfigId=cfg_id)
 
-    # ── Forwarding rule associations & rules ───────────────────────────────
-    print("Removing forwarding rules...")
-    for client, rule_id in [
-        (r53r_a, r.get("rules", {}).get("rule_a")),
-        (r53r_b, r.get("rules", {}).get("rule_b")),
-    ]:
-        if rule_id:
-            try:
-                assocs = client.list_resolver_rule_associations(
-                    Filters=[{"Name": "ResolverRuleId", "Values": [rule_id]}]
-                )["ResolverRuleAssociations"]
-                for a in assocs:
-                    if a["Status"] != "DELETING":
-                        safe(client.disassociate_resolver_rule,
-                             ResolverRuleId=rule_id, VPCId=a["VPCId"])
-                time.sleep(10)
-            except Exception:
-                pass
-            safe(client.delete_resolver_rule, ResolverRuleId=rule_id)
+    # ── Forwarding rules on the lab's outbound endpoints ───────────────────
+    # Every rule that targets a lab endpoint, including leftovers from exercises (a rule must be
+    # disassociated before it can be deleted, and deleted before its endpoint can be).
+    print("Removing forwarding rules (disassociation takes 1-2 min)...")
+    outbound = [(REGION_A, r.get("endpoints", {}).get("outbound_a")),
+                (REGION_B, r.get("endpoints", {}).get("outbound_b"))]
+    for reg, eid in outbound:
+        if not eid:
+            continue
+        client = r53r[reg]
+        list_rules = lambda c=client, e=eid: c.list_resolver_rules(
+            Filters=[{"Name": "ResolverEndpointId", "Values": [e]}])["ResolverRules"]
+        rules = safe(list_rules) or []
+        for rule in rules:
+            for a in safe(lambda c=client, i=rule["Id"]: c.list_resolver_rule_associations(
+                    Filters=[{"Name": "ResolverRuleId", "Values": [i]}])["ResolverRuleAssociations"]) or []:
+                if a["Status"] != "DELETING":
+                    safe(client.disassociate_resolver_rule, ResolverRuleId=rule["Id"], VPCId=a["VPCId"])
+        for rule in rules:
+            wait_until(f"rule {rule['Id']} disassociation", lambda c=client, i=rule["Id"]: not c.list_resolver_rule_associations(
+                Filters=[{"Name": "ResolverRuleId", "Values": [i]}])["ResolverRuleAssociations"])
+            safe(client.delete_resolver_rule, ResolverRuleId=rule["Id"])
+        wait_until(f"rules on {eid} to be deleted", lambda f=list_rules: not f())
 
     # ── Resolver endpoints ─────────────────────────────────────────────────
     print("Deleting resolver endpoints (takes 1-2 min)...")
-    for client, eid in [
-        (r53r_a, r.get("endpoints", {}).get("inbound_a")),
-        (r53r_a, r.get("endpoints", {}).get("outbound_a")),
-        (r53r_b, r.get("endpoints", {}).get("outbound_b")),
-    ]:
+    endpoints = [(REGION_A, r.get("endpoints", {}).get("inbound_a"))] + outbound
+    for reg, eid in endpoints:
         if eid:
-            safe(client.delete_resolver_endpoint, ResolverEndpointId=eid)
-
-    # Wait for endpoint deletion
-    time.sleep(30)
+            safe(r53r[reg].delete_resolver_endpoint, ResolverEndpointId=eid)
+    for reg, eid in endpoints:
+        if eid:
+            def gone(c=r53r[reg], e=eid):
+                try:
+                    c.get_resolver_endpoint(ResolverEndpointId=e)
+                    return False
+                except ClientError as ex:
+                    return ex.response["Error"]["Code"] == "ResourceNotFoundException"
+            wait_until(f"endpoint {eid} deletion", gone)
 
     # ── PHZ disassociate & delete ──────────────────────────────────────────
     print("Removing Private Hosted Zones...")
     for phz_id in [r.get("phz", {}).get("prod"), r.get("phz", {}).get("dr")]:
         if not phz_id:
             continue
-        # Delete records first
-        try:
-            rrsets = r53.list_resource_record_sets(HostedZoneId=phz_id)["ResourceRecordSets"]
-            changes = [{"Action": "DELETE", "ResourceRecordSet": rr}
-                      for rr in rrsets if rr["Type"] not in ("SOA", "NS")]
-            if changes:
-                r53.change_resource_record_sets(HostedZoneId=phz_id,
-                                                ChangeBatch={"Changes": changes})
-        except Exception:
-            pass
-        # Disassociate VPCs
-        try:
-            zone = r53.get_hosted_zone(Id=phz_id)
-            for vpc in zone.get("VPCs", []):
-                # Cannot disassociate the last VPC — delete handles it
-                try:
-                    r53.disassociate_vpc_from_hosted_zone(
-                        HostedZoneId=phz_id, VPC=vpc)
-                except Exception:
-                    pass
-        except Exception:
-            pass
+        rrsets = safe(lambda: r53.list_resource_record_sets(HostedZoneId=phz_id)["ResourceRecordSets"]) or []
+        changes = [{"Action": "DELETE", "ResourceRecordSet": rr}
+                   for rr in rrsets if rr["Type"] not in ("SOA", "NS")]
+        if changes:
+            safe(r53.change_resource_record_sets, HostedZoneId=phz_id, ChangeBatch={"Changes": changes})
+        zone = safe(r53.get_hosted_zone, Id=phz_id) or {}
+        for vpc in zone.get("VPCs", [])[1:]:  # the last VPC can't be disassociated; delete handles it
+            safe(r53.disassociate_vpc_from_hosted_zone, HostedZoneId=phz_id, VPC=vpc)
         safe(r53.delete_hosted_zone, Id=phz_id)
 
     # ── EC2 instances ──────────────────────────────────────────────────────
     print("Terminating EC2 instances...")
-    for region, iid in [
-        (REGION_A, r.get("instances", {}).get("onprem_dns")),
-        (REGION_A, r.get("instances", {}).get("prod_test")),
-        (REGION_B, r.get("instances", {}).get("dr_test")),
-    ]:
-        if iid:
-            client = (sess_a if region == REGION_A else sess_b).client("ec2")
-            safe(client.terminate_instances, InstanceIds=[iid])
-
-    # Release EIP
+    instances = {REGION_A: [r.get("instances", {}).get(k) for k in ("onprem_dns", "prod_test")],
+                 REGION_B: [r.get("instances", {}).get("dr_test")]}
+    for reg, ids in instances.items():
+        ids = [i for i in ids if i]
+        if ids:
+            safe(ec2[reg].terminate_instances, InstanceIds=ids)
+            safe(ec2[reg].get_waiter("instance_terminated").wait, InstanceIds=ids)
     if r.get("eip_onprem"):
-        time.sleep(5)
-        safe(ec2_a.release_address, AllocationId=r["eip_onprem"])
+        safe(ec2[REGION_A].release_address, AllocationId=r["eip_onprem"])
 
-    # ── VPC endpoints ──────────────────────────────────────────────────────
+    # ── VPC endpoints (lab SSM endpoints + anything else, e.g. guardduty-data) ─
+    # GuardDuty Runtime Monitoring creates its own guardduty-data endpoint in VPCs with EC2
+    # instances. It blocks VPC deletion, and it's safe to remove once the instances are gone.
     print("Deleting VPC endpoints...")
-    for region, endpoints in [
-        (REGION_A, r.get("vpc_endpoints_a", {})),
-        (REGION_B, r.get("vpc_endpoints_b", {})),
-    ]:
-        client = (sess_a if region == REGION_A else sess_b).client("ec2")
-        for svc, eid in endpoints.items():
-            safe(client.delete_vpc_endpoints, VpcEndpointIds=[eid])
-
-    # Wait for instances to terminate
-    print("Waiting for instances to terminate...")
-    time.sleep(30)
+    for reg, vpc in vpcs:
+        live = lambda c=ec2[reg], v=vpc: [e for e in c.describe_vpc_endpoints(
+            Filters=[{"Name": "vpc-id", "Values": [v]}])["VpcEndpoints"] if e["State"] not in ("deleted", "deleting")]
+        eps = safe(live) or []
+        for e in eps:
+            if "guardduty" in e["ServiceName"]:
+                print(f"  {e['VpcEndpointId']} was created by GuardDuty ({e['ServiceName']})")
+        if eps:
+            safe(ec2[reg].delete_vpc_endpoints, VpcEndpointIds=[e["VpcEndpointId"] for e in eps])
 
     # ── VPC peerings ───────────────────────────────────────────────────────
     print("Deleting VPC peerings...")
     for pcx in [r.get("peering_onprem_a"), r.get("peering_a_b")]:
         if pcx:
-            safe(ec2_a.delete_vpc_peering_connection, VpcPeeringConnectionId=pcx)
+            safe(ec2[REGION_A].delete_vpc_peering_connection, VpcPeeringConnectionId=pcx)
 
-    # ── Security groups (non-default) ──────────────────────────────────────
-    print("Deleting security groups...")
-    time.sleep(10)  # let ENIs detach
-    for region, sgs in [
-        (REGION_A, [r.get("security_groups", {}).get(k) for k in
-                    ["onprem", "resolver_a", "workload_a"]]),
-        (REGION_B, [r.get("security_groups", {}).get(k) for k in
-                    ["resolver_b", "workload_b"]]),
-    ]:
-        client = (sess_a if region == REGION_A else sess_b).client("ec2")
-        for sg in sgs:
-            if sg:
-                safe(client.delete_security_group, GroupId=sg)
+    # ── VPCs and everything inside them ────────────────────────────────────
+    print("Deleting VPCs (subnets, route tables, security groups, IGW)...")
+    for reg, vpc in vpcs:
+        client = ec2[reg]
+        flt = [{"Name": "vpc-id", "Values": [vpc]}]
+        vpc_info = safe(lambda: client.describe_vpcs(VpcIds=[vpc])["Vpcs"])
+        if not vpc_info:
+            continue
+        # Resolver, endpoint and instance ENIs take a while to disappear after their owner is deleted
+        if not wait_until(f"ENIs in {vpc} to be released",
+                          lambda: not client.describe_network_interfaces(Filters=flt)["NetworkInterfaces"]):
+            continue
+        for igw in client.describe_internet_gateways(
+                Filters=[{"Name": "attachment.vpc-id", "Values": [vpc]}])["InternetGateways"]:
+            safe(client.detach_internet_gateway, InternetGatewayId=igw["InternetGatewayId"], VpcId=vpc)
+            safe(client.delete_internet_gateway, InternetGatewayId=igw["InternetGatewayId"])
+        for sub in client.describe_subnets(Filters=flt)["Subnets"]:
+            safe(client.delete_subnet, SubnetId=sub["SubnetId"])
+        for rt in client.describe_route_tables(Filters=flt)["RouteTables"]:
+            if not any(a.get("Main") for a in rt["Associations"]):
+                safe(client.delete_route_table, RouteTableId=rt["RouteTableId"])
+        sgs = [g for g in client.describe_security_groups(Filters=flt)["SecurityGroups"]
+               if g["GroupName"] != "default"]
+        for g in sgs:  # revoke first so SGs that reference each other can be deleted
+            if g["IpPermissions"]:
+                safe(client.revoke_security_group_ingress, GroupId=g["GroupId"], IpPermissions=g["IpPermissions"])
+        for g in sgs:
+            safe(client.delete_security_group, GroupId=g["GroupId"])
+        safe(client.delete_vpc, VpcId=vpc)
 
-    # ── IGW ────────────────────────────────────────────────────────────────
-    if r.get("igw_onprem"):
-        safe(ec2_a.detach_internet_gateway, InternetGatewayId=r["igw_onprem"],
-             VpcId=r["vpc_onprem"])
-        safe(ec2_a.delete_internet_gateway, InternetGatewayId=r["igw_onprem"])
-
-    # ── Subnets ────────────────────────────────────────────────────────────
-    print("Deleting subnets...")
-    for region, subs in [
-        (REGION_A, [r.get("subnets", {}).get(k) for k in ["onprem", "a1", "a2", "a3"]]),
-        (REGION_B, [r.get("subnets", {}).get(k) for k in ["b1", "b2", "b3"]]),
-    ]:
-        client = (sess_a if region == REGION_A else sess_b).client("ec2")
-        for sub in subs:
-            if sub:
-                safe(client.delete_subnet, SubnetId=sub)
-
-    # ── VPCs ───────────────────────────────────────────────────────────────
-    print("Deleting VPCs...")
-    for vpc_id in [r.get("vpc_onprem"), r.get("vpc_a")]:
-        if vpc_id:
-            safe(ec2_a.delete_vpc, VpcId=vpc_id)
-    if r.get("vpc_b"):
-        safe(ec2_b.delete_vpc, VpcId=r["vpc_b"])
+    # ── DHCP option sets created by the lab or its exercises ───────────────
+    for reg in (REGION_A, REGION_B):
+        for d in safe(lambda c=ec2[reg]: c.describe_dhcp_options(
+                Filters=[{"Name": "tag:Project", "Values": ["NET-015"]}])["DhcpOptions"]) or []:
+            safe(ec2[reg].delete_dhcp_options, DhcpOptionsId=d["DhcpOptionsId"])
 
     # ── IAM ────────────────────────────────────────────────────────────────
+    # Account automation can attach extra managed policies (e.g. AmazonSSMPatchAssociation),
+    # so detach whatever is attached instead of a fixed list.
     print("Cleaning up IAM...")
-    safe(iam.remove_role_from_instance_profile,
-         InstanceProfileName=r.get("instance_profile", ""),
-         RoleName=r.get("iam_role", ""))
-    safe(iam.delete_instance_profile,
-         InstanceProfileName=r.get("instance_profile", ""))
-    safe(iam.detach_role_policy,
-         RoleName=r.get("iam_role", ""),
-         PolicyArn="arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore")
-    safe(iam.delete_role, RoleName=r.get("iam_role", ""))
+    role, profile_name = r.get("iam_role", ""), r.get("instance_profile", "")
+    if profile_name:
+        safe(iam.remove_role_from_instance_profile, InstanceProfileName=profile_name, RoleName=role)
+        safe(iam.delete_instance_profile, InstanceProfileName=profile_name)
+    if role:
+        for pol in safe(lambda: iam.list_attached_role_policies(RoleName=role)["AttachedPolicies"]) or []:
+            safe(iam.detach_role_policy, RoleName=role, PolicyArn=pol["PolicyArn"])
+        for name in safe(lambda: iam.list_role_policies(RoleName=role)["PolicyNames"]) or []:
+            safe(iam.delete_role_policy, RoleName=role, PolicyName=name)
+        safe(iam.delete_role, RoleName=role)
 
     # ── Log groups ─────────────────────────────────────────────────────────
     print("Deleting log groups...")
-    safe(logs_a.delete_log_group, logGroupName="/aws/route53/net015-prod")
-    safe(logs_b.delete_log_group, logGroupName="/aws/route53/net015-dr")
+    safe(logs[REGION_A].delete_log_group, logGroupName="/aws/route53/net015-prod")
+    safe(logs[REGION_B].delete_log_group, logGroupName="/aws/route53/net015-dr")
 
     # ── Done ───────────────────────────────────────────────────────────────
+    if failures:
+        print(f"\n⚠️  Teardown finished with {len(failures)} problem(s). resources.json kept — "
+              "fix the cause and run teardown again.")
+        return
     RESOURCE_FILE.unlink(missing_ok=True)
     print("\n✅ Teardown complete.")
 

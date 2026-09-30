@@ -375,7 +375,15 @@ only those specific names, never the whole `amazonaws.com`.
 ### Exercise 6 — DHCP search domain changes the query
 
 Create a DHCP option set with `domain-name = svc.internal` and `domain-name-servers =
-AmazonProvidedDNS`, associate it with VPC-B, and renew the lease on the DR instance:
+AmazonProvidedDNS`, tagged `Project=NET-015` so `teardown` removes it, associate it with VPC-B,
+and renew the lease on the DR instance:
+```
+aws ec2 create-dhcp-options --region us-west-2 \
+  --dhcp-configurations Key=domain-name,Values=svc.internal Key=domain-name-servers,Values=AmazonProvidedDNS \
+  --tag-specifications 'ResourceType=dhcp-options,Tags=[{Key=Project,Value=NET-015}]'
+aws ec2 associate-dhcp-options --region us-west-2 --vpc-id <vpc-b-id> --dhcp-options-id <new-dopt-id>
+```
+On the DR instance:
 ```
 sudo networkctl renew $(ip -o route show default | awk '{print $5}')
 grep search /etc/resolv.conf                # search svc.internal
@@ -443,6 +451,11 @@ Things found while running the exercises against the live lab. Fixed in the repo
   now adds it.
 - **`SERVFAIL` vs `TIMEOUT`.** When a target doesn't answer, Resolver query logs record
   `rcode: TIMEOUT` and `dig` shows `communications error ... timed out`, not SERVFAIL.
+- **Teardown.** `teardown` waits for each dependency (rule disassociation → rule deletion →
+  endpoint deletion → ENI release) and cleans each VPC by what's actually in it, including rules
+  left over from exercises, GuardDuty-created `guardduty-data` endpoints and SGs, and any managed
+  policies that account automation attached to the SSM role. If anything fails, it keeps
+  `resources.json` so you can run it again.
 - **Unresolved:** in Exercise 6, two queries returned TTL 30 in 0 ms and **didn't appear in the
   query log**, while the same name in the same second went through the chain with TTL 0. This
   looks like a resolver node still serving the stale answer from Exercise 4, and stale answers
