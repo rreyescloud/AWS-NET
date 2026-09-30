@@ -13,7 +13,7 @@ APIs serving financial institutions, insurers and telecoms. When a consumer appl
 or a business opens an account, the lender calls these APIs at the point of decision — the
 response determines whether the transaction is approved, declined or flagged for manual review.
 
-The APIs run active-passive across two AWS regions behind Route 53 failover records controlledz+++++
+The APIs run active-passive across two AWS regions behind Route 53 failover records controlled
 by ARC routing controls. A Region Switch plan automates the failover sequence: flip the routing
 controls, fail over the Aurora Global Database, and update EKS workloads — all in a single
 orchestrated execution.
@@ -109,15 +109,17 @@ management account, we use an **IAM permission boundary** on the execution role 
 the same deny effect. The CloudTrail error message differs (`permissions boundary` instead of
 `service control policy`), but the policy evaluation logic and the fix are identical.
 
-**Estimated cost:** ~$2.50/hour (ARC cluster dominates at $2.50/hr). Tear down same day.
+**Estimated cost:** ~$2.50/hour (ARC cluster dominates at $2.50/hr). Tear down same day, and
+confirm the cluster is gone afterwards: it keeps billing until deleted, and a partial teardown can
+leave it behind (`teardown` now waits for each ARC level and looks the cluster up by name).
 
 ## Files
-por 
+
 - `README.md` — this document
 - `architecture.drawio` — the failover topology, the SCP condition block, and why each condition is true
 - `lab/deploy_lab.py` — `deploy | test-deny | fix | test-allow | teardown`
 - `lab/scp_policy.json` — the SCP / permission boundary document
-+++
+
 ## References
 
 - [ARC Region Switch](https://docs.aws.amazon.com/r53recovery/latest/dg/arc-region-switch.html)

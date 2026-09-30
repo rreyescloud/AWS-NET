@@ -347,26 +347,32 @@ def deploy(profile):
     time.sleep(10)  # IAM propagation
 
     try:
-        plan = sess_a.client("arc-region-switch").create_region_switch_plan(
-            RegionSwitchPlanName="NET-016-lab-plan",
-            ExecutionRoleArn=r["role_arn"],
-            Steps=[
-                {
-                    "StepName": "flip-routing-controls",
-                    "StepType": "ROUTING_CONTROL",
-                    "RoutingControlUpdates": [
-                        {"RoutingControlArn": rc_primary["RoutingControlArn"],
-                         "RoutingControlState": "Off"},
-                        {"RoutingControlArn": rc_secondary["RoutingControlArn"],
-                         "RoutingControlState": "On"},
-                    ],
-                },
-            ],
-            Tags={"lab": "NET-016"},
-        )
-        r["plan_arn"] = plan["RegionSwitchPlanArn"]
+        # Active-passive plan: activating a region turns that region's routing control On.
+        # The API is CreatePlan (arc-region-switch); the plan's home region is REGION_A.
+        plan = sess_a.client("arc-region-switch").create_plan(
+            name="NET-016-lab-plan",
+            executionRole=r["role_arn"],
+            regions=[REGION_A, REGION_B],
+            recoveryApproach="activePassive",
+            primaryRegion=REGION_A,
+            workflows=[{
+                "workflowTargetAction": "activate",
+                "steps": [{
+                    "name": "flip-routing-controls",
+                    "executionBlockType": "ARCRoutingControl",
+                    "executionBlockConfiguration": {"arcRoutingControlConfig": {
+                        "regionAndRoutingControls": {
+                            REGION_A: [{"routingControlArn": rc_primary["RoutingControlArn"], "state": "On"}],
+                            REGION_B: [{"routingControlArn": rc_secondary["RoutingControlArn"], "state": "On"}],
+                        },
+                    }},
+                }],
+            }],
+            tags={"lab": "NET-016"},
+        )["plan"]
+        r["plan_arn"] = plan["arn"]
         r["plan_name"] = "NET-016-lab-plan"
-        print(f"  Plan: {plan['RegionSwitchPlanArn']}")
+        print(f"  Plan: {plan['arn']}")
     except Exception as e:
         print(f"  ⚠️  Region Switch plan creation: {e}")
         print("  Plan will need to be created manually or API may not be available yet.")
@@ -616,73 +622,109 @@ def test_allow(profile):
 def teardown(profile):
     r = load()
     if not r:
-        print("No resources.json.")
-        return
+        print("No resources.json — looking up NET-016 ARC resources by name anyway.")
 
     sess_a = get_session(profile, REGION_A)
     sess_b = get_session(profile, REGION_B)
     iam = sess_a.client("iam")
     r53 = sess_a.client("route53")
     r53rc = sess_a.client("route53-recovery-control-config")
+    region_switch = sess_a.client("arc-region-switch")
+    failures = []
 
     def safe(fn, *a, **kw):
         try:
-            fn(*a, **kw)
-        except Exception as e:
-            print(f"  (skip: {e})")
+            return fn(*a, **kw)
+        except ClientError as e:
+            code = e.response["Error"]["Code"]
+            if "NotFound" in code or code.startswith("NoSuch"):
+                return None  # already gone
+            print(f"  (failed: {e})")
+            failures.append(str(e))
+        return None
+
+    def wait_gone(desc, describe_fn, timeout=600, interval=10):
+        """Poll describe_fn() until it raises NotFound; record a failure on timeout."""
+        elapsed = 0
+        while elapsed < timeout:
+            try:
+                describe_fn()
+            except ClientError as e:
+                if "NotFound" in e.response["Error"]["Code"]:
+                    return True
+            print(f"  waiting for {desc} deletion... ({elapsed}s)")
+            time.sleep(interval)
+            elapsed += interval
+        print(f"  (timed out waiting for {desc} deletion)")
+        failures.append(f"timeout: {desc}")
+        return False
+
+    # ── Region Switch plan (references the routing controls and the role) ─
+    print("Deleting Region Switch plan...")
+    plans = safe(lambda: region_switch.list_plans()["plans"]) or []
+    plan_arns = {p["arn"] for p in plans if p.get("name") == r.get("plan_name", "NET-016-lab-plan")}
+    if r.get("plan_arn", "MANUAL") != "MANUAL":
+        plan_arns.add(r["plan_arn"])
+    for arn in plan_arns:
+        safe(region_switch.delete_plan, arn=arn)
 
     # ── Route 53 records ───────────────────────────────────────────────────
     print("Deleting Route 53 records...")
     if r.get("zone_id"):
-        try:
-            rrsets = r53.list_resource_record_sets(HostedZoneId=r["zone_id"])["ResourceRecordSets"]
-            changes = [{"Action": "DELETE", "ResourceRecordSet": rr}
-                      for rr in rrsets if rr["Type"] not in ("SOA", "NS")]
-            if changes:
-                r53.change_resource_record_sets(HostedZoneId=r["zone_id"],
-                                                ChangeBatch={"Changes": changes})
-        except Exception:
-            pass
+        rrsets = safe(lambda: r53.list_resource_record_sets(HostedZoneId=r["zone_id"])["ResourceRecordSets"]) or []
+        changes = [{"Action": "DELETE", "ResourceRecordSet": rr}
+                   for rr in rrsets if rr["Type"] not in ("SOA", "NS")]
+        if changes:
+            safe(r53.change_resource_record_sets, HostedZoneId=r["zone_id"], ChangeBatch={"Changes": changes})
         safe(r53.delete_hosted_zone, Id=r["zone_id"])
 
-    # ── Health checks ──────────────────────────────────────────────────────
+    # ── Health checks (they reference the routing controls) ────────────────
     print("Deleting health checks...")
     for hc in [r.get("hc_primary"), r.get("hc_secondary")]:
         if hc:
             safe(r53.delete_health_check, HealthCheckId=hc)
 
-    # ── Routing controls ───────────────────────────────────────────────────
-    print("Deleting routing controls...")
-    for rc in [r.get("rc_primary"), r.get("rc_secondary")]:
-        if rc:
-            safe(r53rc.delete_routing_control, RoutingControlArn=rc)
-
-    # ── Control panel ──────────────────────────────────────────────────────
-    if r.get("panel_arn"):
-        print("Deleting control panel...")
-        safe(r53rc.delete_control_panel, ControlPanelArn=r["panel_arn"])
-
-    # ── Cluster ────────────────────────────────────────────────────────────
+    # ── ARC: routing controls → control panel → cluster ────────────────────
+    # Each delete is asynchronous and the next one fails while the previous resource is still
+    # PENDING_DELETION, so wait for each level to disappear. The cluster bills ~$2.50/h until
+    # it's gone, so it's also looked up by name in case resources.json is stale.
+    clusters = {c["ClusterArn"] for c in safe(lambda: r53rc.list_clusters()["Clusters"]) or []
+                if c.get("Name") == "NET-016-lab-cluster"}
     if r.get("cluster_arn"):
-        print("Deleting ARC cluster (takes ~5 min)...")
-        safe(r53rc.delete_cluster, ClusterArn=r["cluster_arn"])
+        clusters.add(r["cluster_arn"])
+    for cluster_arn in clusters:
+        panels = [p for p in safe(lambda c=cluster_arn: r53rc.list_control_panels(ClusterArn=c)["ControlPanels"]) or []
+                  if not p.get("DefaultControlPanel")]
+        for panel in panels:
+            print(f"Deleting routing controls in {panel['Name']}...")
+            controls = safe(lambda p=panel: r53rc.list_routing_controls(
+                ControlPanelArn=p["ControlPanelArn"])["RoutingControls"]) or []
+            for rc in controls:
+                safe(r53rc.delete_routing_control, RoutingControlArn=rc["RoutingControlArn"])
+            for rc in controls:
+                wait_gone(f"routing control {rc['Name']}", lambda a=rc["RoutingControlArn"]:
+                          r53rc.describe_routing_control(RoutingControlArn=a))
+            print(f"Deleting control panel {panel['Name']}...")
+            safe(r53rc.delete_control_panel, ControlPanelArn=panel["ControlPanelArn"])
+            wait_gone(f"control panel {panel['Name']}", lambda a=panel["ControlPanelArn"]:
+                      r53rc.describe_control_panel(ControlPanelArn=a))
+        print("Deleting ARC cluster...")
+        safe(r53rc.delete_cluster, ClusterArn=cluster_arn)
+        wait_gone("ARC cluster", lambda a=cluster_arn: r53rc.describe_cluster(ClusterArn=a))
 
-    # ── IAM ────────────────────────────────────────────────────────────────
+    # ── IAM (role before the boundary policy it uses) ──────────────────────
     print("Cleaning up IAM...")
-    if r.get("role_name"):
-        safe(iam.delete_role_policy, RoleName=r["role_name"],
-             PolicyName="region-switch-permissions")
-        safe(iam.delete_role, RoleName=r["role_name"])
-
+    role = r.get("role_name")
+    if role:
+        for name in safe(lambda: iam.list_role_policies(RoleName=role)["PolicyNames"]) or []:
+            safe(iam.delete_role_policy, RoleName=role, PolicyName=name)
+        for pol in safe(lambda: iam.list_attached_role_policies(RoleName=role)["AttachedPolicies"]) or []:
+            safe(iam.detach_role_policy, RoleName=role, PolicyArn=pol["PolicyArn"])
+        safe(iam.delete_role, RoleName=role)
     if r.get("boundary_arn"):
-        # Delete all non-default versions first
-        try:
-            versions = iam.list_policy_versions(PolicyArn=r["boundary_arn"])["Versions"]
-            for v in versions:
-                if not v["IsDefaultVersion"]:
-                    iam.delete_policy_version(PolicyArn=r["boundary_arn"], VersionId=v["VersionId"])
-        except Exception:
-            pass
+        for v in safe(lambda: iam.list_policy_versions(PolicyArn=r["boundary_arn"])["Versions"]) or []:
+            if not v["IsDefaultVersion"]:
+                safe(iam.delete_policy_version, PolicyArn=r["boundary_arn"], VersionId=v["VersionId"])
         safe(iam.delete_policy, PolicyArn=r["boundary_arn"])
 
     # ── API Gateways ───────────────────────────────────────────────────────
@@ -691,8 +733,12 @@ def teardown(profile):
         if r.get(f"apigw_{label}"):
             safe(client.delete_rest_api, restApiId=r[f"apigw_{label}"]["id"])
 
+    if failures:
+        print(f"\n⚠️  Teardown finished with {len(failures)} problem(s). resources.json kept — "
+              "fix the cause and run teardown again. The ARC cluster bills ~$2.50/h until deleted.")
+        return
     RESOURCE_FILE.unlink(missing_ok=True)
-    print("\n✅ Teardown complete. ARC cluster deletion takes ~5 minutes in background.")
+    print("\n✅ Teardown complete (ARC cluster confirmed deleted).")
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
