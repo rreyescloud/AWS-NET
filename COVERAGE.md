@@ -23,11 +23,16 @@ architecture. This index shows which services appear across the portfolio and in
 - **Aurora MySQL** — NET-007: Serverless v2 ACU sizing, storage bandwidth saturation
 - **DMS** — NET-007: CDC replication to Kafka, ParallelApply tuning, LOB handling
 - **MSK (Kafka)** — NET-007: cross-VPC target latency, SASL/SCRAM vs IAM auth with DMS
+- **DynamoDB** — NET-020: 1 MB Scan page applied before the filter, `Scan` + filter vs a `Status` GSI, history under TTL inflating a table-wide read
 
 ## Application Integration
 
 - **API Gateway** — NET-006: REST API with WAF integration; NET-016: mock regional endpoints for failover testing
-- **CloudFront** — NET-006: WAF-protected distribution; NET-012, NET-014: origin for WAF evaluation
+- **CloudFront** — NET-006: WAF-protected distribution; NET-012, NET-014: origin for WAF evaluation; NET-020: OAI to the STNO console bucket
+- **AppSync** — NET-020: VTL DynamoDB Scan resolver, `limit`/`nextToken` pagination contract between resolver and client
+- **Step Functions** — NET-020: STNO approval workflow driving TGW associate/propagate
+- **EventBridge** — NET-020: custom bus with per-spoke-account rules reacting to VPC and subnet tags
+- **Cognito** — NET-020: user and identity pool fronting the STNO console, Admin vs ReadOnly groups
 
 ## Monitoring & Logging
 
@@ -37,7 +42,7 @@ architecture. This index shows which services appear across the portfolio and in
 
 ## Networking (secondary to the primary service)
 
-- **Transit Gateway** — NET-005: centralized inspection with RNAT; NET-011: spoke/inspection VPC topology
+- **Transit Gateway** — NET-005: centralized inspection with RNAT; NET-011: spoke/inspection VPC topology; NET-020 *(primary)*: hub-and-spoke across 150+ accounts, segmentation by route table, approval-gated attachment lifecycle, orchestrator vs network state drift
 - **VPC Peering** — NET-007: cross-VPC Kafka latency; NET-015: cross-region for resolver forwarding chain
 - **VPC Endpoints** — NET-001: S3 gateway endpoint; NET-015: SSM interface endpoints in private subnets, endpoint-managed PHZs outranking an `amazonaws.com` forwarding rule
 - **Regional NAT Gateway** — NET-005: zonal affinity, RNAT route table, chaining with firewall
@@ -56,6 +61,8 @@ architecture. This index shows which services appear across the portfolio and in
 ## Other
 
 - **ACM** — NET-004: cross-signed certificate import rejection, TLS inspection configuration
-- **RAM** — NET-002: sharing query log configs across accounts
-- **S3** — NET-001: cross-account private access; NET-014: origin for monetized content
+- **RAM** — NET-002: sharing query log configs across accounts; NET-020: TGW shared to 150+ spoke accounts with external principals allowed
+- **S3** — NET-001: cross-account private access; NET-014: origin for monetized content; NET-020: console SPA behind CloudFront OAI
+- **Direct Connect** — NET-020: DXGW attachment on the hub TGW, propagation into the on-premises route table
+- **AWS Solutions** — NET-020: Network Orchestration for AWS Transit Gateway (SO0058) v3.3.28, upstream bug triage and upgrade ownership
 - **Blockchain** — NET-014: EIP-3009 USDC transfer on Base Sepolia, web3.py

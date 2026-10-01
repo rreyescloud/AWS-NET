@@ -7,6 +7,7 @@ Portfolio of real-world AWS networking and network-security work covering VPC co
 - **[VPC](services/VPC/)** — PrivateLink, cross-region private access, Transit Gateway inspection, hybrid connectivity. Docs on endpoints, connectivity, components and troubleshooting.
 - **[Route 53](services/R53/)** — ARC failover and Region Switch, multi-region DR, Resolver and Global Resolver, query logging, DNSSEC. Docs on records, resolver, health checks and domains.
 - **[Network Firewall](services/NetworkFirewall/)** — Suricata rule development, TLS inspection, centralized egress and TGW inspection models. Docs on rules, deployment models, logging and troubleshooting.
+- **[Transit Gateway](services/TransitGateway/)** — hub-and-spoke at organization scale, segmentation through association and propagation, tag-driven attachment lifecycle, AWS Solutions orchestration on top of TGW.
 - **[WAF, Shield & Firewall Manager](services/WAF/)** — managed rule tuning, Bot Control, rate-based protection, DDoS response, centralized policy. Docs on rules, logging, integrations and onboarding.
 
 ## Scenario Tiers
@@ -28,6 +29,7 @@ Scenarios come in two tiers, declared at the top of every scenario README so you
 - **[NET-010](services/NetworkFirewall/scenarios/NET-010_container_attributes_referencing/)** — Network Firewall container attributes referencing on EKS · Technology
 - **[NET-011](services/NetworkFirewall/scenarios/NET-011_suricata_domain_allowlist_syn_drop/)** — Suricata domain allowlist never matches, catch-all drop kills the SYN · Regulated Financial Services
 - **[NET-014](services/WAF/scenarios/NET-014_waf_ai_traffic_monetization_x402/)** — WAF AI traffic monetization over x402 · Content and API providers
+- **[NET-020](services/TransitGateway/scenarios/NET-020_stno_console_scan_pagination/)** — STNO console hides pending TGW requests past one DynamoDB Scan page · Public Sector / Research Computing
 
 **Case analysis**
 
