@@ -100,6 +100,18 @@ dig evil.c2-lab.example         # block-custom
   do you prove the firewall blocked it and not the real DNS? The query log's
   `firewall_rule_action` is the only reliable signal.
 
+**Observed (2026-09-30):**
+- Client view: `evil.c2-lab.example` → `NXDOMAIN`, and a control name that simply doesn't exist
+  (`nothing-here.example`) → `NXDOMAIN`. **Identical to the client.**
+- Query log: the blocked one carries `firewall_rule_action: BLOCK` plus `firewall_domain_list_id`
+  and `firewall_rule_group_id`. The nonexistent one has no `firewall_*` fields at all. That's the
+  only way to tell "blocked" from "doesn't exist".
+- `app.company.internal`, which matches the ALLOW rule, was logged **without** any `firewall_*`
+  fields, exactly like `aws.amazon.com`, which matches nothing. The log doesn't distinguish
+  "allowed by a rule" from "no rule matched".
+- `aws.amazon.com` isn't covered by `*.amazonaws.com`, which is a different domain. It resolved
+  only because nothing blocks it, a common allow-list mistake.
+
 ### Exercise 2 — Priority: first match wins
 
 Add `safe.c2-lab.example` to the allow list. With the allow rule at priority 100 it resolves
@@ -117,6 +129,23 @@ it stop like ALLOW and BLOCK?
 The attack pattern: an attacker who controls a CNAME target inside an allowed domain (a dangling
 record, a takeover-able SaaS subdomain) turns your allow list into a tunnel.
 
+**Observed (2026-09-30):** `block-custom` was set to `OVERRIDE` (CNAME to the sinkhole), so a
+blocked chain shows up as `10.60.1.99` instead of an ambiguous NXDOMAIN.
+- **TRUST** (default): `legit.company.internal` → CNAME `cdn.c2-lab.example` → `NXDOMAIN` from
+  real DNS. The query log has one entry with **no `firewall_*` fields**: the resolver chased the
+  CNAME out to the internet. If that domain belonged to an attacker, the query would have reached
+  it.
+- **INSPECT**: `legit.company.internal` → `cdn.c2-lab.example` → rewritten to
+  `sinkhole.company.internal` → `10.60.1.99`. The second hop was evaluated and blocked.
+- **Control:** TRUST with OVERRIDE still active went back to NXDOMAIN with no sinkhole, so the
+  difference comes from the redirection action alone. `evil.c2-lab.example` queried directly was
+  sinkholed in both modes.
+- **Takeaway:** use `INSPECT_REDIRECTION_DOMAIN` on ALLOW rules for broad domains. `TRUST` only
+  makes sense when you trust everything that domain can point to.
+- **Why OVERRIDE matters to a SOC:** the client gets a sinkhole IP you own, so you can log which
+  host tried to reach the C2 or serve a warning page. With NXDOMAIN, malware just tries its next
+  domain and leaves nothing on your network.
+
 ### Exercise 4 — Exfiltration-style traffic and DNS Firewall Advanced
 
 The script encodes random bytes into base32 labels and sends them as TXT queries to
@@ -125,6 +154,17 @@ The script encodes random bytes into base32 labels and sends them as TXT queries
 - Does `DGA` fire on the same traffic?
 
 Record the actual result: Advanced is behavioral, so the outcome is empirical.
+
+**Observed (2026-09-30):** ~360 base32-encoded TXT queries to `*.tunnel-lab.example` over ~10
+minutes, with `DNS_TUNNELING` and `DGA` both at confidence `LOW`: **no alert**. All logged queries
+were plain `NXDOMAIN` with no `firewall_*` fields. Hypotheses, not yet confirmed:
+- `tunnel-lab.example` has no authoritative server, so every query dies at the root. A working
+  tunnel needs a delegated domain that answers, and detection may depend on that exchange.
+- The volume is too low. Tools like iodine or dnscat2 generate thousands of sustained queries.
+- ALERT matches might not be logged the way BLOCK is (see the ALLOW finding in Exercise 1).
+
+Next attempt: a really delegated lab subdomain with a wildcard TXT that responds. Either way,
+Advanced isn't a guarantee: test detection with your own traffic before relying on it.
 
 ### Exercise 5 — The bypass
 
@@ -140,6 +180,19 @@ dig @8.8.8.8 evil.c2-lab.example
   egress proxy or Network Firewall with TLS SNI rules (see
   [NET-011](../../../NetworkFirewall/scenarios/NET-011_suricata_domain_allowlist_syn_drop/)),
   not DNS Firewall.
+
+**Observed (2026-09-30):**
+- **Egress open:** through the VPC resolver, `evil.c2-lab.example` → sinkhole `10.60.1.99`. With
+  `dig @8.8.8.8`, `NXDOMAIN` came **from Google** (`SERVER: 8.8.8.8`), with no sinkhole and no
+  firewall entry. `aws.amazon.com` resolved the same way, with Google's own TTL (1500 s).
+- **Egress lockdown** (53 only to `10.60.0.2/32`, 443 anywhere): `dig @8.8.8.8` → timeout, and the
+  VPC path kept working with the firewall acting.
+- **DoH still works under lockdown:** `https://dns.google/resolve?name=evil.c2-lab.example`
+  returned `Status: 3` (Google's NXDOMAIN, no sinkhole), and `aws.amazon.com` resolved. It rides
+  in HTTPS on 443, which SSM needs, so neither the SG nor DNS Firewall sees it.
+- **Layered fix:** SG/NACL egress for port 53, then an egress proxy or Network Firewall with TLS
+  SNI rules for known DoH endpoints (`dns.google`, `cloudflare-dns.com`, ...), plus endpoint
+  policy (browser/OS DoH settings). Encrypted Client Hello would eventually hide even the SNI.
 
 ### Exercise 6 — Fail open vs fail closed
 
