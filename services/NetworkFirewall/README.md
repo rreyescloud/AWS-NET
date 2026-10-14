@@ -34,12 +34,13 @@ Key highlights:
 
 ## Scenarios
 
-All four are Lab tier — each ships a deploy script with a `teardown` path.
+All five are Lab tier — each ships a deploy script with a `teardown` path.
 
 - **[NET-004](scenarios/NET-004_tls_inspection_cross_signed_cert/)** — TLS inspection rejects a cross-signed certificate · Capital Markets
 - **[NET-005](scenarios/NET-005_asymmetric_routing_regional_natgw/)** — asymmetric routing with regional NAT Gateway and multi-AZ firewall · Airlines
 - **[NET-010](scenarios/NET-010_container_attributes_referencing/)** — container attributes referencing on EKS · Technology
 - **[NET-011](scenarios/NET-011_suricata_domain_allowlist_syn_drop/)** — Suricata domain allowlist never matches, catch-all drop kills the SYN · Regulated Financial Services
+- **[NET-017](scenarios/NET-017_fms_egress_regional_natgw_symmetry/)** — Firewall Manager centralized egress can't stay symmetric with a regional NAT Gateway and appliance mode · IT Consulting
 
 ## Industries Served
 

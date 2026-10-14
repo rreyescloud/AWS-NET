@@ -14,7 +14,7 @@ architecture. This index shows which services appear across the portfolio and in
 ## Compute & Containers
 
 - **EKS** — NET-010: VPC CNI with external SNAT disabled, container attribute referencing; NET-009: Karpenter reconciliation loops, zonal shift recovery
-- **EC2** — NET-004, NET-005, NET-011, NET-015: test instances, SSM Session Manager access
+- **EC2** — NET-004, NET-005, NET-011, NET-015, NET-017: test instances, SSM Session Manager access
 - **Lambda** — NET-006: Bedrock-backed chatbot function behind API Gateway
 
 ## Database & Streaming
@@ -42,18 +42,18 @@ architecture. This index shows which services appear across the portfolio and in
 
 ## Networking (secondary to the primary service)
 
-- **Transit Gateway** — NET-005: centralized inspection with RNAT; NET-011: spoke/inspection VPC topology; NET-020 *(primary)*: hub-and-spoke across 150+ accounts, segmentation by route table, approval-gated attachment lifecycle, orchestrator vs network state drift
+- **Transit Gateway** — NET-005: centralized inspection with RNAT; NET-011: spoke/inspection VPC topology; NET-017: appliance mode flow hashing, TGW-attached firewall routing; NET-020 *(primary)*: hub-and-spoke across 150+ accounts, segmentation by route table, approval-gated attachment lifecycle, orchestrator vs network state drift
 - **VPC Peering** — NET-007: cross-VPC Kafka latency; NET-015: cross-region for resolver forwarding chain
 - **VPC Endpoints** — NET-001: S3 gateway endpoint; NET-015: SSM interface endpoints in private subnets, endpoint-managed PHZs outranking an `amazonaws.com` forwarding rule
-- **Regional NAT Gateway** — NET-005: zonal affinity, RNAT route table, chaining with firewall
-- **VPC Routing** — NET-005: per-AZ return routing; NET-011: TGW + firewall + NAT insertion order
+- **Regional NAT Gateway** — NET-005: zonal affinity, RNAT route table, chaining with firewall; NET-017: single route table vs multi-AZ firewall, manual mode EIPs per AZ, zonal NAT replacement
+- **VPC Routing** — NET-005: per-AZ return routing; NET-011: TGW + firewall + NAT insertion order; NET-017: why per-subnet return routes fail with appliance mode
 
 ## Security Services
 
 - **Shield Advanced** — NET-012: L7AM vs AntiDDoS AMR activation parity, known-offender rate-based rule
 - **WAF Bot Control** — NET-006: targeted bot management; NET-014: Monetize action for AI traffic; NET-022 *(primary)*: unpinned default version (1.0) leaves Claude crawlers unclassified, `CategoryAI` blocking verified AI bots, label-based allow for LLM crawlers
-- **DNS Firewall** — NET-011: related pattern (domain allowlisting), planned SEC-001
-- **Firewall Manager** — NET-022: FMS-managed web ACL, pre/post-process rule group slots
+- **DNS Firewall** — NET-011: related pattern (domain allowlisting), planned SEC-001; NET-017: Firewall Manager DNS Firewall policy as interim egress control
+- **Firewall Manager** — NET-017: centralized Network Firewall model limits (no route management, IGW-only monitoring, no TGW-attached firewalls); NET-022: FMS-managed web ACL, pre/post-process rule group slots
 
 ## Directory & Hybrid Identity
 
@@ -62,7 +62,7 @@ architecture. This index shows which services appear across the portfolio and in
 ## Other
 
 - **ACM** — NET-004: cross-signed certificate import rejection, TLS inspection configuration
-- **RAM** — NET-002: sharing query log configs across accounts; NET-020: TGW shared to 150+ spoke accounts with external principals allowed
+- **RAM** — NET-002: sharing query log configs across accounts; NET-017: org resource sharing required by Firewall Manager policies; NET-020: TGW shared to 150+ spoke accounts with external principals allowed
 - **S3** — NET-001: cross-account private access; NET-014: origin for monetized content; NET-020: console SPA behind CloudFront OAI; NET-022: private origin behind Origin Access Control
 - **Direct Connect** — NET-020: DXGW attachment on the hub TGW, propagation into the on-premises route table
 - **AWS Solutions** — NET-020: Network Orchestration for AWS Transit Gateway (SO0058) v3.3.28, upstream bug triage and upgrade ownership
