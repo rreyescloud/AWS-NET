@@ -1,7 +1,7 @@
 # NET-022 — AWS WAF Bot Control: Legitimate LLM Crawlers Blocked Despite a Label-Based Allow Design
 
 **Tier:** Lab — reproducible end to end
-**Status:** Design. Lab not yet deployed (results recorded as exercises are run)
+**Status:** Lab Part 1 (Bot Control version comparison) built and run on 2026-10-13. Part 2 (customer rules + fix) is still design.
 **Services:** AWS WAF (Bot Control, custom rule groups, labels) · AWS Firewall Manager · CloudFront · S3 · CloudWatch Logs · AWS Organizations
 
 [📐 Open diagram in draw.io](https://app.diagrams.net/#Uhttps%3A%2F%2Fraw.githubusercontent.com%2Frreyescloud%2FAWS-NET%2Fmain%2Fservices%2FWAF%2Fscenarios%2FNET-022_bot_control_llm_crawler_label_allow%2Farchitecture.drawio)
@@ -125,6 +125,11 @@ Two independent blockers:
   rule, only a few by `CategoryAI`.
 - The rule group definition: BLOCK on a label match combined with NOT exact UA match.
 - Public docs: `CategoryAI` blocks verified bots too, and the signal rules skip verified bots.
+- **Lab (Part 1):** the default Bot Control version is `Version_1.0`, and it has no Anthropic
+  label. In 1.0, ClaudeBot gets only `signal:non_browser_user_agent`. `Version_6.0` and
+  `Version_6.1` classify the Claude crawlers (`bot:name:claudebot`, `bot:category:ai`, ...), and
+  they don't add the signal label to them. The unpinned version is what turns a known crawler into
+  blocker A.
 
 **Not confirmed:** individual log samples with `terminatingRuleId`, `labels` and the UA header.
 
@@ -134,6 +139,27 @@ slot where nobody looked first. Read the action and the statement, never the nam
 ## Resolution
 
 **Status:** proposed. Application not confirmed.
+
+### Step 0 — Pin Bot Control to a version that classifies the crawler
+
+An unpinned Bot Control runs the current default, which was `Version_1.0` on 2026-10-13. Check the
+crawler's `bot:name:*` label in each available version:
+
+```
+aws wafv2 describe-managed-rule-group --vendor-name AWS --name AWSManagedRulesBotControlRuleSet \
+  --scope CLOUDFRONT --region us-east-1 --version-name Version_6.1 \
+  --query 'AvailableLabels[].Name' --output text | tr '\t' '\n' | grep -i '<crawler>'
+```
+
+Pin the policy to the oldest version that has the label (`Version: Version_6.1` in the managed
+rule group statement). In the lab, this alone moved the Claude crawlers out of blocker A: they're
+classified, so they no longer carry the signal label that the post-process rule matches. Steps 1–2
+are still needed, because now `CategoryAI` blocks them.
+
+- A pinned version is a commitment. Watch the version's expiry and move forward on your own
+  schedule, because AWS deprecates old versions.
+- A newer version changes labels and the rules' behavior for every bot, not only for AI crawlers.
+  Run it in Count first (Step 3).
 
 ### Step 1 — Override only `CategoryAI` to Count (in the FMS policy)
 
@@ -186,8 +212,9 @@ before switching them to their real actions.
 
 ### Permanent path for unclassified crawlers
 
-Request a Bot Control classification for the crawler through AWS Support. Once it's classified
-and verifiable, P0 covers it and P1 is removed.
+First check whether a newer Bot Control version already classifies the crawler (Step 0). If none
+does, request a classification through AWS Support. Once it's classified and verifiable, P0 covers
+it and P1 is removed.
 
 ### Caveats
 
@@ -240,40 +267,127 @@ For requests terminated inside a rule group, `terminatingRuleId` is the group; t
 
 ## Lab Architecture
 
-One account, no FMS (the central-policy model doesn't change WAF evaluation; it's an optional
-variant).
+The lab is built in two parts. **Part 1 is built and was run**. It answers the question at the
+root of blocker A: does Bot Control classify the crawler at all, and does that depend on the
+version? **Part 2 is design only.** It reproduces the customer's rules and the fix (Exercises 1–5,
+7, 8).
 
-- **S3 bucket** with a static page, private, behind **Origin Access Control**
-- **2 CloudFront distributions** sharing **one web ACL**:
-  - `marketing`: the site crawlers should reach
-  - `portal`: stands in for the authenticated apps; crawlers must stay out
-- **Web ACL `NET-022-acl`** (CLOUDFRONT scope, us-east-1, default Allow), reduced to what the
-  exercises need:
-  1. Pre-process slot (empty at first; Exercise 5 uses it)
-  2. Bot Control COMMON, default version, `SignalNonBrowserUserAgent` → Count
-  3. `AWSManagedRulesAmazonIpReputationList`
-  4. `AWSManagedRulesCommonRuleSet`
-  5. Post-process group `NET-022-allow_seo_crawler_ua`: the customer's BLOCK rule, reproduced as-is
-- **IP set `NET-022-vendor-crawlers`** holding the lab client's public IP, standing in for the
-  vendor's range
-- **WAF logging** to CloudWatch Logs `aws-waf-logs-net022` (1-day retention)
+### Part 1 (built) — Bot Control version comparison
 
-The `Host` condition is tested with the second distribution: CloudFront rejects a `Host` header
-that doesn't belong to the distribution before WAF sees it, so the realistic bypass is "the same
+One account, no FMS, `us-east-1` (CLOUDFRONT scope). `lab/deploy_lab.py` creates:
+
+- **S3 bucket** `net022-lab-<account>`: private, Block Public Access on, one `index.html`.
+- **Origin Access Control**: CloudFront signs the requests to S3. The bucket policy allows
+  `s3:GetObject` only for the two lab distributions (`AWS:SourceArn`).
+- **Two web ACLs**, default action Allow. Each one has a single rule, Bot Control COMMON:
+  - `NET-022-acl-default`: no `Version`, so it gets whatever AWS serves as the default.
+  - `NET-022-acl-v61`: pinned to `Version_6.1`.
+  - **Every Bot Control rule is overridden to Count.** Nothing is blocked, so the WAF log shows
+    only the labels each version adds.
+- **WAF logging** of each web ACL to its own CloudWatch Logs group, `aws-waf-logs-lab-default` and
+  `aws-waf-logs-lab-v61` (1-day retention).
+- **Two CloudFront distributions**, one per web ACL, both on the same S3 origin.
+
+`test` sends the same set of User-Agents to both distributions:
+- ClaudeBot, Claude-SearchBot, Claude-User and GPTBot, with their published UA strings
+- `ExampleAIBot/1.0`, a stand-in for an unclassified crawler
+- `curl` and a Chrome browser, as controls
+
+It tags each request with `?run=<HHMMSS>&ua=<key>`. `labels` reads both log groups for that run and
+prints the labels side by side.
+
+### Run the lab
+
+Requires Python 3.12+ and boto3, with a profile for the lab account.
+
+```
+cd lab
+python deploy_lab.py deploy   --profile <lab-profile>   # bucket, OAC, 2 web ACLs + logging, 2 distributions (~5–10 min)
+python deploy_lab.py status   --profile <lab-profile>   # default version now vs at deploy, distribution state, browser 200
+python deploy_lab.py test     --profile <lab-profile>   # every UA → both distributions, prints the run tag
+python deploy_lab.py labels [RUN] --profile <lab-profile>   # waits for the logs (1–5 min), compares labels per UA
+python deploy_lab.py teardown --profile <lab-profile>   # deletes everything and verifies (~5–15 min)
+```
+
+`deploy` is idempotent: it reads `lab/resources.json` and skips what already exists.
+`resources.json` and the logs are git-ignored because they hold live resource IDs.
+
+### Part 1 results (run on 2026-10-13)
+
+At deploy time, `CurrentDefaultVersion` for Bot Control was **`Version_1.0`**. The available
+versions were 1.0, 2.0, 3.0–3.3, 4.0, 5.0, 6.0 and 6.1. `availableLabels` per version:
+- **Version_1.0:** 247 labels and **no Anthropic entry at all**.
+- **Version_6.0:** `bot:name:claudebot`, `bot:name:claude_user`, `bot:name:claude_web`,
+  `bot:name:anthropic` and `bot:organization:anthropic`.
+- **Version_6.1:** 950 labels in total. The same as 6.0 plus `bot:name:claude_searchbot`.
+
+These are the labels observed in the WAF log. All the rules were in Count, so every request got a
+`200`. The prefix `awswaf:managed:aws:bot-control:` is omitted.
+
+- **ClaudeBot**
+  - Version_1.0: only `signal:non_browser_user_agent`. **This is blocker A.**
+  - Version_6.1: `bot:category:ai`, `bot:name:claudebot`, `bot:organization:anthropic`,
+    `bot:intent:train_ai`, `bot:unverified`. **No `signal:non_browser_user_agent`.**
+- **Claude-SearchBot**
+  - Version_1.0: no Bot Control label.
+  - Version_6.1: `bot:category:ai`, `bot:name:claude_searchbot`, `bot:intent:search`,
+    `bot:organization:anthropic`, `bot:unverified`.
+- **Claude-User**
+  - Version_1.0: no Bot Control label.
+  - Version_6.1: `bot:category:ai`, `bot:name:claude_user`, `bot:intent:ai_assistant`,
+    `bot:organization:anthropic`, `bot:unverified`.
+- **GPTBot**
+  - Version_1.0: `bot:category:ai`, `bot:name:gptbot`, `bot:unverified`,
+    `signal:non_browser_user_agent`. It's classified even in 1.0, so it would hit blocker B.
+  - Version_6.1: the same, plus `bot:intent:train_ai` and `bot:organization:openai`, and
+    **without** the signal label.
+- **ExampleAIBot/1.0**: `signal:non_browser_user_agent` in both versions. It stays unclassified,
+  as expected.
+- **curl**: `bot:category:http_library`, `bot:name:curl`, `bot:unverified` in both. The signal
+  label shows up only in 1.0.
+- **Browser**: no bot label in either version.
+- **Version_6.1 only**: every request also matched `TGT_TokenAbsent` (counted). This means a
+  targeted-level rule is evaluated at COMMON inspection level in 6.1.
+
+What this means for the case:
+- **Blocker A is caused by the unpinned version.** With the default (1.0), ClaudeBot carries only
+  the signal label, so the customer's post-process rule blocks it and no label-based allow can
+  match it.
+- **In 6.x the picture flips.** The Claude crawlers are classified and lose the signal label, so the
+  post-process rule no longer matches them. The only remaining blocker is `CategoryAI` (blocker B),
+  which Step 1 and P0 already handle.
+- From the lab IP every crawler comes out `bot:unverified`, as expected. That P0 matches the real
+  crawler from its own infrastructure (`bot:verified`) is **not confirmed** by the lab.
+
+### Part 2 (design, not built) — customer rules and fix
+
+This part adds what Exercises 1–5, 7 and 8 need on top of Part 1:
+
+- A second distribution, `portal`, that shares the marketing web ACL. It stands in for the
+  authenticated apps that crawlers must not reach.
+- The managed groups `AWSManagedRulesAmazonIpReputationList` and `AWSManagedRulesCommonRuleSet`.
+- The post-process group `NET-022-allow_seo_crawler_ua`: the customer's BLOCK rule, reproduced
+  as-is.
+- The IP set `NET-022-vendor-crawlers`, holding the lab client's public IP as a stand-in for the
+  vendor's range.
+
+The `Host` condition is tested with the second distribution. CloudFront rejects a `Host` header
+that doesn't belong to the distribution before WAF sees it. So the realistic bypass is "the same
 web ACL attached to another distribution", which is what Troubleshooting step 6 checks.
 
 **What the lab can't reproduce:** `bot:verified` and `bot:web_bot_auth:verified`. Verification
 depends on the real crawler infrastructure (reverse DNS, published IPs, signed requests). From a
-lab IP, a classified AI UA always comes out `bot:unverified`. Flow B is shown with the unverified
-variant and through the docs.
+lab IP, a classified AI UA always comes out `bot:unverified`.
 
 ## Exercises
 
-`<ai-ua-classified>` is a UA taken from `availableLabels` of the deployed Bot Control version,
-picked at deploy time. Every exercise reads the result from the WAF log: `action`,
-`terminatingRuleId`, `ruleGroupList[].terminatingRule` and `labels`.
+`<ai-ua-classified>` is a UA taken from the `availableLabels` of the deployed Bot Control version.
+Every exercise reads the result from the WAF log: `action`, `terminatingRuleId`,
+`ruleGroupList[].terminatingRule` and `labels`.
 
-### Exercise 1 — Reproduce blocker A (unclassified crawler)
+Exercise 6 runs on Part 1. The others need Part 2.
+
+### Exercise 1 — Reproduce blocker A (unclassified crawler) · *Part 2*
 
 ```
 curl -s -o /dev/null -w '%{http_code}\n' -A "ExampleAIBot/1.0" https://<marketing>.cloudfront.net/
@@ -282,18 +396,20 @@ curl -s -o /dev/null -w '%{http_code}\n' -A "ExampleAIBot/1.0" https://<marketin
 - Expected: `403`. Labels: only `signal:non_browser_user_agent`. Terminated by
   `NET-022-allow_seo_crawler_ua`.
 - Control: the exact SEO UA string → `200`. A browser UA → `200`.
+- With Bot Control on the default version (1.0), ClaudeBot behaves the same way (see the Part 1
+  results).
 
-### Exercise 2 — Reproduce blocker B (classified AI crawler)
+### Exercise 2 — Reproduce blocker B (classified AI crawler) · *Part 2*
 
 ```
 curl -s -o /dev/null -w '%{http_code}\n' -A "<ai-ua-classified>" https://<marketing>.cloudfront.net/
 ```
 
 - Expected: `403` from `CategoryAI`. Labels: `bot:category:ai`, `bot:name:<...>`, `bot:unverified`.
-- Question to answer: does this request carry `signal:non_browser_user_agent` too? (Signal rules
-  skip verified bots, but this one is unverified.)
+- Does this request also carry `signal:non_browser_user_agent`? Part 1 answers it: **it depends on
+  the version.** Yes in 1.0 (GPTBot), no in 6.1.
 
-### Exercise 3 — Apply the fix and validate it
+### Exercise 3 — Apply the fix and validate it · *Part 2*
 
 Override `CategoryAI` → Count and replace the post-process group with P0–P3 (P1 with the lab IP).
 
@@ -306,67 +422,95 @@ Override `CategoryAI` → Count and replace the post-process group with P0–P3 
   still block)
 - Browser UA on both distributions → `200`
 
-### Exercise 4 — Count before enforce
+### Exercise 4 — Count before enforce · *Part 2*
 
-Put P0–P3 in Count (rule action override on the group's rules), replay Exercise 3, and confirm in
-the log that each request has the expected `nonTerminatingMatchingRules` without changing its
-outcome. That's the 24–48 h validation step in miniature.
+Put P0–P3 in Count (rule action override on the group's rules) and replay Exercise 3. In the log,
+confirm that each request has the expected `nonTerminatingMatchingRules` and that its outcome
+doesn't change. That's the 24–48 h validation step in miniature.
 
-### Exercise 5 — Allow placement: pre-process vs post-process
+### Exercise 5 — Allow placement: pre-process vs post-process · *Part 2*
 
-Move the P1 allow into the pre-process slot, ahead of every managed group, and send
+Move the P1 allow into the pre-process slot, ahead of every managed group. Then send
 `ExampleAIBot/1.0` with a CRS-triggering payload (`?file=../../etc/passwd`).
 
 - Pre-process: `200`. The allow terminated evaluation before CRS inspected it.
 - Post-process: `403` from CRS.
 - Takeaway: an early allow doesn't mean "trust this crawler", it means "skip all inspection".
 
-### Exercise 6 — Version drift
+### Exercise 6 — Version drift · *Part 1, done*
 
-Pin Bot Control to the oldest available version, diff its `availableLabels` against the default
-version, and note which AI crawlers each one classifies. An unpinned rule group changes which
-crawlers fall into blocker A without any change on your side.
+Compare the labels from an unpinned Bot Control with those from a pinned recent version, for the
+same User-Agents:
 
-### Exercise 7 — Exact UA vs label for the SEO exception
+```
+python deploy_lab.py test --profile <lab-profile>
+python deploy_lab.py labels --profile <lab-profile>
+```
 
-With the original rule, send the SEO UA with a version bump or an extra token: it's blocked by the
-exact match. With P3 (keyed on `bot:name:<seo-crawler>`), check what Bot Control labels the
-modified UA as.
+Result: see the Part 1 results. The default version (1.0) doesn't classify any Claude crawler, and
+6.0/6.1 do. An unpinned rule group decides which crawlers fall into blocker A, with no change on
+your side. `status` prints the default version again, so a later change of default shows up.
 
-### Exercise 8 — Scope-down on Bot Control (design discussion + measurement)
+### Exercise 7 — Exact UA vs label for the SEO exception · *Part 2*
 
-Add a scope-down so Bot Control only evaluates the marketing host. Measure the Bot Control request
-count (CloudWatch `AWS/WAFV2` metrics) against what you lose on the other hosts.
+With the original rule, send the SEO UA with a version bump or an extra token: the exact match
+blocks it. With P3 (keyed on `bot:name:<seo-crawler>`), check what label Bot Control gives the
+modified UA.
+
+### Exercise 8 — Scope-down on Bot Control (design discussion + measurement) · *Part 2*
+
+Add a scope-down so that Bot Control only evaluates the marketing host. Then measure the Bot Control
+request count (CloudWatch `AWS/WAFV2` metrics) against what you lose on the other hosts.
 
 ## Cost
 
-Roughly **$0.03/hour** while deployed. WAF fees are prorated hourly:
-- Web ACL $5/month + $1/month per rule or rule group
-- Bot Control $10/month per web ACL + per-request fee beyond the included tier (lab traffic stays
-  inside it)
-- CloudFront requests and CloudWatch Logs ingestion: negligible for a lab
+Part 1 costs roughly **$0.045/hour** while deployed (about $32/month if left running). WAF fees are
+prorated hourly:
+- 2 web ACLs × ($5/month + $1/month for the Bot Control rule)
+- 2 × Bot Control $10/month per web ACL. The per-request fee doesn't apply, because lab traffic
+  stays inside the included tier.
+- CloudFront requests and CloudWatch Logs ingestion: negligible
 - FMS variant: FMS policy fee + AWS Config in both accounts
 
-Tear down Bot Control right after testing.
+Tear down right after testing.
 
 ## Teardown
 
-Order matters:
-1. Disassociate the web ACL from both distributions (set `WebACLId` to empty and wait for
-   `Deployed`).
-2. Disable and delete both distributions (disable, wait for `Deployed`, then delete with the ETag).
-3. Delete the logging configuration and the log group.
-4. Delete the web ACL, then the custom rule group, then the IP set (each needs its lock token).
-5. Delete the OAC, empty and delete the bucket.
-6. **Verify:** `wafv2 list-web-acls`, `list-rule-groups`, `list-ip-sets` (CLOUDFRONT, us-east-1),
-   `cloudfront list-distributions`, and the bucket.
+```
+python deploy_lab.py teardown --profile <lab-profile>
+```
+
+What it does, in order (the order matters):
+1. Detaches the web ACL from each distribution and disables it, then waits for `Deployed`
+   (3–10 min). After that it deletes the distribution with the current ETag.
+2. Deletes the WAF logging configuration, the web ACL (with its lock token) and the log group, for
+   each variant.
+3. Deletes the OAC (with its ETag).
+4. Empties the bucket (every object version and delete marker) and deletes it.
+5. **Verifies** that no distribution, web ACL, log group, OAC or bucket from `resources.json` is
+   left. Only then does it delete `resources.json`. If anything is left, it keeps the file and exits
+   with code 1. Run it again to finish (for example, if a distribution was still deploying).
+
+Manual check:
+
+```
+aws wafv2 list-web-acls --scope CLOUDFRONT --region us-east-1 --query 'WebACLs[?starts_with(Name,`NET-022`)]'
+aws cloudfront list-distributions --query 'DistributionList.Items[?starts_with(Comment,`NET-022`)].Id'
+aws logs describe-log-groups --log-group-name-prefix aws-waf-logs-lab- --region us-east-1
+aws s3api head-bucket --bucket net022-lab-<account>
+```
 
 ## Files
 
-- `README.md` — this document
-- `architecture.drawio` — the customer architecture with both failing flows (page 1) and the fix
+- `README.md`: this document
+- `architecture.drawio`: the customer architecture with both failing flows (page 1), and the fix
   with the lab variant (page 2)
-- `lab/deploy_lab.py` — deploy, exercise knobs and verified teardown (added when the lab is built)
+- `lab/deploy_lab.py`: Part 1 lab. Commands: `deploy`, `status`, `test`, `labels` and a verified
+  `teardown`.
+- `explainers/ste100.md`: the case explained in ASD-STE100 (Simplified Technical English)
+- `explainers/explainer.html`: an interactive request simulator (current web ACL vs the fix) with
+  a narrated walkthrough. Open it locally in a browser. It's modeled on the default Bot Control
+  version.
 
 ## References
 

@@ -32,6 +32,7 @@ Key highlights:
 
 - **[NET-006](scenarios/NET-006_waf_bot_control_api_chatbot/)** — WAF Bot Control for a public API chatbot · Public Sector · *Lab*
 - **[NET-014](scenarios/NET-014_waf_ai_traffic_monetization_x402/)** — AI traffic monetization over x402 · Content and API providers · *Lab*
+- **[NET-022](scenarios/NET-022_bot_control_llm_crawler_label_allow/)** — Bot Control blocks LLM crawlers despite a label-based allow (unpinned version, misnamed BLOCK group) · Healthcare Data & Analytics · *Lab*
 - **[NET-012](scenarios/NET-012_shield_l7am_to_antiddos_amr_migration/)** — Shield Advanced L7AM vs the AntiDDoS managed rule set · Financial Services · *Case analysis*
 
 ## Industries Served

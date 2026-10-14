@@ -28,7 +28,7 @@ architecture. This index shows which services appear across the portfolio and in
 ## Application Integration
 
 - **API Gateway** — NET-006: REST API with WAF integration; NET-016: mock regional endpoints for failover testing
-- **CloudFront** — NET-006: WAF-protected distribution; NET-012, NET-014: origin for WAF evaluation; NET-020: OAI to the STNO console bucket
+- **CloudFront** — NET-006: WAF-protected distribution; NET-012, NET-014: origin for WAF evaluation; NET-020: OAI to the STNO console bucket; NET-022: two distributions on one S3 origin, one web ACL each for a side-by-side comparison
 - **AppSync** — NET-020: VTL DynamoDB Scan resolver, `limit`/`nextToken` pagination contract between resolver and client
 - **Step Functions** — NET-020: STNO approval workflow driving TGW associate/propagate
 - **EventBridge** — NET-020: custom bus with per-spoke-account rules reacting to VPC and subnet tags
@@ -37,7 +37,7 @@ architecture. This index shows which services appear across the portfolio and in
 ## Monitoring & Logging
 
 - **CloudTrail** — NET-009: zonal shift timeline reconstruction; NET-016: denied-call forensics
-- **CloudWatch Logs** — NET-002: query log destination and Insights queries; NET-011, NET-015: resolver query logging
+- **CloudWatch Logs** — NET-002: query log destination and Insights queries; NET-011, NET-015: resolver query logging; NET-022: WAF logs per web ACL, labels compared per User-Agent by run tag
 - **CloudWatch Metrics** — NET-007: storage bandwidth exceeded events; NET-012: per-rule WAF metrics during DDoS simulation
 
 ## Networking (secondary to the primary service)
@@ -51,8 +51,9 @@ architecture. This index shows which services appear across the portfolio and in
 ## Security Services
 
 - **Shield Advanced** — NET-012: L7AM vs AntiDDoS AMR activation parity, known-offender rate-based rule
-- **WAF Bot Control** — NET-006: targeted bot management; NET-014: Monetize action for AI traffic
+- **WAF Bot Control** — NET-006: targeted bot management; NET-014: Monetize action for AI traffic; NET-022 *(primary)*: unpinned default version (1.0) leaves Claude crawlers unclassified, `CategoryAI` blocking verified AI bots, label-based allow for LLM crawlers
 - **DNS Firewall** — NET-011: related pattern (domain allowlisting), planned SEC-001
+- **Firewall Manager** — NET-022: FMS-managed web ACL, pre/post-process rule group slots
 
 ## Directory & Hybrid Identity
 
@@ -62,7 +63,7 @@ architecture. This index shows which services appear across the portfolio and in
 
 - **ACM** — NET-004: cross-signed certificate import rejection, TLS inspection configuration
 - **RAM** — NET-002: sharing query log configs across accounts; NET-020: TGW shared to 150+ spoke accounts with external principals allowed
-- **S3** — NET-001: cross-account private access; NET-014: origin for monetized content; NET-020: console SPA behind CloudFront OAI
+- **S3** — NET-001: cross-account private access; NET-014: origin for monetized content; NET-020: console SPA behind CloudFront OAI; NET-022: private origin behind Origin Access Control
 - **Direct Connect** — NET-020: DXGW attachment on the hub TGW, propagation into the on-premises route table
 - **AWS Solutions** — NET-020: Network Orchestration for AWS Transit Gateway (SO0058) v3.3.28, upstream bug triage and upgrade ownership
 - **Blockchain** — NET-014: EIP-3009 USDC transfer on Base Sepolia, web3.py
