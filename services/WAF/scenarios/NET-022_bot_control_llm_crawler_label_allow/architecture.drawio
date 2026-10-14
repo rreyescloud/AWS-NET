@@ -1,0 +1,263 @@
+<mxfile host="drawio-plugin" modified="2026-10-13T12:00:00.000Z" agent="Mozilla/5.0" version="22.1.22" etag="NET022-bot-control-llm" type="embed">
+  <diagram name="1 — Problem: two independent blockers" id="net022-problem">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1720" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="title" value="NET-022: LLM crawlers blocked — the custom rule, not Bot Control, stops most of them" style="text;html=1;fontSize=17;fontStyle=1;align=center;fontColor=#333333;" parent="1" vertex="1">
+          <mxGeometry x="260" y="15" width="1200" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="subtitle" value="Blocker A: an unclassified crawler only gets signal:non_browser_user_agent and the post-process group named &quot;allow&quot; BLOCKS it. Blocker B: CategoryAI blocks classified AI bots even when verified." style="text;html=1;fontSize=11;align=center;fontColor=#666666;" parent="1" vertex="1">
+          <mxGeometry x="110" y="45" width="1500" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- Clients -->
+        <mxCell id="clientA" value="Flow A · LLM crawler, unclassified&#xa;UA ExampleAIBot/1.0&#xa;from 203.0.113.0/24 (vendor range)&#xa;~90–95% of the vendor's traffic" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="40" y="140" width="220" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="clientB" value="Flow B · LLM crawler, classified&#xa;bot:name:&amp;lt;known-ai-bot&amp;gt;&#xa;verified (real vendor infrastructure)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="40" y="260" width="220" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="clientC" value="Human visitor&#xa;browser UA" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="40" y="370" width="220" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- App account -->
+        <mxCell id="appAcct" value="&amp;lt;ACCOUNT_APP&amp;gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=12;fontStyle=1;verticalAlign=top;dashed=1;" parent="1" vertex="1">
+          <mxGeometry x="300" y="120" width="230" height="420" as="geometry" />
+        </mxCell>
+        <mxCell id="cf" value="CloudFront&#xa;www.example.com&#xa;(FMS policy scope)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="325" y="250" width="180" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="origin" value="Origin&#xa;open-source PHP CMS&#xa;marketing site" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="325" y="440" width="180" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- Web ACL -->
+        <mxCell id="acl" value="Web ACL (pushed by FMS · CLOUDFRONT scope · us-east-1 · default Allow) — evaluated top to bottom" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff4f4;strokeColor=#b85450;fontSize=12;fontStyle=1;verticalAlign=top;" parent="1" vertex="1">
+          <mxGeometry x="580" y="90" width="580" height="700" as="geometry" />
+        </mxCell>
+        <mxCell id="r1" value="1 · FMS pre-process · custom groups&#xa;PHP probe block · allow-by-IP-set (partner/internal) · NAT egress allow (misnamed) · security-plugin allow" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;align=left;spacingLeft=8;" parent="1" vertex="1">
+          <mxGeometry x="600" y="130" width="540" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="r2" value="&lt;b&gt;2 · AWSManagedRulesBotControlRuleSet&lt;/b&gt; · COMMON · default version (not pinned) · no scope-down&lt;br&gt;SignalNonBrowserUserAgent → &lt;b&gt;Count&lt;/b&gt; (adds signal:non_browser_user_agent; skips verified bots)&lt;br&gt;&lt;font color=&quot;#b85450&quot;&gt;&lt;b&gt;CategoryAI → Block&lt;/b&gt; — verified and unverified AI bots alike&lt;/font&gt;&lt;br&gt;availableLabels: no bot:name:* for the vendor in question" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;align=left;spacingLeft=8;" parent="1" vertex="1">
+          <mxGeometry x="600" y="195" width="540" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="r3" value="3 · Geo-block (one country)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;align=left;spacingLeft=8;" parent="1" vertex="1">
+          <mxGeometry x="600" y="300" width="540" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="r4" value="4 · Request body-size groups (x4)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;align=left;spacingLeft=8;" parent="1" vertex="1">
+          <mxGeometry x="600" y="345" width="540" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="r5" value="5 · AWSManagedRulesAmazonIpReputationList" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;align=left;spacingLeft=8;" parent="1" vertex="1">
+          <mxGeometry x="600" y="390" width="540" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="r6" value="6 · AWSManagedRulesCommonRuleSet (4 rules in Count)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;align=left;spacingLeft=8;" parent="1" vertex="1">
+          <mxGeometry x="600" y="435" width="540" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="r7" value="7 · CMS-specific managed group · SQLi · PHP" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;align=left;spacingLeft=8;" parent="1" vertex="1">
+          <mxGeometry x="600" y="480" width="540" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="r8" value="&lt;b&gt;8 · FMS post-process · &amp;lt;allow_seo_crawler_ua&amp;gt;&lt;/b&gt; (12 WCU, last group)&lt;br&gt;&lt;font color=&quot;#b85450&quot;&gt;&lt;b&gt;action BLOCK, despite the name&lt;/b&gt;&lt;/font&gt;&lt;br&gt;label signal:non_browser_user_agent&lt;br&gt;AND NOT User-Agent EXACTLY &quot;&amp;lt;seo-crawler-ua-string&amp;gt;&quot; (no transformation)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;align=left;spacingLeft=8;" parent="1" vertex="1">
+          <mxGeometry x="600" y="540" width="540" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="rdef" value="default action → Allow" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="600" y="650" width="540" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="aclnote" value="Labels added by Count rules travel down the web ACL. A label-based rule can only match labels that an earlier rule actually added." style="text;html=1;fontSize=10;align=left;fontColor=#666666;whiteSpace=wrap;" parent="1" vertex="1">
+          <mxGeometry x="605" y="700" width="530" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Results -->
+        <mxCell id="res403B" value="403 · blocker B&#xa;terminatingRuleId: Bot Control group&#xa;terminatingRule: CategoryAI&#xa;labels: bot:category:ai, bot:name:*, bot:verified" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;fontStyle=1;align=left;spacingLeft=8;" parent="1" vertex="1">
+          <mxGeometry x="1230" y="200" width="300" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="res403A" value="403 · blocker A (primary)&#xa;terminatingRuleId: &amp;lt;allow_seo_crawler_ua&amp;gt;&#xa;labels: signal:non_browser_user_agent only&#xa;no bot:category:ai · no bot:verified" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;fontStyle=1;align=left;spacingLeft=8;" parent="1" vertex="1">
+          <mxGeometry x="1230" y="545" width="300" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- Security account -->
+        <mxCell id="secAcct" value="&amp;lt;ACCOUNT_SECURITY&amp;gt; · Firewall Manager administrator" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=12;fontStyle=1;verticalAlign=top;dashed=1;" parent="1" vertex="1">
+          <mxGeometry x="40" y="580" width="490" height="210" as="geometry" />
+        </mxCell>
+        <mxCell id="fms" value="FMS policy &amp;lt;fms-web-policy&amp;gt;&#xa;resource type CLOUDFRONT · account include list&#xa;auto-remediation disabled&#xa;owns pre/post-process custom groups" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;align=left;spacingLeft=8;" parent="1" vertex="1">
+          <mxGeometry x="60" y="620" width="220" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="logs" value="S3 bucket aws-waf-logs-*&#xa;WAF full logs&#xa;(Athena)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;align=left;spacingLeft=8;" parent="1" vertex="1">
+          <mxGeometry x="300" y="620" width="210" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="secnote" value="AWS Organizations · policy pushed to the app account's distributions" style="text;html=1;fontSize=10;align=left;fontColor=#666666;" parent="1" vertex="1">
+          <mxGeometry x="60" y="730" width="450" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- Evidence -->
+        <mxCell id="evidence" value="&lt;b&gt;Evidence&lt;/b&gt;&lt;br&gt;• DescribeManagedRuleGroup (default version): availableLabels has bot:category:ai and several AI bot:name:* labels, none for this vendor&lt;br&gt;• Customer logs filtered by vendor IP ranges: 90–95% terminated by the custom rule, few by CategoryAI&lt;br&gt;• Rule group definition: BLOCK on label AND NOT exact UA&lt;br&gt;• Not confirmed: individual log samples (terminatingRuleId, labels, UA)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#999999;fontSize=10;align=left;verticalAlign=top;spacingLeft=8;spacingTop=4;" parent="1" vertex="1">
+          <mxGeometry x="1200" y="680" width="460" height="110" as="geometry" />
+        </mxCell>
+
+        <!-- Legend -->
+        <mxCell id="legend" value="Legend: red = flow A (unclassified crawler) · orange = flow B (classified AI bot) · green = allowed path · grey = no match, request continues" style="text;html=1;fontSize=10;align=left;fontColor=#333333;" parent="1" vertex="1">
+          <mxGeometry x="40" y="820" width="900" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- Edges -->
+        <mxCell id="eA" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#b85450;strokeWidth=2;endArrow=block;" parent="1" source="clientA" target="cf" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="eB" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#d79b00;strokeWidth=2;endArrow=block;" parent="1" source="clientB" target="cf" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="eC" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#82b366;strokeWidth=2;endArrow=block;" parent="1" source="clientC" target="cf" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="eCfAcl" value="GET https://www.example.com/..." style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#666666;strokeWidth=2;endArrow=block;fontSize=9;exitX=1;exitY=0.25;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="cf" target="r1" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="eR2B" value="flow B: CategoryAI terminates" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#d79b00;strokeWidth=2;endArrow=block;fontSize=9;fontColor=#d79b00;" parent="1" source="r2" target="res403B" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="eR8A" value="flow A: label present, UA ≠ SEO string" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#b85450;strokeWidth=2;endArrow=block;fontSize=9;fontColor=#b85450;" parent="1" source="r8" target="res403A" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="eDefOrigin" value="browser: no match → Allow" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#82b366;strokeWidth=2;endArrow=block;fontSize=9;fontColor=#82b366;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="rdef" target="origin" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="eLogs" value="logs" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#d6b656;dashed=1;endArrow=block;fontSize=9;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.75;entryDx=0;entryDy=0;" parent="1" source="acl" target="logs" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="eFms" value="pushes web ACL" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#9673a6;dashed=1;endArrow=block;fontSize=9;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="fms" target="r8" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="170" y="560" />
+              <mxPoint x="560" y="560" />
+              <mxPoint x="560" y="585" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="2 — Fix and lab variant" id="net022-fix">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1720" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="title2" value="NET-022 fix: CategoryAI labels only, the post-process group decides — verified AI bots by label, one interim exception by UA + IP" style="text;html=1;fontSize=17;fontStyle=1;align=center;fontColor=#333333;" parent="1" vertex="1">
+          <mxGeometry x="110" y="15" width="1500" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="subtitle2" value="Lab variant: one account, no FMS. Two distributions share the web ACL, so the Host condition is tested the way it can actually be bypassed." style="text;html=1;fontSize=11;align=center;fontColor=#666666;" parent="1" vertex="1">
+          <mxGeometry x="210" y="45" width="1300" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- Clients -->
+        <mxCell id="lab" value="Lab client&#xa;public IP in NET-022-vendor-crawlers&#xa;curl -A ExampleAIBot/1.0 · &amp;lt;ai-ua-classified&amp;gt;&#xa;python-requests · browser UA" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="40" y="150" width="230" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="other" value="Other IP (e.g. CloudShell)&#xa;not in the IP set&#xa;curl -A ExampleAIBot/1.0" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="40" y="290" width="230" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- Distributions -->
+        <mxCell id="mkt" value="CloudFront · marketing&#xa;&amp;lt;marketing&amp;gt;.cloudfront.net&#xa;crawlers allowed (GET/HEAD)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="330" y="150" width="210" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="portal" value="CloudFront · portal&#xa;&amp;lt;portal&amp;gt;.cloudfront.net&#xa;stands in for authenticated apps" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="330" y="260" width="210" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="s3" value="S3 origin (private)&#xa;Origin Access Control&#xa;static index.html" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="330" y="420" width="210" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="cwl" value="CloudWatch Logs&#xa;aws-waf-logs-net022 (1 day)&#xa;action · terminatingRuleId · labels" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="330" y="530" width="210" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="ipset" value="IP set NET-022-vendor-crawlers&#xa;lab client /32&#xa;(stands in for 203.0.113.0/24)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="330" y="640" width="210" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- Web ACL -->
+        <mxCell id="acl2" value="Web ACL NET-022-acl · CLOUDFRONT · us-east-1 · default Allow" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff4f4;strokeColor=#b85450;fontSize=12;fontStyle=1;verticalAlign=top;" parent="1" vertex="1">
+          <mxGeometry x="600" y="90" width="580" height="680" as="geometry" />
+        </mxCell>
+        <mxCell id="pre" value="Pre-process slot · empty (Exercise 5 moves P1 here: allowed requests then skip IP reputation and CRS)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;align=left;spacingLeft=8;dashed=1;" parent="1" vertex="1">
+          <mxGeometry x="620" y="130" width="540" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="bc" value="&lt;b&gt;Bot Control&lt;/b&gt; · COMMON · default version&lt;br&gt;SignalNonBrowserUserAgent → Count&lt;br&gt;&lt;font color=&quot;#82b366&quot;&gt;&lt;b&gt;CategoryAI → Count (step 1): still labels, no longer terminates&lt;/b&gt;&lt;/font&gt;&lt;br&gt;all other category rules → Block (python-requests still 403)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;align=left;spacingLeft=8;" parent="1" vertex="1">
+          <mxGeometry x="620" y="185" width="540" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="iprep" value="AWSManagedRulesAmazonIpReputationList" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;align=left;spacingLeft=8;" parent="1" vertex="1">
+          <mxGeometry x="620" y="280" width="540" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="crs" value="AWSManagedRulesCommonRuleSet" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;align=left;spacingLeft=8;" parent="1" vertex="1">
+          <mxGeometry x="620" y="325" width="540" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="post" value="Post-process group (rebuilt, step 2) · every managed group has already inspected the request" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#b85450;fontSize=11;fontStyle=1;verticalAlign=top;" parent="1" vertex="1">
+          <mxGeometry x="620" y="380" width="540" height="330" as="geometry" />
+        </mxCell>
+        <mxCell id="p0" value="&lt;b&gt;P0 ALLOW&lt;/b&gt; · Host = marketing AND Method IN (GET, HEAD)&lt;br&gt;AND ( (bot:category:ai AND (bot:verified OR bot:user_triggered:verified)) OR bot:web_bot_auth:verified )&lt;br&gt;&lt;i&gt;covers current and future verified AI crawlers, no per-vendor rule&lt;/i&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;align=left;spacingLeft=8;" parent="1" vertex="1">
+          <mxGeometry x="640" y="415" width="500" height="65" as="geometry" />
+        </mxCell>
+        <mxCell id="p1" value="&lt;b&gt;P1 ALLOW (interim)&lt;/b&gt; · Host = marketing AND Method IN (GET, HEAD)&lt;br&gt;AND User-Agent CONTAINS &quot;ExampleAIBot&quot; AND source IP IN NET-022-vendor-crawlers&lt;br&gt;&lt;i&gt;UA alone is spoofable — the IP set is mandatory; removed once classified&lt;/i&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;align=left;spacingLeft=8;dashed=1;" parent="1" vertex="1">
+          <mxGeometry x="640" y="490" width="500" height="65" as="geometry" />
+        </mxCell>
+        <mxCell id="p2" value="&lt;b&gt;P2 BLOCK&lt;/b&gt; · label bot:category:ai&lt;br&gt;&lt;i&gt;restores the CategoryAI block for unverified/spoofed AI UAs and other hosts/methods&lt;/i&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;align=left;spacingLeft=8;" parent="1" vertex="1">
+          <mxGeometry x="640" y="565" width="500" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="p3" value="&lt;b&gt;P3 BLOCK&lt;/b&gt; · label signal:non_browser_user_agent AND NOT label bot:name:&amp;lt;seo-crawler&amp;gt;&lt;br&gt;&lt;i&gt;replaces the exact UA string match&lt;/i&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;align=left;spacingLeft=8;" parent="1" vertex="1">
+          <mxGeometry x="640" y="625" width="500" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="def2" value="default action → Allow" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="620" y="725" width="540" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- Expected results -->
+        <mxCell id="expected" value="&lt;b&gt;Expected after the fix (Exercise 3)&lt;/b&gt;&lt;br&gt;&lt;br&gt;• ExampleAIBot · GET · lab IP · marketing → &lt;b&gt;200&lt;/b&gt; (P1)&lt;br&gt;• ExampleAIBot · other IP → &lt;b&gt;403&lt;/b&gt; (P3)&lt;br&gt;• ExampleAIBot · POST → &lt;b&gt;403&lt;/b&gt; (P3)&lt;br&gt;• ExampleAIBot · GET · portal → &lt;b&gt;403&lt;/b&gt; (P3)&lt;br&gt;• &amp;lt;ai-ua-classified&amp;gt; from lab IP → &lt;b&gt;403&lt;/b&gt; (P2, bot:unverified)&lt;br&gt;• python-requests → &lt;b&gt;403&lt;/b&gt; (CategoryHttpLibrary)&lt;br&gt;• browser UA, both distributions → &lt;b&gt;200&lt;/b&gt;&lt;br&gt;&lt;br&gt;Step 3: run P0–P3 in Count 24–48 h and read nonTerminatingMatchingRules before enforcing (Exercise 4)." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#999999;fontSize=10;align=left;verticalAlign=top;spacingLeft=8;spacingTop=4;" parent="1" vertex="1">
+          <mxGeometry x="1230" y="130" width="440" height="250" as="geometry" />
+        </mxCell>
+        <mxCell id="cannot" value="&lt;b&gt;Not reproducible in the lab&lt;/b&gt;&lt;br&gt;bot:verified and bot:web_bot_auth:verified depend on the real crawler infrastructure (reverse DNS, published IPs, signed requests). From a lab IP a classified AI UA is always bot:unverified, so P0 is shown by design, not by test." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;align=left;verticalAlign=top;spacingLeft=8;spacingTop=4;" parent="1" vertex="1">
+          <mxGeometry x="1230" y="410" width="440" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="perm" value="&lt;b&gt;Permanent path&lt;/b&gt;&lt;br&gt;Request Bot Control classification for the crawler through AWS Support. Once classified and verifiable, P0 covers it and P1 is deleted. Pin or track the Bot Control version: availableLabels drifts between versions (Exercise 6)." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;align=left;verticalAlign=top;spacingLeft=8;spacingTop=4;" parent="1" vertex="1">
+          <mxGeometry x="1230" y="540" width="440" height="100" as="geometry" />
+        </mxCell>
+
+        <!-- Edges -->
+        <mxCell id="f1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#6c8ebf;strokeWidth=2;endArrow=block;" parent="1" source="lab" target="mkt" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#6c8ebf;strokeWidth=2;endArrow=block;exitX=1;exitY=0.75;exitDx=0;exitDy=0;" parent="1" source="lab" target="portal" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#666666;strokeWidth=2;dashed=1;endArrow=block;exitX=1;exitY=0.25;exitDx=0;exitDy=0;entryX=0;entryY=0.75;entryDx=0;entryDy=0;" parent="1" source="other" target="mkt" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="300" y="308" />
+              <mxPoint x="300" y="203" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="f4" value="same web ACL" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#666666;strokeWidth=2;endArrow=block;fontSize=9;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="mkt" target="pre" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f5" value="same web ACL" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#666666;strokeWidth=2;endArrow=block;fontSize=9;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="portal" target="iprep" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f6" value="allowed" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#82b366;strokeWidth=2;endArrow=block;fontSize=9;fontColor=#82b366;exitX=0;exitY=0.25;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="post" target="s3" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f7" value="logs" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#d6b656;dashed=1;endArrow=block;fontSize=9;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="post" target="cwl" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f8" value="referenced by P1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#9673a6;dashed=1;endArrow=block;fontSize=9;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="ipset" target="p1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="580" y="675" />
+              <mxPoint x="580" y="522" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
