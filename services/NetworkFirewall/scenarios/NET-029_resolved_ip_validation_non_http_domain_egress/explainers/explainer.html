@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NET-029 — Network Firewall Route 53 Resolved IP Validation</title>
+<style>
+:root{
+  --bg:#fbfbfa;--fg:#1d1d1f;--muted:#5f6368;--card:#ffffff;--line:#e3e3e0;
+  --accent:#2f6fde;--ok:#1e8e3e;--bad:#c5221f;--warn:#b26a00;--code:#f3f3f1;--hl:#fff4cc;
+}
+@media (prefers-color-scheme: dark){
+  :root{--bg:#141416;--fg:#e8e8ea;--muted:#a0a3a8;--card:#1c1c1f;--line:#2e2e33;
+  --accent:#7aa7ff;--ok:#5bd17a;--bad:#ff7a70;--warn:#f0b24a;--code:#232327;--hl:#3a3320;}
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+main{max-width:760px;margin:0 auto;padding:32px 20px 80px}
+h1{font-size:1.8rem;line-height:1.25;margin:0 0 8px}
+h2{font-size:1.35rem;margin:48px 0 12px;padding-top:12px;border-top:1px solid var(--line)}
+h3{font-size:1.08rem;margin:24px 0 8px}
+p,li{margin:6px 0}
+.lead{color:var(--muted);font-size:1.05rem}
+.meta{font-size:.85rem;color:var(--muted)}
+code,pre{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.86rem}
+code{background:var(--code);padding:1px 5px;border-radius:4px}
+pre{background:var(--code);padding:12px 14px;border-radius:8px;overflow-x:auto;margin:8px 0;white-space:pre}
+pre code{background:none;padding:0}
+table{width:100%;border-collapse:collapse;margin:10px 0;font-size:.92rem}
+th,td{border-bottom:1px solid var(--line);padding:8px 6px;text-align:left;vertical-align:top}
+th{font-weight:600}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:12px 0}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:640px){.grid2{grid-template-columns:1fr}}
+.ok{color:var(--ok)}.bad{color:var(--bad)}.warn{color:var(--warn)}
+.badge{display:inline-block;padding:2px 10px;border-radius:999px;font-weight:600;font-size:.85rem;border:1px solid currentColor}
+.callout{border-left:4px solid var(--warn);background:var(--card);padding:10px 14px;border-radius:0 8px 8px 0;margin:12px 0}
+.callout.info{border-left-color:var(--accent)}
+.callout.bad{border-left-color:var(--bad)}
+nav.toc{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 16px;margin:20px 0}
+nav.toc ol{margin:4px 0;padding-left:20px;columns:2;column-gap:24px}
+@media (max-width:640px){nav.toc ol{columns:1}}
+a{color:var(--accent)}
+abbr[data-tip]{text-decoration:underline dotted;cursor:help;position:relative}
+abbr[data-tip]:hover::after,abbr[data-tip]:focus::after{content:attr(data-tip);position:absolute;left:0;top:1.6em;z-index:10;background:var(--fg);color:var(--bg);padding:6px 9px;border-radius:6px;font-size:.8rem;width:260px;line-height:1.35}
+button{font:inherit;cursor:pointer;border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:8px;padding:6px 12px}
+button:hover{border-color:var(--accent)}
+button.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+button:disabled{opacity:.4;cursor:default}
+/* stepper */
+#flow svg{width:100%;height:auto;display:block}
+#flow .node rect{fill:var(--card);stroke:var(--line);stroke-width:1.5}
+#flow .node text{fill:var(--fg);font-size:13px;text-anchor:middle}
+#flow .node.on rect{stroke:var(--accent);stroke-width:2.5}
+#flow .arrow{opacity:.12;transition:opacity .4s}
+#flow .arrow.on{opacity:1}
+#flow .arrow line,#flow .arrow path{stroke:var(--muted);stroke-width:2;fill:none}
+#flow .arrow.good line,#flow .arrow.good path{stroke:var(--ok)}
+#flow .arrow.badc line,#flow .arrow.badc path{stroke:var(--bad)}
+#flow .arrow text{font-size:11.5px;fill:var(--fg)}
+#flow .x{opacity:0;transition:opacity .4s}#flow .x.on{opacity:1}
+#stepText{min-height:96px}
+.stepbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.dots{display:flex;gap:5px;margin-left:auto}
+.dots span{width:9px;height:9px;border-radius:50%;background:var(--line)}
+.dots span.on{background:var(--accent)}
+/* sim */
+.sim label{display:block;font-size:.9rem;margin:8px 0 3px;font-weight:600}
+.sim select{width:100%;font:inherit;padding:6px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--fg)}
+.sim .chk{font-weight:400;display:flex;gap:8px;align-items:center}
+#trace{margin:0;padding-left:20px}
+#trace li{margin:4px 0}
+#verdict{font-size:1.1rem;margin:8px 0}
+/* cli cards */
+.step{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:14px 0}
+.step h4{margin:0 0 6px;font-size:1rem}
+.step .goal{margin:0 0 6px}
+.cmd{position:relative}
+.cmd button{position:absolute;top:6px;right:6px;font-size:.75rem;padding:3px 8px}
+.expect{font-size:.88rem;color:var(--muted)}
+.expect b{color:var(--fg)}
+.phase{display:inline-block;font-size:.72rem;letter-spacing:.04em;text-transform:uppercase;padding:1px 8px;border-radius:999px;background:var(--code);margin-right:6px}
+details{margin:8px 0}
+summary{cursor:pointer;font-weight:600}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<main>
+
+<h1>Network Firewall: Route 53 resolved IP validation</h1>
+<p class="lead">Network Firewall checks that a connection's destination IP came from a DNS answer of your VPC's Route 53 Resolver. This blocks SNI/Host spoofing and applies domain rules to any protocol (SSH, SFTP, generic TCP).</p>
+<p class="meta">Scenario NET-029 · Sources: the What's New announcement (2026-10-21) and the AWS Network Firewall Developer Guide / API Reference. No additional charge. Available in the commercial Regions that have Network Firewall and Route 53 Resolver DNS Firewall.</p>
+
+<nav class="toc"><b>Contents</b>
+<ol>
+<li><a href="#problem">The problem it solves</a></li>
+<li><a href="#how">How it works (step by step)</a></li>
+<li><a href="#levels">The two levels</a></li>
+<li><a href="#policy">Policy settings</a></li>
+<li><a href="#rules">Resolved-domain rules</a></li>
+<li><a href="#sim">Simulator</a></li>
+<li><a href="#arch">Architectures and scenarios</a></li>
+<li><a href="#ops">Operations and rollout</a></li>
+<li><a href="#errors">Common mistakes</a></li>
+<li><a href="#cli">Replicate it (CLI-first)</a></li>
+<li><a href="#gaps">What the documentation doesn't say</a></li>
+<li><a href="#refs">References</a></li>
+</ol></nav>
+
+<h2 id="problem">1. The problem it solves</h2>
+<p>A standard domain rule reads the name that the <b>client asserts</b>. For TLS it reads the <abbr tabindex="0" data-tip="Server Name Indication: the field in the TLS ClientHello where the client writes the hostname. It is in clear text and the client controls it.">SNI</abbr>. For HTTP it reads the <code>Host</code> header. The client controls both fields.</p>
+<p>A malicious process can send <code>SNI: allowed.example.com</code> and connect to the IP of its command-and-control server. The domain rule sees an allowed name and passes the connection.</p>
+
+<div class="grid2">
+<div class="card">
+<b>Classic rule (<code>TLS_SNI</code>)</b>
+<pre>SNI   = allowed.example.com   ✔ in allowlist
+IP    = 203.0.113.99          (not checked)
+→ <span class="bad">PASS — spoofing succeeds</span></pre>
+</div>
+<div class="card">
+<b>With resolved IP validation</b>
+<pre>SNI   = allowed.example.com   ✔ in allowlist
+IP    = 203.0.113.99
+Did the Resolver return this IP? ✘
+→ <span class="ok">DROP / REJECT / ALERT</span></pre>
+</div>
+</div>
+
+<p>The second effect matters just as much. Many protocols carry no domain name in the traffic: SSH, SFTP, databases, proprietary TCP. Before, you could filter them only by IP or CIDR. Now the firewall knows which domain each IP was resolved for, so you can write "allow SSH only to <code>.partner.example.com</code>".</p>
+
+<h2 id="how">2. How it works (step by step)</h2>
+<div id="flow" class="card">
+<svg viewBox="0 0 720 330" role="img" aria-label="Resolved IP validation flow">
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="currentColor"/></marker>
+  </defs>
+  <g class="node" id="n-client"><rect x="20" y="130" width="120" height="56" rx="8"/><text x="80" y="154">Client</text><text x="80" y="172" style="font-size:11px">10.0.1.10</text></g>
+  <g class="node" id="n-res"><rect x="230" y="20" width="160" height="56" rx="8"/><text x="310" y="44">Route 53 Resolver</text><text x="310" y="62" style="font-size:11px">VPC associated with DNS FW RG</text></g>
+  <g class="node" id="n-cache"><rect x="470" y="20" width="160" height="56" rx="8"/><text x="550" y="44">Resolved IP cache</text><text x="550" y="62" style="font-size:11px">IP ↔ domain</text></g>
+  <g class="node" id="n-nfw"><rect x="300" y="130" width="160" height="56" rx="8"/><text x="380" y="154">Network Firewall</text><text x="380" y="172" style="font-size:11px">stateful engine</text></g>
+  <g class="node" id="n-dst"><rect x="560" y="130" width="140" height="56" rx="8"/><text x="630" y="154">Destination</text><text x="630" y="172" style="font-size:11px">198.51.100.20</text></g>
+  <g class="node" id="n-bad"><rect x="560" y="250" width="140" height="56" rx="8"/><text x="630" y="274">Unresolved IP</text><text x="630" y="292" style="font-size:11px">203.0.113.99</text></g>
+  <g class="arrow" id="a1" style="color:var(--muted)"><line x1="110" y1="130" x2="240" y2="76" marker-end="url(#ah)"/><text x="120" y="92">① DNS query sftp.partner.example.com</text></g>
+  <g class="arrow good" id="a2" style="color:var(--ok)"><line x1="250" y1="76" x2="130" y2="130" marker-end="url(#ah)"/><text x="150" y="122">② A 198.51.100.20</text></g>
+  <g class="arrow good" id="a2b" style="color:var(--ok)"><line x1="390" y1="48" x2="468" y2="48" marker-end="url(#ah)"/><text x="394" y="40">② record</text></g>
+  <g class="arrow" id="a3" style="color:var(--muted)"><line x1="140" y1="158" x2="298" y2="158" marker-end="url(#ah)"/><text x="150" y="150">③ TCP 22 → .20</text></g>
+  <g class="arrow good" id="a4" style="color:var(--ok)"><path d="M420,130 C440,100 500,100 530,78" marker-end="url(#ah)"/><text x="440" y="118">④ present? yes</text></g>
+  <g class="arrow good" id="a5" style="color:var(--ok)"><line x1="460" y1="158" x2="558" y2="158" marker-end="url(#ah)"/><text x="466" y="150">⑤ PASS</text></g>
+  <g class="arrow badc" id="a6" style="color:var(--bad)"><path d="M80,186 C80,280 300,280 380,190" marker-end="url(#ah)"/><text x="90" y="262">⑥ TCP 22 → 203.0.113.99 (no DNS)</text></g>
+  <g class="arrow badc" id="a6b" style="color:var(--bad)"><line x1="430" y1="186" x2="556" y2="270" stroke-dasharray="5 4"/></g>
+  <g class="x" id="x6"><text x="488" y="238" style="font-size:26px;fill:var(--bad);font-weight:700">✕</text></g>
+</svg>
+<div id="stepText"></div>
+<div class="stepbar">
+  <button id="prev">← Previous</button>
+  <button id="next" class="primary">Next →</button>
+  <div class="dots" id="dots"></div>
+</div>
+</div>
+
+<h2 id="levels">3. The two levels</h2>
+<table>
+<tr><th></th><th>Policy level</th><th>Rule level</th></tr>
+<tr><td><b>Question</b></td><td>Did the Resolver return this IP for <i>any</i> domain?</td><td>Did the Resolver return this IP for <i>this</i> domain?</td></tr>
+<tr><td><b>Where</b></td><td>Firewall policy → <code>Route53ResolvedIPValidation</code></td><td>Stateful rule group: a domain list with <code>AWS_ROUTE_53_RESOLVED_DOMAIN</code>, the Suricata keyword <code>aws_route_53_resolved_domain</code>, or a standard stateful rule with <i>Domain filtering</i></td></tr>
+<tr><td><b>Required?</b></td><td>Yes. Without it, resolved-domain rules have no effect.</td><td>No. It is optional and sits on top of the policy level.</td></tr>
+<tr><td><b>Action</b></td><td>Policy <code>Action</code>: <code>ALERT</code> | <code>DROP</code> | <code>REJECT</code></td><td>The action of each rule: <code>pass</code>, <code>drop</code>, <code>reject</code>, <code>alert</code></td></tr>
+<tr><td><b>Scope</b></td><td>Limited by <code>SourceIPRanges</code> and <code>BypassDestinationValidationIPRanges</code></td><td>Ignores both fields. Always evaluated.</td></tr>
+</table>
+<div class="callout info">Think of it this way. The policy level is an <b>integrity control</b>: "never connect to an IP that didn't come from DNS". The rule level is a <b>policy control</b>: "which domains you may reach, over any protocol".</div>
+
+<h2 id="policy">4. Policy settings</h2>
+<p>The API structure is <code>Route53ResolvedIPValidation</code> and belongs to the firewall policy. It has three required fields and two optional ones.</p>
+
+<div class="card">
+<h3 style="margin-top:0"><code>Action</code> <span class="badge">required</span></h3>
+<p>What the firewall does with a connection that <b>fails</b> validation.</p>
+<ul>
+<li><code>ALERT</code>: tags the connection in the <b>flow logs</b> and doesn't block it. Requires logging. Use it to measure impact before you block.</li>
+<li><code>DROP</code>: blocks the connection silently. The client waits until it times out.</li>
+<li><code>REJECT</code>: blocks and sends a TCP RST. On non-TCP traffic (UDP, ICMP) it drops.</li>
+</ul>
+</div>
+
+<div class="card">
+<h3 style="margin-top:0"><code>DNSFirewallRuleGroupId</code> <span class="badge">required</span></h3>
+<p>The ID of a <abbr tabindex="0" data-tip="Route 53 Resolver DNS Firewall: filters DNS queries that leave a VPC through the Resolver (.2). Here it mainly works as the anchor that defines which VPCs count.">Route 53 Resolver DNS Firewall</abbr> rule group, in the format <code>^rslvr-frg-[0-9a-f]+$</code>.</p>
+<ul>
+<li>This field defines <b>which VPCs count</b>. An IP counts as resolved only if the Resolver returned it in a VPC <b>associated with this rule group</b>.</li>
+<li>Associate the rule group with every VPC whose traffic goes through the firewall.</li>
+<li>Each policy has <b>one</b> managed association with DNS Firewall. When you change the ID, the firewall swaps the association asynchronously. During the swap it rejects other changes to this block. Wait for the policy to return to <code>ACTIVE</code>.</li>
+<li>The rule group can be empty. It doesn't have to block anything to work as the anchor. You can also reuse one that already filters DNS.</li>
+</ul>
+</div>
+
+<div class="card">
+<h3 style="margin-top:0"><code>DNSExpiryExceptionPolicy</code> <span class="badge">required</span></h3>
+<p>What to do when the cache entry has <b>expired</b> and traffic to that IP keeps arriving. Examples: an SSH session of several hours, or a client that caches DNS longer than the TTL.</p>
+<ul>
+<li><code>CONTINUE</code>: treats the expired entry as valid. This is the least disruptive option.</li>
+<li><code>DROP</code> / <code>REJECT</code>: blocks. It is stricter and can break clients with their own DNS cache (JVM, persistent connections).</li>
+</ul>
+<p>The firewall keeps each entry <b>longer than the TTL</b>. A short TTL on its own doesn't break connections.</p>
+</div>
+
+<div class="card">
+<h3 style="margin-top:0"><code>SourceIPRanges</code> <span class="badge">optional</span></h3>
+<p>The sources to validate. Up to 100 IPv4/IPv6 addresses or CIDRs.</p>
+<ul>
+<li><b>Field omitted</b>: validates the CIDRs of the firewall VPC and of any additional VPCs attached to the firewall.</li>
+<li><b>Empty list <code>[]</code></b>: <span class="bad">validates no source</span>. That isn't the same as omitting the field.</li>
+<li>It affects the policy level only. Resolved-domain rules evaluate regardless.</li>
+</ul>
+</div>
+
+<div class="card">
+<h3 style="margin-top:0"><code>BypassDestinationValidationIPRanges</code> <span class="badge">optional</span></h3>
+<p>Destinations exempt from the policy-level check. Up to 100 IPv4/IPv6 addresses or CIDRs. Use it for legitimate destinations without DNS: fixed partner IPs, NTP by IP, on-premises appliances.</p>
+<p>It affects the policy level only. An <code>aws_route_53_resolved_domain</code> rule still evaluates those destinations.</p>
+</div>
+
+<h3>Example block</h3>
+<div class="cmd"><button data-copy>Copy</button><pre><code>{
+  "Action": "ALERT",
+  "DNSFirewallRuleGroupId": "rslvr-frg-0123456789abcdef",
+  "DNSExpiryExceptionPolicy": "CONTINUE",
+  "SourceIPRanges": [
+    { "AddressDefinition": "10.0.0.0/16" }
+  ],
+  "BypassDestinationValidationIPRanges": [
+    { "AddressDefinition": "198.51.100.0/24" }
+  ]
+}</code></pre></div>
+
+<h3>Which changes restart the stateful engine</h3>
+<table>
+<tr><th>Change</th><th>Restart?</th></tr>
+<tr><td>Enable or disable validation</td><td class="warn">May restart</td></tr>
+<tr><td>Change <code>DNSFirewallRuleGroupId</code></td><td class="warn">May restart (and the swap is asynchronous)</td></tr>
+<tr><td><code>Action</code>, <code>DNSExpiryExceptionPolicy</code>, <code>SourceIPRanges</code>, <code>BypassDestinationValidationIPRanges</code></td><td class="ok">No</td></tr>
+</table>
+<div class="callout">⚠️ If the engine restarts, the firewall handles open connections according to the <abbr tabindex="0" data-tip="The policy's StreamExceptionPolicy: DROP, CONTINUE or REJECT. It defines what happens to mid-session flows that the stateful engine doesn't know, for example after a restart.">stream exception policy</abbr>. With <code>DROP</code> or <code>REJECT</code>, long sessions are cut. Enable validation in a maintenance window.</div>
+<p>When you remove the block from the policy, the firewall removes the managed DNS Firewall association and validation stops applying.</p>
+
+<h2 id="rules">5. Resolved-domain rules</h2>
+<p>There are three ways to write them. All three need the policy level enabled.</p>
+
+<h3>a) Domain list</h3>
+<p>Add <code>AWS_ROUTE_53_RESOLVED_DOMAIN</code> to the target types, alongside <code>TLS_SNI</code> and <code>HTTP_HOST</code> or instead of them.</p>
+<div class="cmd"><button data-copy>Copy</button><pre><code>{
+  "RulesSource": {
+    "RulesSourceList": {
+      "Targets": [".partner.example.com", "api.example.com"],
+      "TargetTypes": ["AWS_ROUTE_53_RESOLVED_DOMAIN"],
+      "GeneratedRulesType": "ALLOWLIST"
+    }
+  }
+}</code></pre></div>
+<p>With only <code>AWS_ROUTE_53_RESOLVED_DOMAIN</code>, the allowlist applies to <b>all</b> IP traffic, not only HTTP/HTTPS. Combining it with <code>TLS_SNI</code>/<code>HTTP_HOST</code> follows the rules in the "Stateful domain list rule groups" guide. Read them before you mix target types.</p>
+
+<h3>b) Suricata</h3>
+<table>
+<tr><th>Goal</th><th>Rule</th></tr>
+<tr><td>Drop one exact domain</td><td><code>drop ip $HOME_NET any -&gt; $EXTERNAL_NET any (aws_route_53_resolved_domain:"example.com"; flow:to_server, established; sid:1;)</code></td></tr>
+<tr><td>Domain and subdomains (leading dot)</td><td><code>pass ip $HOME_NET any -&gt; $EXTERNAL_NET any (aws_route_53_resolved_domain:".example.com"; flow:to_server, established; sid:2;)</code></td></tr>
+<tr><td>Reject (requires <code>tcp</code>)</td><td><code>reject tcp $HOME_NET any -&gt; $EXTERNAL_NET any (aws_route_53_resolved_domain:".ads.example.com"; flow:to_server, established; sid:3;)</code></td></tr>
+<tr><td>Several domains (OR)</td><td><code>drop ip $HOME_NET any -&gt; $EXTERNAL_NET any (aws_route_53_resolved_domain:"api.example.com,cdn.example.com"; flow:to_server, established; sid:4;)</code></td></tr>
+<tr><td>Anti-spoofing: SNI <b>and</b> resolution must match</td><td><code>pass tls $HOME_NET any -&gt; $EXTERNAL_NET any (tls.sni; content:"example.com"; nocase; startswith; endswith; aws_route_53_resolved_domain:"example.com"; flow:to_server, established; sid:5;)</code></td></tr>
+</table>
+
+<h3>Recommended pattern: SSH/SFTP to one partner only</h3>
+<div class="cmd"><button data-copy>Copy</button><pre><code>pass tcp $HOME_NET any -&gt; $EXTERNAL_NET 22 (aws_route_53_resolved_domain:".partner.example.com"; flow:to_server, established; sid:100;)
+drop tcp $HOME_NET any -&gt; $EXTERNAL_NET 22 (flow:to_server, established; sid:101;)</code></pre></div>
+
+<h3>c) Standard stateful rule</h3>
+<p>In the API, add a <code>RuleOption</code> with <code>Keyword: aws_route_53_resolved_domain</code> and a single setting in double quotes, for example <code>"example.com,cdn.example.com"</code>. In the console, choose <b>Standard stateful rule</b> → <b>Domain filtering</b>. The console writes the keyword for you.</p>
+
+<div class="callout">Syntax rules:
+<ul>
+<li>Put the domain in <b>double quotes</b>.</li>
+<li>Use <b>one</b> <code>aws_route_53_resolved_domain</code> keyword per rule. For several domains, separate them with commas inside the value.</li>
+<li>The wildcard is <code>.example.com</code>, not <code>*.example.com</code>.</li>
+<li><code>reject</code> doesn't work with the <code>ip</code> protocol. Use <code>tcp</code>.</li>
+</ul></div>
+
+<h2 id="sim">6. Simulator</h2>
+<p>Change the conditions and see what the firewall decides. The simulator applies the documented logic. Assumptions are marked <span class="warn">⚑</span>.</p>
+<div class="card sim">
+<div class="grid2">
+<div>
+<label for="s-proto">Protocol</label>
+<select id="s-proto"><option value="tcp">TCP (SSH 22)</option><option value="udp">UDP</option></select>
+<label for="s-dns">How did the client get the destination IP?</label>
+<select id="s-dns">
+<option value="assoc">Resolver of a VPC associated with the DNS FW rule group</option>
+<option value="unassoc">Resolver of a VPC that is NOT associated</option>
+<option value="ext">External DNS (8.8.8.8, DoH, own DNS)</option>
+<option value="hard">Hardcoded IP (no DNS)</option>
+</select>
+<label for="s-dom">Domain it was resolved for</label>
+<select id="s-dom">
+<option value="partner">sftp.partner.example.com</option>
+<option value="ads">tracker.ads.example.com</option>
+<option value="other">files.example.org</option>
+</select>
+<label class="chk"><input type="checkbox" id="s-exp"> The cache entry has expired</label>
+</div>
+<div>
+<label for="s-src">Source vs <code>SourceIPRanges</code></label>
+<select id="s-src">
+<option value="in">In scope (or field omitted and source in the VPC CIDR)</option>
+<option value="out">Out of scope</option>
+<option value="empty">Empty list [] configured</option>
+</select>
+<label class="chk"><input type="checkbox" id="s-byp"> Destination is in <code>BypassDestinationValidationIPRanges</code></label>
+<label for="s-act"><code>Action</code></label>
+<select id="s-act"><option>ALERT</option><option selected>DROP</option><option>REJECT</option></select>
+<label for="s-expp"><code>DNSExpiryExceptionPolicy</code></label>
+<select id="s-expp"><option>CONTINUE</option><option>DROP</option><option>REJECT</option></select>
+<label for="s-rule">Resolved-domain rules</label>
+<select id="s-rule">
+<option value="none">None (policy level only)</option>
+<option value="allow">pass .partner.example.com + drop the rest (port 22)</option>
+<option value="deny">drop .ads.example.com</option>
+</select>
+</div>
+</div>
+<hr style="border:none;border-top:1px solid var(--line);margin:14px 0">
+<div id="verdict"></div>
+<ol id="trace"></ol>
+<p class="meta"><span class="warn">⚑</span> Assumptions: (1) the policy-level check runs before the rule groups; (2) a resolved-domain rule uses an expired cache entry when <code>DNSExpiryExceptionPolicy=CONTINUE</code>; (3) when no rule matches, the stateful default action passes. The documentation doesn't specify these three points.</p>
+</div>
+
+<h2 id="arch">7. Architectures and scenarios</h2>
+<table>
+<tr><th>Scenario</th><th>What happens</th><th>What to do</th></tr>
+<tr><td><b>Distributed</b>: firewall in the same VPC as the workloads</td><td>The simplest case</td><td>Associate the DNS FW rule group with that VPC. Leave <code>SourceIPRanges</code> omitted.</td></tr>
+<tr><td><b>Centralized</b>: inspection VPC + Transit Gateway</td><td>Spoke IPs aren't part of the firewall VPC CIDR</td><td>Associate the rule group with <b>every spoke VPC</b>. Set <code>SourceIPRanges</code> to the spoke CIDRs <span class="warn">⚑</span>. Check <code>$HOME_NET</code> too.</td></tr>
+<tr><td><b>Hybrid</b>: on-premises clients egressing through AWS</td><td>If they resolve with on-premises DNS, the AWS Resolver never sees the query and the connection fails</td><td>Forward their DNS to an <i>inbound endpoint</i> in an associated VPC <span class="warn">⚑</span>, or leave those sources out of <code>SourceIPRanges</code>.</td></tr>
+<tr><td><b>DoH / public DNS</b></td><td>Resolution bypasses the VPC Resolver, so validation fails</td><td>This is the intended behavior. Combine it with DNS Firewall and rules that block known DoH endpoints.</td></tr>
+<tr><td><b>Fixed-IP destinations</b></td><td>No DNS, so validation fails</td><td>Add them to <code>BypassDestinationValidationIPRanges</code>.</td></tr>
+<tr><td><b>Long connections</b> (SSH, tunnels)</td><td>The cache entry can expire mid-session</td><td><code>DNSExpiryExceptionPolicy=CONTINUE</code></td></tr>
+<tr><td><b>Interface VPC endpoints / PrivateLink</b></td><td>The Resolver resolves them, so they count as resolved</td><td>Nothing, as long as the traffic goes through the firewall.</td></tr>
+</table>
+
+<h2 id="ops">8. Operations and rollout</h2>
+<ol>
+<li><b>Enable the firewall's flow and alert logs.</b> <code>ALERT</code> leaves no trace without logs.</li>
+<li><b>Create or reuse</b> a DNS Firewall rule group and associate it with every source VPC.</li>
+<li><b>Enable validation with <code>Action=ALERT</code></b> in a maintenance window, because it may restart the engine.</li>
+<li><b>Observe for 1-2 weeks.</b> List the destinations that fail: fixed IPs, on-premises DNS, clients with their own DNS.</li>
+<li><b>Fix them</b> with bypass ranges, new associations or client changes.</li>
+<li><b>Switch to <code>DROP</code> or <code>REJECT</code>.</b> This change doesn't restart the engine.</li>
+<li><b>Add the resolved-domain rules</b> for SSH/SFTP and the TLS anti-spoofing rule.</li>
+</ol>
+<div class="callout info"><code>REJECT</code> gives the client fast, clear failures (connection reset). <code>DROP</code> gives timeouts, which take longer to diagnose. For internal corporate traffic, <code>REJECT</code> is usually the better choice.</div>
+
+<h2 id="errors">9. Common mistakes</h2>
+<table>
+<tr><th>Symptom</th><th>Likely cause</th><th>Check</th></tr>
+<tr><td>All traffic from one spoke fails</td><td>The VPC isn't associated with the DNS FW rule group</td><td><code>aws route53resolver list-firewall-rule-group-associations --firewall-rule-group-id rslvr-frg-...</code></td></tr>
+<tr><td><code>aws_route_53_resolved_domain</code> rules do nothing</td><td>The policy block is missing</td><td><code>describe-firewall-policy</code></td></tr>
+<tr><td>Nothing appears with <code>ALERT</code></td><td>Flow logs are off</td><td><code>aws network-firewall describe-logging-configuration</code></td></tr>
+<tr><td>Validation applies to nobody</td><td><code>SourceIPRanges: []</code> instead of omitting the field</td><td>Check the policy JSON</td></tr>
+<tr><td>Spokes aren't validated in a centralized TGW model</td><td><code>SourceIPRanges</code> omitted only covers the firewall VPC <span class="warn">⚑</span></td><td>Set the spoke CIDRs</td></tr>
+<tr><td>Containers or JVMs fail after hours</td><td>The client caches DNS and <code>DNSExpiryExceptionPolicy=DROP</code></td><td>Use <code>CONTINUE</code></td></tr>
+<tr><td>Sessions were cut when the feature was enabled</td><td>Engine restart + stream exception policy in DROP</td><td>Enable it in a maintenance window</td></tr>
+<tr><td>Error when creating the rule</td><td><code>reject ip</code>, a <code>*.</code> wildcard, single quotes, or two keywords in one rule</td><td>Use <code>reject tcp</code>, <code>.domain</code> and double quotes</td></tr>
+<tr><td>"Change rejected" when editing the policy</td><td>A rule group swap is still running (asynchronous)</td><td>Wait for <code>FirewallPolicyStatus=ACTIVE</code></td></tr>
+</table>
+
+<h2 id="cli">10. Replicate it (CLI-first)</h2>
+<p>Lab prerequisites: a VPC with Network Firewall deployed and routing to the firewall already in place. An SSM-managed EC2 test instance whose egress goes through the firewall. A lab policy with <code>DEFAULT_ACTION_ORDER</code>. You need <code>jq</code> on your laptop.</p>
+<div class="callout bad">⚠️ Run all of this in a lab account only. Never in production.</div>
+<div id="cli-steps"></div>
+
+<h2 id="gaps">11. What the documentation doesn't say</h2>
+<p>Verify these points in the lab before you state them to anyone:</p>
+<ul>
+<li>The <b>exact key name</b> inside <code>FirewallPolicy</code>. The type is <code>Route53ResolvedIPValidation</code>. Check with <code>aws network-firewall update-firewall-policy help</code>.</li>
+<li>The <b>exact flow log field</b> that tags a connection with <code>ALERT</code>.</li>
+<li>The <b>order</b> between the policy check and the rule groups.</li>
+<li>With <b>CNAMEs</b>: does the rule match the queried name, the CNAME target, or both?</li>
+<li>How long the cache keeps each entry. The documentation only says "longer than the TTL".</li>
+<li>Whether queries forwarded through an <b>inbound endpoint</b> from on premises count as resolved.</li>
+<li>The behavior with <b>several IPs</b> per domain and with AAAA answers.</li>
+</ul>
+
+<h2 id="refs">12. References</h2>
+<ul>
+<li><a href="https://aws.amazon.com/about-aws/whats-new/2026/10/network-firewall-route-53-ip-validation/">What's New — 2026-10-21</a></li>
+<li><a href="https://docs.aws.amazon.com/network-firewall/latest/developerguide/route53-resolved-ip-validation.html">Developer Guide — Resolved IP validation</a></li>
+<li><a href="https://docs.aws.amazon.com/network-firewall/latest/developerguide/route53-resolved-ip-validation-policy-setting.html">Configuring resolved IP validation on the firewall policy</a></li>
+<li><a href="https://docs.aws.amazon.com/network-firewall/latest/developerguide/route53-resolved-ip-validation-rules.html">Matching specific domains with resolved-domain rules</a></li>
+<li><a href="https://docs.aws.amazon.com/network-firewall/latest/APIReference/API_Route53ResolvedIPValidation.html">API Reference — Route53ResolvedIPValidation</a></li>
+</ul>
+</main>
+<script>
+const steps = [
+  {on:["n-client","n-res"], a:["a1"], t:"<b>① DNS query.</b> The client asks its VPC Resolver (the <code>.2</code> address) for <code>sftp.partner.example.com</code>. The VPC is associated with the policy's DNS Firewall rule group."},
+  {on:["n-res","n-cache","n-client"], a:["a1","a2","a2b"], t:"<b>② Answer and record.</b> The Resolver returns <code>198.51.100.20</code>. Network Firewall records the pair <code>198.51.100.20 ↔ sftp.partner.example.com</code> in its resolved IP cache. The entry lasts longer than the TTL."},
+  {on:["n-client","n-nfw"], a:["a3"], t:"<b>③ Connection.</b> The client opens TCP 22 to <code>198.51.100.20</code>. The traffic enters the firewall's stateful engine."},
+  {on:["n-nfw","n-cache"], a:["a4"], t:"<b>④ Policy check.</b> The source is inside <code>SourceIPRanges</code> and the destination isn't in the bypass. The firewall finds the IP in the cache, so the connection passes the check."},
+  {on:["n-nfw","n-dst"], a:["a5"], t:"<b>⑤ Rule check.</b> The rule <code>pass tcp … 22 (aws_route_53_resolved_domain:\".partner.example.com\")</code> matches, because the IP was resolved for that domain. Result: <span class='ok'>PASS</span>."},
+  {on:["n-client","n-nfw","n-bad"], a:["a6","a6b"], x:true, t:"<b>⑥ IP without DNS.</b> A process connects to <code>203.0.113.99</code> with no prior DNS query, or with an external DNS. The IP isn't in the cache and fails the policy check. The firewall applies <code>Action</code>: <span class='bad'>DROP / REJECT</span>, or only <code>ALERT</code> in the logs. The same happens when the SNI claims an allowed domain."}
+];
+let cur=0;
+const dots=document.getElementById("dots");
+steps.forEach(()=>dots.appendChild(document.createElement("span")));
+function render(){
+  document.querySelectorAll("#flow .node,#flow .arrow,#flow .x").forEach(e=>e.classList.remove("on"));
+  const s=steps[cur];
+  s.on.forEach(id=>document.getElementById(id).classList.add("on"));
+  s.a.forEach(id=>document.getElementById(id).classList.add("on"));
+  if(s.x) document.getElementById("x6").classList.add("on");
+  document.getElementById("stepText").innerHTML="<p>"+s.t+"</p>";
+  [...dots.children].forEach((d,i)=>d.classList.toggle("on",i===cur));
+  document.getElementById("prev").disabled=cur===0;
+  document.getElementById("next").disabled=cur===steps.length-1;
+}
+document.getElementById("prev").onclick=()=>{if(cur>0){cur--;render();}};
+document.getElementById("next").onclick=()=>{if(cur<steps.length-1){cur++;render();}};
+render();
+
+const $=id=>document.getElementById(id);
+const domName={partner:"sftp.partner.example.com",ads:"tracker.ads.example.com",other:"files.example.org"};
+function sim(){
+  const proto=$("s-proto").value, dns=$("s-dns").value, dom=$("s-dom").value,
+        exp=$("s-exp").checked, src=$("s-src").value, byp=$("s-byp").checked,
+        act=$("s-act").value, expp=$("s-expp").value, rule=$("s-rule").value;
+  $("s-dom").disabled=!(dns==="assoc");
+  $("s-exp").disabled=!(dns==="assoc");
+  const tr=[]; let final=null; let alerted=false;
+  const resolved = dns==="assoc";
+  const block=(a)=>{
+    if(a==="REJECT") return proto==="tcp" ? {cls:"bad",txt:"REJECT — TCP RST to the client"} : {cls:"bad",txt:"DROP (REJECT on UDP = drop)"};
+    return {cls:"bad",txt:"DROP — client times out"};
+  };
+  tr.push("<b>Policy level</b>");
+  if(src!=="in"){
+    tr.push(src==="empty" ? "<code>SourceIPRanges: []</code> → no source is validated. The check is skipped." : "The source is outside <code>SourceIPRanges</code>. The check is skipped.");
+  } else if(byp){
+    tr.push("The destination is in <code>BypassDestinationValidationIPRanges</code>. The check is skipped.");
+  } else if(!resolved){
+    const why={unassoc:"the Resolver answered in a VPC that isn't associated with the DNS FW rule group",
+               ext:"the resolution didn't go through the VPC Resolver",
+               hard:"there was no DNS query"}[dns];
+    tr.push("The IP isn't in the cache: "+why+". <span class='bad'>Validation fails.</span>");
+    if(act==="ALERT"){alerted=true; tr.push("<code>Action=ALERT</code> → the firewall tags the connection in the flow logs and doesn't block it.");}
+    else {final=block(act); tr.push("<code>Action="+act+"</code> → blocked.");}
+  } else if(exp){
+    tr.push("The IP is in the cache, but the entry has expired.");
+    if(expp==="CONTINUE") tr.push("<code>DNSExpiryExceptionPolicy=CONTINUE</code> → treated as valid. <span class='ok'>Check passes.</span>");
+    else {final=block(expp); tr.push("<code>DNSExpiryExceptionPolicy="+expp+"</code> → blocked.");}
+  } else {
+    tr.push("The IP is in the cache (<code>"+domName[dom]+"</code>). <span class='ok'>Check passes.</span>");
+  }
+  if(!final){
+    tr.push("<b>Rule level</b> (ignores source scope and bypass)");
+    const known = resolved && (!exp || expp==="CONTINUE");
+    const passTxt=(x)=>({cls:alerted?"warn":"ok",txt:alerted?x+" with ALERT in the logs":x});
+    if(rule==="none"){
+      tr.push("No resolved-domain rules. The stateful default action applies <span class='warn'>⚑</span>.");
+      final=passTxt("PASS");
+    } else if(rule==="allow"){
+      if(proto!=="tcp"){ tr.push("The rules are <code>tcp</code> port 22 and don't apply to UDP."); final=passTxt("PASS"); }
+      else if(known && dom==="partner"){ tr.push("sid:100 <code>pass … \".partner.example.com\"</code> matches."); final=passTxt("PASS (sid:100)"); }
+      else { tr.push(known? "The IP was resolved for <code>"+domName[dom]+"</code>. sid:100 doesn't match." : "The firewall doesn't know a domain for this IP. sid:100 doesn't match.");
+             tr.push("sid:101 <code>drop tcp … 22</code> matches."); final={cls:"bad",txt:"DROP (sid:101)"}; }
+    } else {
+      if(known && dom==="ads"){ tr.push("<code>drop … \".ads.example.com\"</code> matches."); final={cls:"bad",txt:"DROP (denylist rule)"}; }
+      else { tr.push("The denylist rule doesn't match."); final=passTxt("PASS"); }
+    }
+  }
+  $("verdict").innerHTML="Result: <span class='badge "+final.cls+"'>"+final.txt+"</span>";
+  $("trace").innerHTML=tr.map(x=>"<li>"+x+"</li>").join("");
+}
+document.querySelectorAll(".sim select,.sim input").forEach(e=>e.addEventListener("change",sim));
+sim();
+
+const cli=[
+ {ph:"Build",title:"0. Variables and CLI version",goal:"Set the lab variables. Check that your AWS CLI knows the new field.",
+  cmd:`export AWS_PROFILE=lab
+export AWS_REGION=us-east-1
+export VPC_ID=vpc-0abc1234example
+export FW_NAME=riv-lab-fw
+export POLICY=riv-lab-policy
+export INSTANCE=i-0123456789abcdef0
+
+aws --version
+aws network-firewall update-firewall-policy help | grep -n -i -B2 -A14 'Route53ResolvedIPValidation'`,
+  exp:"The help shows <b>Route53ResolvedIPValidation</b> and its parent key inside FirewallPolicy. If nothing appears, update the AWS CLI. ⚠️ If the parent key isn't <code>Route53ResolvedIPValidation</code>, adjust the <code>jq</code> filters in steps 4, 7 and 9."},
+ {ph:"Build",title:"1. Firewall logging (FLOW and ALERT)",goal:"Create two log groups. Enable one log type per call.",
+  cmd:`aws logs create-log-group --log-group-name /nfw/riv-lab/flow
+aws logs create-log-group --log-group-name /nfw/riv-lab/alert
+
+aws network-firewall update-logging-configuration --firewall-name $FW_NAME \\
+  --logging-configuration '{"LogDestinationConfigs":[
+    {"LogType":"FLOW","LogDestinationType":"CloudWatchLogs","LogDestination":{"logGroup":"/nfw/riv-lab/flow"}}]}'
+
+aws network-firewall update-logging-configuration --firewall-name $FW_NAME \\
+  --logging-configuration '{"LogDestinationConfigs":[
+    {"LogType":"FLOW","LogDestinationType":"CloudWatchLogs","LogDestination":{"logGroup":"/nfw/riv-lab/flow"}},
+    {"LogType":"ALERT","LogDestinationType":"CloudWatchLogs","LogDestination":{"logGroup":"/nfw/riv-lab/alert"}}]}'
+
+aws network-firewall describe-logging-configuration --firewall-name $FW_NAME \\
+  --query 'LoggingConfiguration.LogDestinationConfigs[].LogType' --output table`,
+  exp:"The table shows <b>FLOW</b> and <b>ALERT</b>."},
+ {ph:"Build",title:"2. DNS Firewall anchor rule group and association",goal:"Create an empty rule group. Associate it with the test instance's VPC.",
+  cmd:`RG_ID=$(aws route53resolver create-firewall-rule-group \\
+  --name riv-lab-anchor --creator-request-id riv-$(date +%s) \\
+  --query FirewallRuleGroup.Id --output text); echo $RG_ID
+
+aws route53resolver associate-firewall-rule-group \\
+  --firewall-rule-group-id $RG_ID --vpc-id $VPC_ID \\
+  --priority 101 --name riv-lab-assoc --creator-request-id riva-$(date +%s)
+
+aws route53resolver list-firewall-rule-group-associations \\
+  --firewall-rule-group-id $RG_ID \\
+  --query 'FirewallRuleGroupAssociations[].{vpc:VpcId,status:Status,managedBy:ManagedOwnerName}' --output table`,
+  exp:"<b>RG_ID</b> has the format <code>rslvr-frg-…</code>. The association with your VPC is <b>COMPLETE</b>. After step 4, a second association managed by Network Firewall may appear."},
+ {ph:"Build",title:"3. Stateful rule group with SNI anti-spoofing",goal:"Create two rules. The first passes TLS to example.com when the SNI and the resolution match. The second blocks the example.com SNI when they don't.",
+  cmd:`cat > /tmp/riv-rules.suricata <<'EOF'
+pass tls $HOME_NET any -> $EXTERNAL_NET 443 (tls.sni; content:"example.com"; nocase; startswith; endswith; aws_route_53_resolved_domain:"example.com"; flow:to_server, established; sid:1;)
+drop tls $HOME_NET any -> $EXTERNAL_NET 443 (tls.sni; content:"example.com"; nocase; startswith; endswith; flow:to_server, established; sid:2;)
+EOF
+
+RULES_ARN=$(aws network-firewall create-rule-group --rule-group-name riv-lab-rules \\
+  --type STATEFUL --capacity 50 --rules file:///tmp/riv-rules.suricata \\
+  --query RuleGroupResponse.RuleGroupArn --output text); echo $RULES_ARN`,
+  exp:"Returns the rule group ARN. If it fails with <i>invalid keyword</i>, the Region doesn't support the keyword yet."},
+ {ph:"Build",title:"4. Enable validation on the policy (ALERT)",goal:"Add the validation block and the rule group to the policy. ⚠️ This step may restart the stateful engine.",
+  cmd:`aws network-firewall describe-firewall-policy --firewall-policy-name $POLICY \\
+  --query '{t:UpdateToken,p:FirewallPolicy}' > /tmp/pol.json
+TOKEN=$(jq -r .t /tmp/pol.json)
+
+jq --arg rg "$RG_ID" --arg arn "$RULES_ARN" '.p
+  | .Route53ResolvedIPValidation = {
+      "Action":"ALERT",
+      "DNSFirewallRuleGroupId":$rg,
+      "DNSExpiryExceptionPolicy":"CONTINUE"}
+  | .StatefulRuleGroupReferences = ((.StatefulRuleGroupReferences // []) + [{"ResourceArn":$arn}])' \\
+  /tmp/pol.json > /tmp/newpol.json
+
+aws network-firewall update-firewall-policy --firewall-policy-name $POLICY \\
+  --update-token $TOKEN --firewall-policy file:///tmp/newpol.json \\
+  --query 'FirewallPolicyResponse.FirewallPolicyStatus' --output text`,
+  exp:"Repeat <code>describe-firewall-policy --query FirewallPolicyResponse.FirewallPolicyStatus</code> until you see <b>ACTIVE</b>."},
+ {ph:"Break",title:"5. Trigger the symptom from the instance",goal:"Run a legitimate connection, a spoofed-SNI connection, and a raw TCP connection to an IP the VPC Resolver didn't return.",
+  cmd:`# On your laptop: pick an IP the VPC Resolver didn't return
+export SPOOF_IP=$(dig +short example.org | head -1); echo $SPOOF_IP
+
+cat > /tmp/riv-test.json <<EOF
+{"commands":[
+ "dig +short example.com",
+ "curl -s -o /dev/null -w 'legit=%{http_code}' --max-time 5 https://example.com; echo",
+ "curl -s -o /dev/null -w 'spoof=%{http_code}' --max-time 5 --resolve example.com:443:$SPOOF_IP https://example.com; echo",
+ "timeout 5 bash -c '</dev/tcp/$SPOOF_IP/443' && echo raw=OPEN || echo raw=BLOCKED"
+]}
+EOF
+
+CMD=$(aws ssm send-command --instance-ids $INSTANCE --document-name AWS-RunShellScript \\
+  --parameters file:///tmp/riv-test.json --query Command.CommandId --output text)
+sleep 15
+aws ssm get-command-invocation --command-id $CMD --instance-id $INSTANCE \\
+  --query StandardOutputContent --output text`,
+  exp:"With <code>Action=ALERT</code>: <b>legit=200</b>. <b>spoof=000</b>: rule sid:2 blocks it, because the SNI says example.com and the IP wasn't resolved for that domain. <b>raw=OPEN</b>: the policy only alerts."},
+ {ph:"Verify",title:"6. Find the ALERT in the logs 📸",goal:"Search the flow and alert logs for the spoof IP.",
+  cmd:`for g in /nfw/riv-lab/flow /nfw/riv-lab/alert; do
+  echo "== $g"
+  aws logs filter-log-events --log-group-name $g \\
+    --filter-pattern "\\"$SPOOF_IP\\"" --start-time $(( ($(date +%s)-900)*1000 )) \\
+    --max-items 5 --query 'events[].message' --output text
+done
+
+# 📸 Checkpoint 1: CloudWatch Logs → /nfw/riv-lab/flow with the tagged entry
+screencapture -iW lab/evidence/01-alert-flow-log.png`,
+  exp:"The flow log shows the connection to <b>$SPOOF_IP</b> tagged as failing validation. Record the exact field name, because the documentation doesn't give it. The alert log shows <b>sid:2</b> for the spoofed-SNI connection."},
+ {ph:"Fix",title:"7. Enforce (DROP)",goal:"Change Action to DROP. This change doesn't restart the engine.",
+  cmd:`aws network-firewall describe-firewall-policy --firewall-policy-name $POLICY \\
+  --query '{t:UpdateToken,p:FirewallPolicy}' > /tmp/pol.json
+jq '.p | .Route53ResolvedIPValidation.Action = "DROP"' /tmp/pol.json > /tmp/newpol.json
+
+aws network-firewall update-firewall-policy --firewall-policy-name $POLICY \\
+  --update-token $(jq -r .t /tmp/pol.json) --firewall-policy file:///tmp/newpol.json \\
+  --query 'FirewallPolicyResponse.FirewallPolicyStatus' --output text`,
+  exp:"The policy returns to <b>ACTIVE</b>."},
+ {ph:"Verify",title:"8. Repeat the test 📸",goal:"Run the same commands as in step 5.",
+  cmd:`CMD=$(aws ssm send-command --instance-ids $INSTANCE --document-name AWS-RunShellScript \\
+  --parameters file:///tmp/riv-test.json --query Command.CommandId --output text)
+sleep 15
+aws ssm get-command-invocation --command-id $CMD --instance-id $INSTANCE \\
+  --query StandardOutputContent --output text
+
+# 📸 Checkpoint 2: output with raw=BLOCKED + policy with Action=DROP
+screencapture -iW lab/evidence/02-enforced-drop.png`,
+  exp:"<b>legit=200</b>, <b>spoof=000</b> and <b>raw=BLOCKED</b>. The policy now blocks any IP that didn't come from the VPC Resolver."},
+ {ph:"Teardown",title:"9. Teardown (reverse order)",goal:"⚠️ Lab account only. Confirm the profile before you run it. Removing the block may restart the engine.",
+  cmd:`aws sts get-caller-identity --query Account --output text   # confirm this is the lab account
+
+# 9.1 Remove validation and the rule group from the policy
+aws network-firewall describe-firewall-policy --firewall-policy-name $POLICY \\
+  --query '{t:UpdateToken,p:FirewallPolicy}' > /tmp/pol.json
+jq --arg arn "$RULES_ARN" '.p | del(.Route53ResolvedIPValidation)
+  | .StatefulRuleGroupReferences |= map(select(.ResourceArn != $arn))' /tmp/pol.json > /tmp/newpol.json
+aws network-firewall update-firewall-policy --firewall-policy-name $POLICY \\
+  --update-token $(jq -r .t /tmp/pol.json) --firewall-policy file:///tmp/newpol.json
+
+# 9.2 Delete the stateful rule group (once the policy is ACTIVE)
+aws network-firewall delete-rule-group --rule-group-arn $RULES_ARN
+
+# 9.3 Disassociate the DNS FW rule group from the VPC and delete it
+ASSOC=$(aws route53resolver list-firewall-rule-group-associations --firewall-rule-group-id $RG_ID \\
+  --query "FirewallRuleGroupAssociations[?VpcId=='$VPC_ID'].Id" --output text)
+aws route53resolver disassociate-firewall-rule-group --firewall-rule-group-association-id $ASSOC
+aws route53resolver delete-firewall-rule-group --firewall-rule-group-id $RG_ID
+
+# 9.4 Logging: remove one type at a time and delete the log groups
+aws network-firewall update-logging-configuration --firewall-name $FW_NAME \\
+  --logging-configuration '{"LogDestinationConfigs":[{"LogType":"FLOW","LogDestinationType":"CloudWatchLogs","LogDestination":{"logGroup":"/nfw/riv-lab/flow"}}]}'
+aws network-firewall update-logging-configuration --firewall-name $FW_NAME \\
+  --logging-configuration '{"LogDestinationConfigs":[]}'
+aws logs delete-log-group --log-group-name /nfw/riv-lab/flow
+aws logs delete-log-group --log-group-name /nfw/riv-lab/alert`,
+  exp:"Each command finishes without errors. <code>delete-firewall-rule-group</code> fails if an association is left. List the associations again, because the one managed by Network Firewall takes time to go away."}
+];
+const box=document.getElementById("cli-steps");
+cli.forEach(s=>{
+  const d=document.createElement("div"); d.className="step";
+  d.innerHTML=`<h4><span class="phase">${s.ph}</span>${s.title}</h4><p class="goal">${s.goal}</p>
+  <div class="cmd"><button data-copy>Copy</button><pre><code></code></pre></div>
+  <p class="expect"><b>Expected output:</b> ${s.exp}</p>`;
+  d.querySelector("code").textContent=s.cmd;
+  box.appendChild(d);
+});
+document.addEventListener("click",e=>{
+  const b=e.target.closest("button[data-copy]"); if(!b) return;
+  const txt=b.parentElement.querySelector("code").textContent;
+  navigator.clipboard.writeText(txt).then(()=>{b.textContent="Copied ✓";setTimeout(()=>b.textContent="Copy",1200);});
+});
+</script>
+
+</body>
+</html>

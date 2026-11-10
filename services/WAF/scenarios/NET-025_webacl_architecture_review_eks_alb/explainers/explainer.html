@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AWS WAF architecture review — web ACL on EKS ingress ALBs</title>
+<style>
+  :root{--bg:#fbfbfa;--surface:#ffffff;--ink:#1d1d1f;--ink2:#55565b;--muted:#8a8b90;--line:#e3e3e6;--accent:#2a6fdb;--accent-soft:#e6eefb;--good:#1f8a4c;--warn:#b26b00;--crit:#c0362c;--code:#f2f2f4}
+  @media (prefers-color-scheme:dark){:root{--bg:#141416;--surface:#1c1c1f;--ink:#ececee;--ink2:#b3b4b9;--muted:#86878c;--line:#2e2e33;--accent:#6ea0f0;--accent-soft:#1f2a3d;--good:#4cc27e;--warn:#e0a03a;--crit:#ee6a5f;--code:#232327}}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+  main{max-width:760px;margin:0 auto;padding:32px 20px 80px}
+  h1{font-size:1.6rem;margin:0 0 8px} h2{font-size:1.25rem;margin:40px 0 8px;padding-top:12px;border-top:1px solid var(--line)} h3{font-size:1.02rem;margin:20px 0 6px}
+  .lead{color:var(--ink2);margin:0 0 16px}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;margin:12px 0}
+  .tag{display:inline-block;font-size:.75rem;padding:2px 8px;border-radius:99px;background:var(--accent-soft);color:var(--accent);margin-right:6px}
+  code,pre{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.86em;background:var(--code);border-radius:4px}
+  code{padding:1px 4px} pre{padding:12px;overflow-x:auto;line-height:1.45}
+  table{width:100%;border-collapse:collapse;font-size:.92rem} th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top} th{color:var(--ink2);font-weight:600}
+  .ok{color:var(--good);font-weight:600}.part{color:var(--warn);font-weight:600}.no{color:var(--crit);font-weight:600}
+  label{cursor:pointer} .grid2{display:grid;grid-template-columns:1fr 1fr;gap:4px 16px} @media(max-width:600px){.grid2{grid-template-columns:1fr}}
+  .meter{position:relative;height:18px;background:var(--code);border-radius:4px;margin:12px 0 4px;overflow:hidden}
+  .meter-fill{height:100%;background:var(--accent);border-radius:0 4px 4px 0;transition:width .3s}
+  .meter-mark{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--ink)}
+  .small{font-size:.85rem;color:var(--ink2)}
+  input[type=range]{width:100%}
+  .steps{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+  .steps button,.btn{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:6px;padding:6px 10px;cursor:pointer;font:inherit;font-size:.88rem}
+  .steps button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .pill{display:inline-block;padding:3px 10px;border-radius:6px;font-weight:600}
+  .pill.ok{background:color-mix(in srgb,var(--good) 15%,transparent)} .pill.no{background:color-mix(in srgb,var(--crit) 15%,transparent)}
+  ol.order li{margin:4px 0} .warn{border-left:3px solid var(--warn);padding:8px 12px;background:color-mix(in srgb,var(--warn) 8%,transparent);border-radius:0 6px 6px 0;margin:10px 0}
+  abbr{text-decoration:underline dotted;cursor:help}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<main>
+<h1>AWS WAF architecture review</h1>
+<p class="lead">A team asks for a review of one web ACL. The web ACL protects 2 <abbr title="Application Load Balancer">ALBs</abbr> that publish the ingress of an EKS cluster. There is no incident: this is a design case with 4 questions.</p>
+<div class="card small">
+<span class="tag">Sev 4</span><span class="tag">WAF · REGIONAL</span><span class="tag">Design</span><br>
+All names are placeholders: web ACL <code>webacl-prod</code>, ALBs <code>alb-istio-ingress</code> and <code>alb-k8s-ingress</code>.
+</div>
+
+<h2>0. The questions and the missing data</h2>
+<table>
+<tr><th>#</th><th>Question</th><th>Section</th></tr>
+<tr><td>1</td><td>Rule group efficiency</td><td><a href="#q1">1</a></td></tr>
+<tr><td>2</td><td>Rate-limiting logic</td><td><a href="#q2">2</a></td></tr>
+<tr><td>3</td><td>OWASP Top 10 protection</td><td><a href="#q3">3</a></td></tr>
+<tr><td>4</td><td>False-positive risk</td><td><a href="#q4">4</a></td></tr>
+</table>
+<p>The request has no configuration attached. A real review needs the web ACL JSON, the logging configuration and per-rule metrics (section <a href="#validar">5</a>).</p>
+
+<h3>Architecture</h3>
+<svg viewBox="0 0 700 190" width="100%" role="img" aria-label="Clients to web ACL, two ALBs and EKS">
+  <style>.b{fill:var(--surface);stroke:var(--line);stroke-width:1.5}.t{fill:var(--ink);font-size:13px}.s{fill:var(--muted);font-size:11px}.a{stroke:var(--ink2);stroke-width:1.5;fill:none;marker-end:url(#ar)}</style>
+  <defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" fill="var(--ink2)"/></marker></defs>
+  <rect class="b" x="10" y="70" width="100" height="50" rx="8"/><text class="t" x="60" y="99" text-anchor="middle">Clients</text>
+  <rect x="150" y="20" width="150" height="150" rx="10" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.5"/>
+  <text class="t" x="225" y="44" text-anchor="middle" style="font-weight:600">web ACL</text><text class="s" x="225" y="60" text-anchor="middle">REGIONAL · 1 for 2 ALBs</text>
+  <text class="s" x="225" y="90" text-anchor="middle">rules by priority</text><text class="s" x="225" y="106" text-anchor="middle">rate-based</text><text class="s" x="225" y="122" text-anchor="middle">managed rule groups</text><text class="s" x="225" y="138" text-anchor="middle">default action</text>
+  <rect class="b" x="350" y="30" width="140" height="50" rx="8"/><text class="t" x="420" y="52" text-anchor="middle">alb-istio-ingress</text><text class="s" x="420" y="68" text-anchor="middle">body inspected ≤ 8 KB</text>
+  <rect class="b" x="350" y="110" width="140" height="50" rx="8"/><text class="t" x="420" y="132" text-anchor="middle">alb-k8s-ingress</text><text class="s" x="420" y="148" text-anchor="middle">body inspected ≤ 8 KB</text>
+  <rect class="b" x="540" y="70" width="150" height="50" rx="8"/><text class="t" x="615" y="92" text-anchor="middle">EKS</text><text class="s" x="615" y="108" text-anchor="middle">Istio gateway / ingress</text>
+  <path class="a" d="M110,95 H148"/><path class="a" d="M300,70 C325,60 330,55 348,55"/><path class="a" d="M300,120 C325,130 330,135 348,135"/>
+  <path class="a" d="M490,55 C515,55 520,85 538,90"/><path class="a" d="M490,135 C515,135 520,105 538,100"/>
+</svg>
+<p class="small">One web ACL protects both ALBs. Every change affects both applications. If their traffic is different (for example API vs browser), one web ACL per ALB makes tuning easier.</p>
+
+<h2 id="q1">1. Rule group efficiency</h2>
+<p><b>What it is.</b> Every rule consumes <abbr title="Web ACL Capacity Units: processing cost of a rule">WCU</abbr>. A web ACL includes 1,500 WCU in the base price. Above 1,500 (maximum 5,000) AWS adds a per-request charge.</p>
+<p><b>How it works.</b> WAF evaluates rules by priority. A terminating action (Allow, Block, CAPTCHA, Challenge) stops evaluation. Count doesn't. So the order decides both the cost and the result.</p>
+<div class="card">
+<b>WCU calculator</b> <span class="small">— tick what the web ACL contains</span>
+<div class="grid2" id="wcu"></div>
+<div class="meter" aria-hidden="true"><div class="meter-fill" id="wfill"></div><div class="meter-mark" id="wmark"></div></div>
+<div id="wtxt" class="small"></div>
+</div>
+<h3>Recommended order</h3>
+<ol class="order">
+<li>Allow/Block by IP set (internal, partners, denylist). Cheap and high confidence.</li>
+<li><code>AWSManagedRulesAmazonIpReputationList</code> and, if needed, <code>AnonymousIpList</code>.</li>
+<li>Rate-based rules (section 2).</li>
+<li><code>KnownBadInputs</code>, <code>CommonRuleSet</code>, <code>SQLiRuleSet</code>, <code>LinuxRuleSet</code>.</li>
+<li>Expensive intelligent-threat groups (Bot Control, ATP) last, with a <b>scope-down</b>. They are billed per inspected request.</li>
+</ol>
+<div class="warn">⚠️ Look for groups that don't match the stack. Example: <code>LinuxRuleSet</code> + <code>UnixRuleSet</code> together, or <code>PHPRuleSet</code>/<code>WordPressRuleSet</code> in front of services that don't use PHP.</div>
+
+<h2 id="q2">2. Rate-limiting logic</h2>
+<p><b>What it is.</b> A rate-based rule counts requests per aggregation key inside a window (60, 120, 300 or 600 s). When a key goes over the limit, the rule applies its action.</p>
+<p><b>How it works.</b> The default key is the source IP. You can aggregate on up to 5 keys: header, cookie, query argument, URI path, HTTP method, label namespace, JA3/JA4. A scope-down limits which requests count.</p>
+<div class="card">
+<b>Simulator</b>
+<p class="small">Requests from one client: <b id="rv"></b> per second</p><input id="r" type="range" min="0.1" max="20" step="0.1" value="2">
+<p class="small">Limit: <b id="lv"></b> requests per window</p><input id="l" type="range" min="10" max="5000" step="10" value="300">
+<p class="small">Window: <span class="steps" id="win"></span></p>
+<p class="small"><label><input type="checkbox" id="nat"> Many users share one egress IP (corporate NAT)</label> · users: <input id="nu" type="number" value="50" min="1" max="1000" style="width:70px"></p>
+<p id="rres"></p>
+</div>
+<h3>What to check</h3>
+<ul>
+<li><b>Real client IP.</b> With CloudFront or another proxy in front of the ALB, the source IP is the proxy. Use <code>FORWARDED_IP</code> with <code>X-Forwarded-For</code>, or put the web ACL on CloudFront.</li>
+<li><b>Layers.</b> One broad rule (for example 2,000 per 5 min per IP) plus narrow rules with scope-down on <code>/login</code>, <code>/otp</code> or <code>/api/*</code>.</li>
+<li><b>Identity key.</b> For token-based APIs, aggregate on a header (<code>Authorization</code> or <code>x-api-key</code>), so a whole NAT isn't punished.</li>
+<li><b>Precision.</b> WAF estimates the rate and reacts after a short delay. It is not an exact counter and not a business quota.</li>
+</ul>
+
+<h2 id="q3">3. OWASP Top 10 (2021)</h2>
+<p>WAF is one layer. It covers attacks with a signature in the request. It doesn't cover design or application logic flaws.</p>
+<table>
+<tr><th>Category</th><th>WAF</th><th>Control</th></tr>
+<tr><td>A01 Broken Access Control</td><td class="part">Partial</td><td><code>AdminProtectionRuleSet</code>, path/IP rules. Authorization stays in the app.</td></tr>
+<tr><td>A02 Cryptographic Failures</td><td class="no">No</td><td>ALB TLS policy, app-side encryption.</td></tr>
+<tr><td>A03 Injection (SQLi, XSS)</td><td class="ok">Yes</td><td><code>SQLiRuleSet</code>, <code>CommonRuleSet</code> (XSS), <code>LinuxRuleSet</code> (LFI).</td></tr>
+<tr><td>A04 Insecure Design</td><td class="no">No</td><td>Threat modeling.</td></tr>
+<tr><td>A05 Security Misconfiguration</td><td class="part">Partial</td><td><code>CommonRuleSet</code> blocks common probes. Review what each ALB exposes.</td></tr>
+<tr><td>A06 Vulnerable Components</td><td class="part">Partial</td><td><code>KnownBadInputsRuleSet</code> (for example Log4j). Patching stays in the app.</td></tr>
+<tr><td>A07 Auth Failures</td><td class="part">Partial</td><td>Rate-based rules on login, ATP (Account Takeover Prevention).</td></tr>
+<tr><td>A08 Integrity Failures</td><td class="no">No</td><td>Pipeline and artifact signing.</td></tr>
+<tr><td>A09 Logging Failures</td><td class="part">Partial</td><td>Web ACL logging enabled (CloudWatch Logs, S3 or Firehose).</td></tr>
+<tr><td>A10 SSRF</td><td class="part">Partial</td><td><code>CommonRuleSet</code> (<code>EC2MetaDataSSRF_*</code>). IMDSv2 on the nodes.</td></tr>
+</table>
+<div class="warn">⚠️ On an ALB, WAF inspects at most the first 8 KB of the body, and the limit can't be raised. An injection payload after 8 KB isn't inspected. <code>CommonRuleSet</code> blocks bodies over 8 KB by default (<code>SizeRestrictions_BODY</code>).</div>
+
+<h2 id="q4">4. False-positive risk</h2>
+<p>Walk through the tuning cycle step by step:</p>
+<div class="card">
+<div class="steps" id="fps"></div>
+<div id="fpb"></div>
+</div>
+<h3><code>CommonRuleSet</code> rules with the most false positives</h3>
+<ul>
+<li><code>SizeRestrictions_BODY</code>: file uploads, large JSON.</li>
+<li><code>CrossSiteScripting_BODY</code>: HTML editors, rich content.</li>
+<li><code>NoUserAgent_HEADER</code>: health checks, machine-to-machine clients.</li>
+<li><code>GenericRFI_QUERYARGUMENTS</code> / <code>GenericRFI_BODY</code>: URLs inside parameters (callbacks, redirects).</li>
+</ul>
+
+<h2 id="validar">5. What to collect before answering</h2>
+<pre>aws wafv2 get-web-acl --scope REGIONAL --name webacl-prod --id &lt;id&gt; --region &lt;region&gt;
+aws wafv2 list-resources-for-web-acl --web-acl-arn &lt;arn&gt; --resource-type APPLICATION_LOAD_BALANCER
+aws wafv2 get-logging-configuration --resource-arn &lt;arn&gt;
+aws cloudwatch get-metric-statistics --namespace AWS/WAFV2 --metric-name BlockedRequests \
+  --dimensions Name=WebACL,Value=webacl-prod Name=Rule,Value=ALL Name=Region,Value=&lt;region&gt; \
+  --start-time &lt;t0&gt; --end-time &lt;t1&gt; --period 3600 --statistics Sum</pre>
+<table>
+<tr><th>Data</th><th>What it decides</th></tr>
+<tr><td>Rules + priority + overrides</td><td>Order, duplicates, WCU, forgotten Count rules</td></tr>
+<tr><td>Rate-based: key, limit, window, scope-down</td><td>Question 2</td></tr>
+<tr><td>Logging enabled and filters</td><td>Whether false positives can be measured</td></tr>
+<tr><td>Blocked/Counted per rule (30 days)</td><td>Which rules act and which add nothing</td></tr>
+<tr><td>Annotation <code>alb.ingress.kubernetes.io/wafv2-acl-arn</code></td><td>That the AWS Load Balancer Controller owns the association and doesn't fight the console</td></tr>
+</table>
+
+<h2>6. Common mistakes</h2>
+<ul>
+<li>Putting new rules straight into Block, with no Count period.</li>
+<li>Disabling a whole rule for one false positive on one path, instead of labels + scope-down.</li>
+<li>Per-IP rate limiting behind CloudFront without <code>FORWARDED_IP</code>: all traffic counts as a few IPs.</li>
+<li>Associating the web ACL by hand when the Ingress controller owns the ALB.</li>
+<li>Assuming WAF covers the whole OWASP Top 10.</li>
+</ul>
+</main>
+<script>
+const groups=[["CommonRuleSet",700,1],["KnownBadInputs",200,1],["SQLiRuleSet",200,1],["AmazonIpReputationList",25,1],["AnonymousIpList",50,0],["LinuxRuleSet",200,0],["UnixRuleSet",100,0],["AdminProtection",100,0],["PHPRuleSet",100,0],["WordPressRuleSet",100,0],["BotControl",50,0],["ATP",50,0],["Rate-based (x2, ~2 c/u)",4,1],["Custom rules (~)",100,0]];
+const w=document.getElementById("wcu");
+groups.forEach((g,i)=>{w.insertAdjacentHTML("beforeend",`<label><input type="checkbox" data-i="${i}" ${g[2]?"checked":""}> ${g[0]} <span class="small">${g[1]}</span></label>`)});
+function wcu(){let t=0;w.querySelectorAll("input:checked").forEach(c=>t+=groups[c.dataset.i][1]);const max=2000;
+document.getElementById("wfill").style.width=Math.min(t/max,1)*100+"%";document.getElementById("wmark").style.left=(1500/max*100)+"%";
+const over=t>1500;document.getElementById("wfill").style.background=over?"var(--warn)":"var(--accent)";
+document.getElementById("wtxt").innerHTML=`<b>${t} WCU</b> of 1,500 included (black mark). `+(over?`<span class="part">⚠️ Over 1,500: a per-request charge applies for each extra 500 WCU.</span>`:`<span class="ok">Inside the base price.</span>`)}
+w.addEventListener("change",wcu);wcu();
+let W=300;const win=document.getElementById("win");[60,120,300,600].forEach(s=>{const b=document.createElement("button");b.textContent=s+" s";b.onclick=()=>{W=s;[...win.children].forEach(x=>x.classList.toggle("on",x===b));rate()};if(s===W)b.classList.add("on");win.appendChild(b)});
+function rate(){const r=+document.getElementById("r").value,l=+document.getElementById("l").value,nat=document.getElementById("nat").checked,nu=+document.getElementById("nu").value||1;
+document.getElementById("rv").textContent=r;document.getElementById("lv").textContent=l;
+const per=r*W*(nat?nu:1);const blk=per>l;
+document.getElementById("rres").innerHTML=`In ${W} s the key accumulates <b>${Math.round(per)}</b> requests. <span class="pill ${blk?"no":"ok"}">${blk?"Block":"Allow"}</span>`+(nat&&blk&&r*W<=l?`<br><span class="small">Each user alone is under the limit. The block comes from aggregating on a shared IP: aggregate on a header or session cookie.</span>`:"")}
+["r","l","nat","nu"].forEach(id=>document.getElementById(id).addEventListener("input",rate));rate();
+const fp=[["1 · Count",`Put the new rule or group in Count (<code>OverrideAction: Count</code> or <code>RuleActionOverrides</code>). WAF adds the label but doesn't block.`],
+["2 · Measure",`Enable logging and query what would have been blocked:<pre>fields @timestamp, httpRequest.uri, terminatingRuleId
+| filter action = "COUNT" or ispresent(nonTerminatingMatchingRules.0.ruleId)
+| stats count(*) by nonTerminatingMatchingRules.0.ruleId, httpRequest.uri
+| sort count(*) desc</pre>`],
+["3 · Classify",`For each rule with matches: is it legitimate app traffic (false positive) or a real attack? Look at URI, method and User-Agent.`],
+["4 · Exclude narrowly",`Keep only the affected rule in Count. Then add a custom rule: <i>if it has the label</i> <code>awswaf:managed:aws:core-rule-set:SizeRestrictions_Body</code> <i>and the path is NOT</i> <code>/upload</code> → Block.`],
+["5 · Block",`Move the rest to Block. Watch <code>BlockedRequests</code> per rule for 1-2 weeks.`]];
+const fps=document.getElementById("fps"),fpb=document.getElementById("fpb");
+fp.forEach((s,i)=>{const b=document.createElement("button");b.textContent=s[0];b.onclick=()=>show(i);fps.appendChild(b)});
+function show(i){[...fps.children].forEach((x,j)=>x.classList.toggle("on",i===j));fpb.innerHTML=fp[i][1]}show(0);
+</script>
+</body>
+</html>

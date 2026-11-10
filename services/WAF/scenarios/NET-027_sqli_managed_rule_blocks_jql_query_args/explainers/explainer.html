@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WAF SQLi_QUERYARGUMENTS blocks issue-tracker JQL/ZQL queries</title>
+<style>
+  :root{--bg:#fbfbfa;--surface:#fff;--ink:#1d1d1f;--ink2:#55565b;--muted:#8a8b90;--line:#e3e3e6;--accent:#2a78d6;--accent-soft:#e6eefb;--good:#1f8a4c;--warn:#b26b00;--crit:#c0362c;--code:#f2f2f4;--series-1:#2a78d6}
+  @media (prefers-color-scheme:dark){:root{--bg:#141416;--surface:#1c1c1f;--ink:#ececee;--ink2:#b3b4b9;--muted:#86878c;--line:#2e2e33;--accent:#6ea0f0;--accent-soft:#1f2a3d;--good:#4cc27e;--warn:#e0a03a;--crit:#ee6a5f;--code:#232327;--series-1:#3987e5}}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+  main{max-width:760px;margin:0 auto;padding:32px 20px 80px}
+  h1{font-size:1.6rem;margin:0 0 8px} h2{font-size:1.25rem;margin:40px 0 8px;padding-top:12px;border-top:1px solid var(--line)} h3{font-size:1.02rem;margin:20px 0 6px}
+  .lead{color:var(--ink2);margin:0 0 16px}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;margin:12px 0}
+  .tag{display:inline-block;font-size:.75rem;padding:2px 8px;border-radius:99px;background:var(--accent-soft);color:var(--accent);margin-right:6px}
+  code,pre{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.86em;background:var(--code);border-radius:4px}
+  code{padding:1px 4px} pre{padding:12px;overflow-x:auto;line-height:1.45;white-space:pre}
+  table{width:100%;border-collapse:collapse;font-size:.92rem} th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top} th{color:var(--ink2);font-weight:600}
+  .small{font-size:.85rem;color:var(--ink2)}
+  .warn{border-left:3px solid var(--warn);padding:8px 12px;background:color-mix(in srgb,var(--warn) 8%,transparent);border-radius:0 6px 6px 0;margin:10px 0}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+  .chips button,.nav button{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:6px;padding:6px 10px;cursor:pointer;font:inherit;font-size:.86rem}
+  .chips button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .nav{display:flex;gap:8px;align-items:center;margin-top:10px}
+  .pill{display:inline-block;font-size:.78rem;font-weight:600;padding:2px 8px;border-radius:5px}
+  .pill.count{background:color-mix(in srgb,var(--good) 15%,transparent);color:var(--good)}
+  .pill.block{background:color-mix(in srgb,var(--crit) 15%,transparent);color:var(--crit)}
+  .verdict{font-weight:600;margin-top:10px;padding:10px 12px;border-radius:8px}
+  .verdict.bad{background:color-mix(in srgb,var(--crit) 10%,transparent);color:var(--crit)}
+  .verdict.good{background:color-mix(in srgb,var(--good) 10%,transparent);color:var(--good)}
+  .hl{background:color-mix(in srgb,var(--crit) 22%,transparent);border-radius:3px;padding:0 2px}
+  svg text{fill:var(--ink);font:12px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+  .node rect{fill:var(--surface);stroke:var(--line);stroke-width:1.5}
+  .node.active rect{stroke:var(--accent);stroke-width:2.5;fill:var(--accent-soft)}
+  .node.blocked rect{stroke:var(--crit);stroke-width:2.5}
+  .edge{stroke:var(--muted);stroke-width:2;fill:none}
+  #chart .bar{fill:var(--series-1)}
+  #chart .bar:hover,#chart .bar.focus{opacity:.75}
+  #chart .axis text{fill:var(--ink2);font-size:11px}
+  #chart .grid{stroke:var(--line);stroke-width:1}
+  #chart .mark{stroke:var(--ink2);stroke-width:1.5;stroke-dasharray:4 3}
+  #tip{position:fixed;pointer-events:none;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:6px 9px;font-size:.82rem;box-shadow:0 2px 8px rgba(0,0,0,.12);display:none;z-index:9}
+  details summary{cursor:pointer;color:var(--ink2);font-size:.9rem}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+  .node rect{transition:fill .3s,stroke .3s}
+</style>
+</head>
+<body>
+<main>
+<span class="tag">AWS WAF</span><span class="tag">CloudFront</span><span class="tag">Managed rule groups</span>
+<h1>AWS WAF blocks Jira JQL queries as if they were SQL injection</h1>
+<p class="lead">Users get a CloudFront 403 when they open items from a Jira dashboard. The <code>SQLi_QUERYARGUMENTS</code> rule in the SQLi managed rule set reads JQL/ZQL syntax as SQL. The blocks start right after a web ACL change: this is not an AWS-side change.</p>
+
+<div class="card">
+<b>Summary in 4 lines</b>
+<ol style="margin:6px 0 0 18px;padding:0">
+<li>At 15:21 UTC an administrator removed the Count override from <code>SQLi_QUERYARGUMENTS</code> (and from 5 other sub-rules).</li>
+<li>The rule went back to Block. Hourly blocks went from ~5-80 to 694 and 1,192.</li>
+<li>Each dashboard click opens <code>/issues/?jql=project = "…" and issuetype = …</code>. To the rule, that text looks like SQL.</li>
+<li>Fix: keep the sub-rule in Count and block on its label, except on the Jira search paths.</li>
+</ol>
+</div>
+
+<h2>1. What the customer asks</h2>
+<table>
+<tr><th>Question</th><th>Short answer</th></tr>
+<tr><td>Why does <code>SQLi_QueryArguments</code> suddenly block if nothing changed?</td><td>There was a change. CloudTrail records 6 <code>UpdateWebACL</code> calls on the same day. The 15:21 UTC call put the sub-rule back to Block.</td></tr>
+<tr><td>Clicking a dashboard item returns 403. A one-off search works. Why?</td><td>The click builds a URL with a <code>jql</code> parameter. The one-off search has no JQL in the query string, so the sub-rule has nothing to match.</td></tr>
+<tr><td>We set the rule to Count. Is that right?</td><td>It fixes the symptom but removes query-string SQLi protection for the whole application. A narrow exception is better (section 7).</td></tr>
+</table>
+
+<h2>2. How the request travels</h2>
+<p>Press <b>Next</b> to follow one dashboard request. The web ACL has CLOUDFRONT scope and evaluates rules by priority, 0 to 6.</p>
+<div class="card">
+<svg id="flow" viewBox="0 0 720 210" width="100%" role="img" aria-label="Request flow: browser, CloudFront, web ACL, ALB, Jira">
+  <defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" fill="currentColor" style="color:var(--muted)"/></marker></defs>
+  <g class="node" id="n0"><rect x="5" y="80" width="100" height="50" rx="8"/><text x="55" y="102" text-anchor="middle">Browser</text><text x="55" y="118" text-anchor="middle" class="small">dashboard</text></g>
+  <g class="node" id="n1"><rect x="135" y="80" width="100" height="50" rx="8"/><text x="185" y="102" text-anchor="middle">CloudFront</text><text x="185" y="118" text-anchor="middle">edge POP</text></g>
+  <g class="node" id="n2"><rect x="265" y="10" width="190" height="190" rx="8"/><text x="360" y="30" text-anchor="middle" font-weight="600">Web ACL (CLOUDFRONT)</text>
+    <text x="275" y="54">0 custom rule group</text><text x="275" y="74">1 fallback URL group</text><text x="275" y="94">2 CommonRuleSet</text>
+    <text x="275" y="114" id="sqlitxt" font-weight="600">3 SQLiRuleSet ←</text><text x="275" y="134">4 KnownBadInputs</text><text x="275" y="154">5 LinuxRuleSet</text><text x="275" y="174">6 IpReputationList</text></g>
+  <g class="node" id="n3"><rect x="485" y="80" width="100" height="50" rx="8"/><text x="535" y="102" text-anchor="middle">ALB</text><text x="535" y="118" text-anchor="middle">origin</text></g>
+  <g class="node" id="n4"><rect x="615" y="80" width="100" height="50" rx="8"/><text x="665" y="102" text-anchor="middle">Jira</text><text x="665" y="118" text-anchor="middle">Apache + app</text></g>
+  <path class="edge" d="M105,105H133" marker-end="url(#arr)"/><path class="edge" d="M235,105H263" marker-end="url(#arr)"/>
+  <path class="edge" d="M455,105H483" marker-end="url(#arr)"/><path class="edge" d="M585,105H613" marker-end="url(#arr)"/>
+</svg>
+<div id="stepText" class="small" style="min-height:3.2em"></div>
+<div class="nav"><button id="prev">← Previous</button><button id="next">Next →</button><span id="stepN" class="small"></span></div>
+</div>
+
+<h2>3. Why JQL looks like SQL</h2>
+<p>The <code>SQLi_QUERYARGUMENTS</code> sub-rule inspects the value of <b>every</b> query argument with LOW-sensitivity SQLi detection. JQL and ZQL have the same shape as a <code>WHERE</code> clause: field, operator, quoted literal and <code>and</code>.</p>
+<div class="card">
+<div class="small">The <code>jql</code> argument from the WAF log (sanitized). In red, the <code>matchedData</code> WAF recorded:</div>
+<pre><span class="hl">project</span> <span class="hl">=</span> "<span class="hl">Example Project</span>" <span class="hl">and</span> <span class="hl">issuetype</span> = Test and status != Cancelled
+and "Test Type" in (Spec, "Combo Script") and labels in (VAL_test) and cf[10300] = PROJ-123</pre>
+<div class="small">The <code>up_zqltext</code> argument of the 3 gadgets blocked in the HAR:</div>
+<pre>project="PROJ" AND fixVersion="Client Execution" AND cycleName in ("VAL-Manual Execution")
+and assignee is EMPTY and folderName in ("Priority Tests", "Net New Deliverables")</pre>
+<p class="small">Compare: <code>id = "1" and name = "x"</code> is the classic tautology-based SQL injection pattern. The rule cannot know that the backend is Jira and not a database.</p>
+</div>
+
+<h2>4. Simulator: web ACL state by time</h2>
+<p>Pick a moment on the incident day (UTC). The table shows the effective action of each SQLi sub-rule and whether the dashboard JQL request passes.</p>
+<div class="card">
+<div class="chips" id="tchips"></div>
+<div id="tinfo" class="small"></div>
+<table id="ttable" style="margin-top:8px"></table>
+<div id="tverdict" class="verdict"></div>
+<p class="small">The state before 08:17 is outside the change-history window that was queried. The 08:17 call already sets all 8 sub-rules to Count.</p>
+</div>
+
+<h2>5. Evidence: blocks per hour</h2>
+<p>Metric <code>AWS/WAFV2 BlockedRequests</code>, dimension <code>Rule=AWS-AWSManagedRulesSQLiRuleSet</code>, hourly sum (UTC). Dashed lines mark the configuration changes.</p>
+<div class="card">
+<svg id="chart" viewBox="0 0 700 260" width="100%" role="img" aria-label="Bar chart of blocked requests per hour"></svg>
+<details><summary>Show as table</summary><table id="ctable"></table></details>
+</div>
+
+<h3>Customer HAR (17:12:15 – 17:12:40 UTC)</h3>
+<table>
+<tr><th>Response</th><th>Requests</th><th>Source</th></tr>
+<tr><td>200 / 204, <code>Miss from cloudfront</code></td><td>954</td><td>Apache at the origin</td></tr>
+<tr><td>200, <code>Hit from cloudfront</code></td><td>1</td><td>S3</td></tr>
+<tr><td><b>403, <code>Error from cloudfront</code></b></td><td><b>3</b></td><td>CloudFront default "Request blocked" page (919 bytes)</td></tr>
+</table>
+<p class="small">The 3 blocks are test-management gadget iframes (<code>/jira/plugins/servlet/gadgets/ifr</code>), each with an <code>up_zqltext</code> argument. Gadgets without ZQL in the URL return 200. A 403 with <code>Server: CloudFront</code> and <code>X-Cache: Error from cloudfront</code> never reaches the origin.</p>
+
+<h2>6. Why this is not an AWS change</h2>
+<ul>
+<li>The rule group has no pinned version (<code>Version: null</code>), so it follows the default version. An AWS update is possible in theory.</li>
+<li>But the spike starts in the same hour as the 15:21 <code>UpdateWebACL</code> and ends after the 17:17 one. A version update does not switch off with an override change.</li>
+<li>Before 15:21 the sub-rule was in Count, so the same JQL already matched without blocking.</li>
+</ul>
+
+<h2>7. Recommended fix: label-based exception</h2>
+<p>A rule in Count still adds its label to the request. A custom rule with a later priority can block on that label, except on the paths where JQL is legitimate.</p>
+<ol>
+<li>Keep <code>SQLi_QUERYARGUMENTS</code> in Count in <code>RuleActionOverrides</code>, as it is now.</li>
+<li>Add this rule with a priority number higher than the SQLi rule set (for example, 4, and shift the rest).</li>
+<li>Review labeled requests in the logs for a few days.</li>
+</ol>
+<pre>{
+  "Name": "Block-SQLi-QueryArgs-except-tracker-search",
+  "Priority": 4,
+  "Statement": { "AndStatement": { "Statements": [
+    { "LabelMatchStatement": { "Scope": "LABEL",
+        "Key": "awswaf:managed:aws:sql-database:SQLi_QueryArguments" } },
+    { "NotStatement": { "Statement": { "OrStatement": { "Statements": [
+      { "ByteMatchStatement": { "FieldToMatch": { "UriPath": {} }, "PositionalConstraint": "STARTS_WITH",
+          "SearchString": "/jira/issues", "TextTransformations": [{ "Priority": 0, "Type": "LOWERCASE" }] } },
+      { "ByteMatchStatement": { "FieldToMatch": { "UriPath": {} }, "PositionalConstraint": "STARTS_WITH",
+          "SearchString": "/jira/plugins/servlet/gadgets/", "TextTransformations": [{ "Priority": 0, "Type": "LOWERCASE" }] } },
+      { "ByteMatchStatement": { "FieldToMatch": { "UriPath": {} }, "PositionalConstraint": "STARTS_WITH",
+          "SearchString": "/jira/rest/", "TextTransformations": [{ "Priority": 0, "Type": "LOWERCASE" }] } }
+    ] } } } }
+  ] } },
+  "Action": { "Block": {} },
+  "VisibilityConfig": { "SampledRequestsEnabled": true, "CloudWatchMetricsEnabled": true,
+    "MetricName": "Block-SQLi-QueryArgs-except-tracker-search" }
+}</pre>
+<div class="warn">⚠️ The exception removes SQLi inspection of the query string on those paths. Jira parses JQL with its own parser; it does not pass it to the database as SQL. For tighter control, also require the Jira session cookie (<code>JSESSIONID</code>), so the exception applies only to authenticated users.</div>
+
+<h2>8. Open risk</h2>
+<p>The 15:21 change also put 5 other sub-rules back to Block. Current state:</p>
+<table id="nowtable"></table>
+<p class="small">More 403s can appear in other Jira flows (for example, filters stored in cookies or JQL in the path). Use the logs to confirm which sub-rule terminates each block before changing anything else.</p>
+
+<h2>9. How to validate (commands)</h2>
+<h3>Current SQLi rule set overrides</h3>
+<pre>aws wafv2 get-web-acl --scope CLOUDFRONT --region us-east-1 \
+  --name &lt;web-acl-name&gt; --id &lt;web-acl-id&gt; \
+  --query "WebACL.Rules[?Name=='AWS-AWSManagedRulesSQLiRuleSet'].Statement.ManagedRuleGroupStatement.RuleActionOverrides"</pre>
+<h3>Who changed the web ACL, and when</h3>
+<pre>aws cloudtrail lookup-events --region us-east-1 \
+  --lookup-attributes AttributeKey=EventName,AttributeValue=UpdateWebACL \
+  --start-time &lt;incident-day&gt;T00:00:00Z \
+  --query "Events[].{t:EventTime,who:Username}"</pre>
+<h3>Hourly blocks for the rule set</h3>
+<pre>aws cloudwatch get-metric-statistics --region us-east-1 --namespace AWS/WAFV2 \
+  --metric-name BlockedRequests --statistics Sum --period 3600 \
+  --dimensions Name=WebACL,Value=&lt;web-acl-name&gt; Name=Rule,Value=AWS-AWSManagedRulesSQLiRuleSet \
+  --start-time &lt;start&gt; --end-time &lt;end&gt;</pre>
+<h3>Which sub-rule and path block (CloudWatch Logs Insights)</h3>
+<pre>fields @timestamp, httpRequest.uri, terminatingRuleId
+| filter action = "BLOCK"
+| parse @message '"terminatingRule":{"ruleId":"*"' as subrule
+| stats count(*) as hits by terminatingRuleId, subrule, httpRequest.uri
+| sort hits desc
+| limit 50</pre>
+<h3>Requests the label marks (after setting the sub-rule to Count)</h3>
+<pre>fields @timestamp, httpRequest.uri, httpRequest.args
+| filter @message like /SQLi_QueryArguments/
+| stats count(*) as hits by httpRequest.uri
+| sort hits desc</pre>
+
+<h2>10. Common mistakes</h2>
+<ul>
+<li>Accepting "nothing changed" without checking CloudTrail. Always look for <code>UpdateWebACL</code> and <code>UpdateRuleGroup</code> in the incident window.</li>
+<li>Leaving a whole sub-rule in Count forever for a false positive on one path.</li>
+<li>Placing the label rule <b>before</b> the rule group. The label does not exist yet at that point, so the rule never matches.</li>
+<li>Using <code>ExcludedRules</code> instead of <code>RuleActionOverrides</code>. Both set the rule to Count; <code>RuleActionOverrides</code> is the current form.</li>
+<li>Debugging the origin. A 403 with <code>X-Cache: Error from cloudfront</code> and <code>Server: CloudFront</code> was generated at the edge.</li>
+</ul>
+
+<h2 id="verified">11. What was verified, step by step</h2>
+<p>Each step confirms one hypothesis and rules out another. Open a step to see what was done and what came out.</p>
+<div class="card" id="proof"></div>
+<p class="small">Every check was read-only: nothing changed in the customer account.</p>
+
+<h2>12. What to tell the customer</h2>
+<div class="card">
+<ol style="margin:0 0 0 18px;padding:0">
+<li><b>It is a false positive.</b> JQL/ZQL has the shape of a SQL condition, so the sub-rule reads it as injection. That is why the dashboard click fails and the one-off search works.</li>
+<li><b>It started with a change in their web ACL.</b> At 15:21 UTC an update removed the Count override. The metric confirms it: from under 80 to 694 and 1,192 blocks per hour. After Count was restored at 17:17, the blocks stopped.</li>
+<li><b>The HAR confirms it.</b> The 3 responses with 403 come from CloudFront and never reach the origin. They are the requests with ZQL in the URL.</li>
+<li><b>Fix.</b> Keep the sub-rule in Count and block on its label, except on the Jira search paths (rule in section 7).</li>
+<li><b>Warning.</b> 5 other sub-rules went back to Block at 15:21 and can cause more 403s. Check in the logs which sub-rule terminates each block before changing them.</li>
+</ol>
+<p class="small">The reply gives the time of the change, not the person. The customer can verify it in their own change history.</p>
+</div>
+</main>
+<div id="tip" role="tooltip"></div>
+<script>
+// ---- Flujo paso a paso
+const steps=[
+ {n:'n0',t:'1. The user clicks a dashboard item. The browser requests <code>/jira/issues/?jql=project = "…" and issuetype = …</code>.'},
+ {n:'n1',t:'2. CloudFront receives the request at the nearest POP. Before going to the origin, it sends it to the web ACL associated with the distribution.'},
+ {n:'n2',t:'3. Rules 0-2 do not match. Rule 3 (SQLiRuleSet) inspects every argument. <code>SQLi_QUERYARGUMENTS</code> matches the <code>jql</code> value.'},
+ {n:'n2',t:'4. If the sub-rule is in <b>Block</b>, evaluation stops. CloudFront returns its default 403 page. The request never reaches the ALB.',b:true},
+ {n:'n3',t:'5. If the sub-rule is in <b>Count</b>, WAF adds the label <code>awswaf:managed:aws:sql-database:SQLi_QueryArguments</code> and keeps evaluating. At the end it applies the default action (Allow).'},
+ {n:'n4',t:'6. The ALB forwards the request to Jira, which parses the JQL with its own parser and returns 200.'}];
+let si=0;
+function drawStep(){document.querySelectorAll('#flow .node').forEach(g=>g.classList.remove('active','blocked'));
+ const s=steps[si];const g=document.getElementById(s.n);g.classList.add(s.b?'blocked':'active');
+ document.getElementById('stepText').innerHTML=s.t;document.getElementById('stepN').textContent=(si+1)+' / '+steps.length;
+ document.getElementById('prev').disabled=si===0;document.getElementById('next').disabled=si===steps.length-1;}
+prev.onclick=()=>{if(si>0){si--;drawStep();}};next.onclick=()=>{if(si<steps.length-1){si++;drawStep();}};drawStep();
+
+// ---- Simulador de estados
+const RULES=['SQLi_QUERYARGUMENTS','SQLiExtendedPatterns_QUERYARGUMENTS','SQLi_BODY','SQLiExtendedPatterns_BODY','SQLi_COOKIE','SQLi_URIPATH','SQLiExtendedPatterns_URIPATH','SQLiExtendedPatterns_HEADER'];
+const C='count',B='block';
+const states=[
+ {t:'08:17',who:'Admin A',note:'Sets all 8 sub-rules to Count.',s:[C,C,C,C,C,C,C,C]},
+ {t:'08:18',who:'Admin A',note:'Puts 3 ExtendedPatterns sub-rules (BODY, HEADER, URIPATH) back to Block.',s:[C,C,C,B,C,C,B,B]},
+ {t:'15:21',who:'Admin B',note:'Leaves only SQLi_BODY and SQLiExtendedPatterns_BODY in Count. The rest go back to Block.',s:[B,B,C,C,B,B,B,B]},
+ {t:'17:12',who:'—',note:'HAR capture time. 3 of 958 requests get a 403.',s:[B,B,C,C,B,B,B,B]},
+ {t:'17:17',who:'Admin B',note:'Sets SQLi_QUERYARGUMENTS to Count again (temporary fix).',s:[C,B,C,C,B,B,B,B]}];
+const tchips=document.getElementById('tchips');
+function pill(a){return `<span class="pill ${a}">${a==='count'?'Count':'Block'}</span>`}
+function setState(i){[...tchips.children].forEach((b,j)=>b.classList.toggle('on',i===j));const st=states[i];
+ document.getElementById('tinfo').innerHTML=`<b>${st.t} UTC</b> · ${st.who} · ${st.note}`;
+ document.getElementById('ttable').innerHTML='<tr><th>Sub-rule</th><th>Action</th></tr>'+RULES.map((r,k)=>`<tr><td><code>${r}</code>${k===0?' ← matches the JQL':''}</td><td>${pill(st.s[k])}</td></tr>`).join('');
+ const v=document.getElementById('tverdict');const blocked=st.s[0]===B;
+ v.className='verdict '+(blocked?'bad':'good');v.textContent=blocked?'✖ The dashboard JQL request gets a CloudFront 403.':'✔ The JQL request passes (the sub-rule only labels it).';}
+states.forEach((st,i)=>{const b=document.createElement('button');b.textContent=st.t;b.onclick=()=>setState(i);tchips.appendChild(b);});setState(2);
+document.getElementById('nowtable').innerHTML='<tr><th>Sub-rule</th><th>Current action</th></tr>'+RULES.map((r,k)=>`<tr><td><code>${r}</code></td><td>${pill(states[4].s[k])}</td></tr>`).join('');
+
+// ---- Gráfico de barras
+const raw={'11-02 12':78,'11-02 13':44,'11-02 14':34,'11-02 15':7,'11-02 16':3,'11-02 17':6,'11-02 18':1,'11-02 19':3,'11-02 22':6,'11-02 23':2,'11-03 02':2,'11-03 05':22,'11-03 06':11,'11-03 07':45,'11-03 08':35,'11-03 09':56,'11-03 10':21,'11-03 11':9,'11-03 12':53,'11-03 13':5,'11-03 14':31,'11-03 15':694,'11-03 16':1192,'11-03 17':281};
+const hours=[];for(let d of ['11-02','11-03'])for(let h=0;h<24;h++){const k=d+' '+String(h).padStart(2,'0');if((d==='11-02'&&h>=12)||(d==='11-03'&&h<=19))hours.push(k);}
+const data=hours.map(k=>({k,v:raw[k]||0}));
+const svg=document.getElementById('chart'),NS='http://www.w3.org/2000/svg',W=700,H=260,L=44,R=10,T=14,Bm=36;
+const pw=W-L-R,ph=H-T-Bm,max=1200,band=pw/data.length,bw=Math.min(18,band-2);
+function el(n,a,p){const e=document.createElementNS(NS,n);for(const x in a)e.setAttribute(x,a[x]);(p||svg).appendChild(e);return e;}
+const ax=el('g',{class:'axis'});
+[0,300,600,900,1200].forEach(t=>{const y=T+ph-t/max*ph;el('line',{class:'grid',x1:L,x2:W-R,y1:y,y2:y});const tx=el('text',{x:L-6,y:y+4,'text-anchor':'end'},ax);tx.textContent=t;});
+data.forEach((d,i)=>{if(d.k.endsWith(' 00')||d.k.endsWith(' 12')||d.k.endsWith(' 06')||d.k.endsWith(' 18')){const tx=el('text',{x:L+i*band+band/2,y:H-Bm+16,'text-anchor':'middle'},ax);tx.textContent=d.k.slice(6)+':00';}
+ if(d.k==='11-02 12'||d.k==='11-03 00'){const tx=el('text',{x:L+i*band+2,y:H-4},ax);tx.textContent=(d.k.startsWith('11-02')?'Day 1':'Day 2');}});
+function xAt(k,frac){const i=hours.indexOf(k);return L+i*band+frac*band;}
+[[ '11-03 08',17/60,'08:17'],['11-03 15',21/60,'15:21'],['11-03 17',17/60,'17:17']].forEach(([k,f,lab])=>{const x=xAt(k,f);el('line',{class:'mark',x1:x,x2:x,y1:T,y2:T+ph});const tx=el('text',{x:x+3,y:T+10,class:'small'});tx.textContent=lab;tx.setAttribute('style','fill:var(--ink2);font-size:10px');});
+const tip=document.getElementById('tip');
+data.forEach((d,i)=>{const h=d.v/max*ph,x=L+i*band+(band-bw)/2,y=T+ph-h;
+ if(d.v>0){const r=Math.min(4,h);el('path',{class:'bar',d:`M${x},${T+ph}V${y+r}Q${x},${y} ${x+r},${y}H${x+bw-r}Q${x+bw},${y} ${x+bw},${y+r}V${T+ph}Z`});}
+ const hit=el('rect',{x:L+i*band,y:T,width:band,height:ph,fill:'transparent',tabindex:0,'aria-label':`${d.k}:00 UTC, ${d.v} blocks`});
+ const show=e=>{tip.style.display='block';tip.innerHTML=`<b>${d.v}</b> blocks<br><span class="small">${d.k.replace('11-02','Day 1').replace('11-03','Day 2')}:00 UTC</span>`;const bb=hit.getBoundingClientRect();tip.style.left=Math.min(innerWidth-140,bb.left+bb.width/2+8)+'px';tip.style.top=(bb.top+20)+'px';};
+ hit.addEventListener('mouseenter',show);hit.addEventListener('focus',show);hit.addEventListener('mouseleave',()=>tip.style.display='none');hit.addEventListener('blur',()=>tip.style.display='none');});
+const t1=el('text',{x:xAt('11-03 16',.5)-6,y:T+ph-1192/max*ph-6,'text-anchor':'end'});t1.textContent='1192';t1.setAttribute('style','fill:var(--ink);font-size:11px;font-weight:600');
+document.getElementById('ctable').innerHTML='<tr><th>Hour (UTC)</th><th>BlockedRequests</th></tr>'+data.map(d=>`<tr><td>${d.k.replace('11-02','Day 1').replace('11-03','Day 2')}:00</td><td>${d.v}</td></tr>`).join('');
+
+// ---- What was verified
+const proof=[
+ ['Read the case and the customer WAF log record','Starting hypothesis: an SQLi false positive in the query string.','The log names <code>SQLi_QUERYARGUMENTS</code>, <code>matchedFieldName: jql</code>, <code>matchedData: project = "…" and issuetype</code>, sensitivity LOW.'],
+ ['Parse the HAR (958 requests) locally','Does the 403 come from WAF at CloudFront or from the origin?','3 responses with 403, <code>Server: CloudFront</code>, <code>X-Cache: Error from cloudfront</code> and the 919-byte "Request blocked" page. All 3 are gadgets with <code>up_zqltext</code>. Gadgets without ZQL return 200. The query string is ~1.2 KB, so it is not a size limit.'],
+ ['Read the web ACL configuration','Which sub-rules are in Count? Is the version pinned?','7 rules. The SQLi rule set has 3 Count overrides (including <code>SQLi_QUERYARGUMENTS</code>, set by the customer). No managed group has a pinned version.'],
+ ['Diff web ACL changes in the change history','Customer change or AWS change?','6 <code>UpdateWebACL</code> calls on the incident day. At 15:21 the Count override was removed from <code>SQLi_QUERYARGUMENTS</code> and 5 other sub-rules. At 17:17 Count was restored.'],
+ ['Review hourly BlockedRequests','Do the blocks follow the configuration change?','1-78 per hour before. 694, 1,192 and 281 in hours 15, 16 and 17. No datapoints after 17:17. It matches the changes to the minute.'],
+ ['Rule out an AWS update','Could the default version of the rule group have changed?','It does not fit. A version change does not switch off with an override change, and the same query already matched (in Count) before 15:21.']];
+document.getElementById('proof').innerHTML=proof.map((p,i)=>`<details ${i===0?'open':''} style="margin:6px 0"><summary><b>${i+1}. ${p[0]}</b></summary><p class="small" style="margin:6px 0 2px"><b>Question:</b> ${p[1]}</p><p style="margin:2px 0 8px"><b>Result:</b> ${p[2]}</p></details>`).join('');
+</script>
+</body>
+</html>

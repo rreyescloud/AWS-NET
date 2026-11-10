@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NET-024 — One custom block response for every WAF block</title>
+<style>
+:root{--bg:#fff;--fg:#1d232b;--muted:#5b6672;--card:#f5f7f9;--line:#d9dee4;--accent:#2563eb;--ok:#15803d;--warn:#b45309;--bad:#b91c1c;--code:#eef1f4;--vio:#7c3aed}
+@media (prefers-color-scheme: dark){:root{--bg:#14181d;--fg:#e6e9ed;--muted:#9aa5b1;--card:#1c2229;--line:#2c343d;--accent:#60a5fa;--ok:#4ade80;--warn:#fbbf24;--bad:#f87171;--code:#232a32;--vio:#a78bfa}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+main{max-width:780px;margin:0 auto;padding:32px 20px 90px}
+h1{font-size:1.6rem;margin:0 0 6px} h2{font-size:1.2rem;margin:36px 0 10px;padding-top:8px;border-top:1px solid var(--line)}
+.lead{color:var(--muted);margin:0 0 18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:12px 0}
+code{background:var(--code);padding:1px 5px;border-radius:4px;font-size:.88em}
+pre{background:var(--code);padding:12px;border-radius:8px;overflow-x:auto;font-size:.82em}
+table{border-collapse:collapse;width:100%;font-size:.92em;margin:10px 0} th,td{border:1px solid var(--line);padding:7px 9px;text-align:left;vertical-align:top} th{background:var(--card)}
+.tag{display:inline-block;font-size:.72em;font-weight:700;padding:2px 8px;border-radius:999px;border:1px solid currentColor;margin-right:4px}
+.ok{color:var(--ok)} .warn{color:var(--warn)} .bad{color:var(--bad)}
+button{font:inherit;background:var(--accent);color:#fff;border:0;border-radius:8px;padding:6px 14px;cursor:pointer}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0} .tabs button{background:var(--card);color:var(--fg);border:1px solid var(--line)} .tabs button.sel{background:var(--accent);color:#fff;border-color:var(--accent)}
+.chain{display:flex;flex-direction:column;gap:6px;margin:12px 0}
+.step{border:2px solid var(--line);border-radius:10px;padding:9px 12px;font-size:.92em;transition:border-color .3s,opacity .3s,background .3s}
+.step.hit{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,transparent)} .step.skip{opacity:.4}
+.bar{display:flex;height:28px;border-radius:8px;overflow:hidden;margin:8px 0;font-size:.8em;font-weight:700;color:#fff} .bar div{display:flex;align-items:center;justify-content:center}
+.order{display:flex;flex-direction:column;gap:6px;margin:10px 0}
+.rule{border:1px solid var(--line);border-radius:8px;padding:8px 12px;font-size:.9em;display:flex;justify-content:space-between;gap:10px}
+.rule.term{border-color:var(--bad)} .rule.done{opacity:.4} .rule.cur{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,transparent)}
+label.sw{display:inline-flex;gap:6px;align-items:center;margin-right:14px;font-size:.92em}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main>
+<h1>One custom block response for every WAF block</h1>
+<p class="lead">NET-024 · AWS WAF + Firewall Manager + CloudFront. Managed rule group blocks have no custom response, so they return the default 403. WAF has no setting for all rules; CloudFront can serve one 403 page for all of them.</p>
+
+<h2>1. The symptom</h2>
+<div class="bar"><div style="width:30%;background:var(--vio)">~30% · responseCodeSent</div><div style="width:70%;background:#64748b">~70% · no responseCodeSent</div></div>
+<p>Own rules (rate-based, custom groups) have a custom response. AWS managed rule group rules don't, so their blocks fall back to the default response.</p>
+
+<h2>2. Which response a blocked request gets</h2>
+<div class="tabs" id="who"></div>
+<div class="chain" id="chain">
+  <div class="step"><b>1. WAF Block action custom response</b> — if present, it is used and nothing else applies.</div>
+  <div class="step"><b>2. Protected resource custom response</b> — CloudFront custom error response by status code (403).</div>
+  <div class="step"><b>3. WAF default Block response</b> — <code>403 Forbidden</code>.</div>
+</div>
+<div class="card" id="whonote"></div>
+
+<h2>3. The four questions</h2>
+<table>
+<tr><th>Question</th><th>Answer</th></tr>
+<tr><td>One setting for all rules?</td><td><span class="tag bad">Not in WAF</span> Custom responses are set per Block action. <span class="tag ok">CloudFront</span> a 403 custom error response covers every block without a WAF custom response.</td></tr>
+<tr><td>Block + CustomResponse in <code>ruleActionOverrides</code>?</td><td><span class="tag ok">WAF API</span> valid (<code>ActionToUse</code> is a full <code>RuleAction</code>). <span class="tag warn">Firewall Manager</span> <strong>not supported</strong> — <code>PutPolicy</code> succeeds but silently stores <code>{"block": {}}</code> (lab, 2026-11-04). Central fix: a rule group in the FMS administrator account with its own <code>CustomResponseBodies</code>.</td></tr>
+<tr><td>Count + label block?</td><td>Valid. Prefer <b>group-level <code>OverrideAction: Count</code></b> — it covers rules AWS adds later. Rule-level overrides need every name and invalid names are silently ignored.</td></tr>
+<tr><td>Where in a retrofitted web ACL?</td><td><b>Last preProcess group.</b> Try the simulator below.</td></tr>
+</table>
+
+<h2>4. Ordering simulator</h2>
+<div>
+  <label class="sw"><input type="radio" name="pos" value="pre" checked> End of preProcess</label>
+  <label class="sw"><input type="radio" name="pos" value="post"> postProcess</label>
+  <label class="sw"><input type="checkbox" id="allow" checked> An own Allow rule matches</label>
+</div>
+<div class="order" id="order"></div>
+<div class="card" id="ordernote"></div>
+
+<h2>5. What the lab confirmed (2026-11-02)</h2>
+<table>
+<tr><th>Request</th><th>baseline</th><th>fixA</th><th>fixB</th><th>fixB-post</th></tr>
+<tr><td>XSS (managed group)</td><td>default 403</td><td>CloudFront page</td><td class="ok">WAF custom</td><td class="ok">WAF custom</td></tr>
+<tr><td>Own rule</td><td class="ok">WAF custom</td><td class="ok">WAF custom</td><td class="ok">WAF custom</td><td class="ok">WAF custom</td></tr>
+<tr><td>XSS + partner Allow</td><td>default 403</td><td>CloudFront page</td><td class="ok">WAF custom</td><td class="bad">200 — allowed</td></tr>
+<tr><td>Origin 403 (WAF allowed)</td><td>S3 XML</td><td class="warn">CloudFront page</td><td>S3 XML</td><td>—</td></tr>
+</table>
+<ul>
+<li>fixA changes what users see, not what WAF logs: managed blocks still have no <code>responseCodeSent</code>.</li>
+<li>The CloudFront error page is fetched from the origin without passing through WAF.</li>
+<li>fixB: the terminating rule becomes the label block; the attack stays visible in <code>labels</code>.</li>
+</ul>
+
+<h2>6. Common mistakes</h2>
+<ul>
+<li>Looking for a global WAF switch — the global switch is the CloudFront 403 page.</li>
+<li>Label block in postProcess — own Allow rules skip it.</li>
+<li>Blocking a too-broad namespace — some managed rules are Count by default; check <code>Rules[].Action</code>.</li>
+<li>Forgetting that the CloudFront 403 page also replaces origin 403s.</li>
+</ul>
+</main>
+<script>
+const W={own:{t:"Own rule with custom response",hit:0,n:"The response comes from WAF. The log shows <code>responseCodeSent</code>."},
+ mrgNo:{t:"Managed group, no CloudFront page",hit:2,n:"No WAF custom response and no CloudFront 403 page → <b>WAF default 403</b>. No <code>responseCodeSent</code> in the log. (Current state.)"},
+ mrgCf:{t:"Managed group, CloudFront 403 page",hit:1,n:"No WAF custom response, but CloudFront has a 403 custom error response → <b>CloudFront page</b>. Covers all managed group blocks without touching WAF."}};
+const who=document.getElementById('who');
+Object.entries(W).forEach(([k,v])=>{const b=document.createElement('button');b.textContent=v.t;b.id='w'+k;b.onclick=()=>sel(k);who.appendChild(b)});
+function sel(k){Object.keys(W).forEach(x=>document.getElementById('w'+x).classList.toggle('sel',x===k));
+ document.querySelectorAll('#chain .step').forEach((s,i)=>{s.classList.toggle('hit',i===W[k].hit);s.classList.toggle('skip',i<W[k].hit)});document.getElementById('whonote').innerHTML=W[k].n}
+sel('mrgNo');
+function render(){const pos=document.querySelector('input[name=pos]:checked').value,allow=document.getElementById('allow').checked;
+ const rules=[{n:"preProcess · AWS managed groups (Count)",a:"COUNT + label"},
+  ...(pos==="pre"?[{n:"preProcess · BlockManagedMatches",a:"BLOCK + custom response",term:1,blk:1}]:[]),
+  {n:"Own rules (retrofit) · Allow partner",a:allow?"ALLOW":"no match",term:allow,al:1},
+  ...(pos==="post"?[{n:"postProcess · BlockManagedMatches",a:"BLOCK + custom response",term:1,blk:1}]:[]),
+  {n:"Default action",a:"ALLOW",term:1}];
+ let stop=false,res="";
+ document.getElementById('order').innerHTML=rules.map(r=>{let c="rule",a=r.a;
+  if(stop){c+=" done";a="not evaluated"}else if(r.term){c+=" term cur";stop=true;res=r.blk?"<span class='ok'>Blocked with the custom response.</span>":r.al?"<span class='bad'>Allowed — the own Allow rule ended evaluation before the block. Security regression.</span>":"<span class='bad'>Allowed by the default action.</span>"}else c+=" cur";
+  return `<div class="${c}"><span>${r.n}</span><b>${a}</b></div>`}).join('');
+ document.getElementById('ordernote').innerHTML="An attack request that a managed group detects → "+res}
+document.querySelectorAll('input[name=pos]').forEach(i=>i.onchange=render);document.getElementById('allow').onchange=render;render();
+</script>
+</body>
+</html>

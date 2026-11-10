@@ -10,7 +10,7 @@ Key highlights:
 - Resolved **TLS Inspection certificate requirements** — documented ACM public vs imported vs Private CA compatibility matrix
 - Identified **firewall endpoint scaling time (10-15 min)** causing packet drops during traffic spikes — pre-warming strategy
 - Built **Suricata IDS/IPS rules** for SQL injection, data exfiltration, and ransomware IoC blocking
-- Discovered **domain list limitation** — only inspects HTTP/HTTPS, not SMTP or custom TLS ports
+- Discovered **domain list limitation** — only inspects HTTP/HTTPS, not SMTP or custom TLS ports (resolved IP validation now closes this gap — see NET-029)
 - Documented **Stream Exception Policy** behavior — packets not logged in alerts, only in CloudWatch metric
 
 40+ cases across 7+ industries | Top category: Deployment / Architecture (30%)
@@ -34,13 +34,14 @@ Key highlights:
 
 ## Scenarios
 
-All five are Lab tier — each ships a deploy script with a `teardown` path.
+NET-004 to NET-017 are Lab tier — each ships a deploy script with a `teardown` path. NET-029 is Case analysis (design scenario with a CLI-first replication method, not yet run).
 
 - **[NET-004](scenarios/NET-004_tls_inspection_cross_signed_cert/)** — TLS inspection rejects a cross-signed certificate · Capital Markets
 - **[NET-005](scenarios/NET-005_asymmetric_routing_regional_natgw/)** — asymmetric routing with regional NAT Gateway and multi-AZ firewall · Airlines
 - **[NET-010](scenarios/NET-010_container_attributes_referencing/)** — container attributes referencing on EKS · Technology
 - **[NET-011](scenarios/NET-011_suricata_domain_allowlist_syn_drop/)** — Suricata domain allowlist never matches, catch-all drop kills the SYN · Regulated Financial Services
 - **[NET-017](scenarios/NET-017_fms_egress_regional_natgw_symmetry/)** — Firewall Manager centralized egress can't stay symmetric with a regional NAT Gateway and appliance mode · IT Consulting
+- **[NET-029](scenarios/NET-029_resolved_ip_validation_non_http_domain_egress/)** — resolved IP validation: domain-based egress for SSH/SFTP and SNI anti-spoofing with Route 53 Resolver provenance · Regulated Financial Services *(Case analysis)*
 
 ## Industries Served
 

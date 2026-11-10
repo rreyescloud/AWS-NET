@@ -30,6 +30,8 @@ Scenarios come in two tiers, declared at the top of every scenario README so you
 - **[NET-011](services/NetworkFirewall/scenarios/NET-011_suricata_domain_allowlist_syn_drop/)** — Suricata domain allowlist never matches, catch-all drop kills the SYN · Regulated Financial Services
 - **[NET-014](services/WAF/scenarios/NET-014_waf_ai_traffic_monetization_x402/)** — WAF AI traffic monetization over x402 · Content and API providers
 - **[NET-020](services/TransitGateway/scenarios/NET-020_stno_console_scan_pagination/)** — STNO console hides pending TGW requests past one DynamoDB Scan page · Public Sector / Research Computing
+- **[NET-023](services/WAF/scenarios/NET-023_per_account_login_failure_limiting/)** — Per-account login failure limiting on a custom OAuth token endpoint · SaaS
+- **[NET-024](services/WAF/scenarios/NET-024_custom_block_response_managed_rule_groups/)** — One custom block response for every WAF block, including AWS managed rule groups · Banking
 
 **Case analysis**
 
@@ -38,6 +40,11 @@ Scenarios come in two tiers, declared at the top of every scenario README so you
 - **[NET-008](services/R53/scenarios/NET-008_global_resolver_troubleshooting/)** — Global Resolver failure modes · General
 - **[NET-009](services/R53/scenarios/NET-009_eks_zonal_shift_recovery_delay/)** — EKS zonal shift recovery delay after expiry · Financial Services
 - **[NET-012](services/WAF/scenarios/NET-012_shield_l7am_to_antiddos_amr_migration/)** — Shield Advanced L7AM vs the AntiDDoS managed rule set · Financial Services
+- **[NET-025](services/WAF/scenarios/NET-025_webacl_architecture_review_eks_alb/)** — AWS WAF web ACL architecture review for EKS ingress load balancers · Banking Software
+- **[NET-026](services/WAF/scenarios/NET-026_automated_vulnerability_scan_cloudfront_waf_layers/)** — Automated vulnerability scanning through CloudFront: layered WAF blocking and log analysis · Agriculture Technology
+- **[NET-027](services/WAF/scenarios/NET-027_sqli_managed_rule_blocks_jql_query_args/)** — SQLi managed rule blocks issue-tracker JQL/ZQL query arguments after a web ACL override change · Pension Administration Software
+- **[NET-028](services/WAF/scenarios/NET-028_waf_log_filter_keep_block_count/)** — AWS WAF logging filter that keeps BLOCK and Count matches while dropping benign ALLOW traffic · Media / Video Streaming
+- **[NET-029](services/NetworkFirewall/scenarios/NET-029_resolved_ip_validation_non_http_domain_egress/)** — Network Firewall resolved IP validation: domain egress control beyond HTTP/HTTPS and SNI spoofing · Regulated Financial Services
 
 ## Structure
 

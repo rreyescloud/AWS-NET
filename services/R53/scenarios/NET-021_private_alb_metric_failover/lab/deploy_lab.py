@@ -746,8 +746,9 @@ def teardown(profile, _=None):
             if reg.get(key):
                 until(f"{key} released", lambda k=key: safe(f"target group {k}", elb.delete_target_group,
                                                           TargetGroupArn=reg[k]), timeout=120)
-        if reg.get("instance_id"):
-            safe(f"instance {reg['instance_id']}", ec2.terminate_instances, InstanceIds=[reg["instance_id"]])
+        # only wait when the terminate call went through: the waiter retries NotFound until it times out
+        if reg.get("instance_id") and safe(f"instance {reg['instance_id']}", ec2.terminate_instances,
+                                           InstanceIds=[reg["instance_id"]]):
             try:
                 ec2.get_waiter("instance_terminated").wait(InstanceIds=[reg["instance_id"]])
             except WaiterError:
@@ -778,8 +779,10 @@ def teardown(profile, _=None):
     except ClientError:
         pass
     safe("instance profile", iam.delete_instance_profile, InstanceProfileName=EC2_ROLE)
+    # detach everything, not just what deploy attached: account automation can add policies (e.g. SSM patching)
     try:
-        iam.detach_role_policy(RoleName=EC2_ROLE, PolicyArn="arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore")
+        for p in iam.list_attached_role_policies(RoleName=EC2_ROLE)["AttachedPolicies"]:
+            iam.detach_role_policy(RoleName=EC2_ROLE, PolicyArn=p["PolicyArn"])
     except ClientError:
         pass
     safe(f"role {EC2_ROLE}", iam.delete_role, RoleName=EC2_ROLE)

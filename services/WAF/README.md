@@ -33,6 +33,12 @@ Key highlights:
 - **[NET-006](scenarios/NET-006_waf_bot_control_api_chatbot/)** — WAF Bot Control for a public API chatbot · Public Sector · *Lab*
 - **[NET-014](scenarios/NET-014_waf_ai_traffic_monetization_x402/)** — AI traffic monetization over x402 · Content and API providers · *Lab*
 - **[NET-022](scenarios/NET-022_bot_control_llm_crawler_label_allow/)** — Bot Control blocks LLM crawlers despite a label-based allow (unpinned version, misnamed BLOCK group) · Healthcare Data & Analytics · *Lab*
+- **[NET-023](scenarios/NET-023_per_account_login_failure_limiting/)** — Per-account login failure limiting on a custom OAuth token endpoint (why WAF can't count failures, ATP response inspection CloudFront-only) · SaaS · *Lab*
+- **[NET-024](scenarios/NET-024_custom_block_response_managed_rule_groups/)** — One custom block response for every block, including AWS managed rule groups (response precedence, CloudFront 403 page, Count + label block, FMS retrofit ordering, FMS drops custom responses in overrides) · Banking · *Lab*
+- **[NET-025](scenarios/NET-025_webacl_architecture_review_eks_alb/)** — Web ACL architecture review for EKS ingress ALBs (WCU and rule order, rate-based keys, OWASP Top 10 coverage, 8 KB ALB body limit, label-based false-positive tuning) · Banking Software · *Case analysis*
+- **[NET-026](scenarios/NET-026_automated_vulnerability_scan_cloudfront_waf_layers/)** — Automated vulnerability scanning through CloudFront (layered managed rules, rate-based and trap-path rules, the slow distributed scan gap, origin bypass, log-based impact analysis) · Agriculture Technology · *Case analysis*
+- **[NET-027](scenarios/NET-027_sqli_managed_rule_blocks_jql_query_args/)** — SQLi managed rule blocks issue-tracker JQL/ZQL in query arguments (change-history diff vs "nothing changed", CloudFront edge 403 in a HAR, Count + label exception scoped by path) · Pension Administration Software · *Case analysis*
+- **[NET-028](scenarios/NET-028_waf_log_filter_keep_block_count/)** — WAF logging filter that drops benign ALLOW traffic but keeps BLOCK and every Count match (first-match filter order, COUNT vs EXCLUDED_AS_COUNT, fully qualified label conditions, CAPTCHA/CHALLENGE gap, Firehose/S3 cost sizing) · Media / Video Streaming · *Case analysis*
 - **[NET-012](scenarios/NET-012_shield_l7am_to_antiddos_amr_migration/)** — Shield Advanced L7AM vs the AntiDDoS managed rule set · Financial Services · *Case analysis*
 
 ## Industries Served

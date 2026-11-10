@@ -1,0 +1,39 @@
+<mxfile host="app.diagrams.net">
+  <diagram id="net027" name="NET-027 SQLi managed rule blocks JQL query args">
+    <mxGraphModel dx="1200" dy="700" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="620" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="title" value="NET-027 — SQLi_QUERYARGUMENTS reads issue-tracker JQL/ZQL as SQL injection" style="text;html=1;fontSize=16;fontStyle=1;align=left;" vertex="1" parent="1">
+          <mxGeometry x="40" y="20" width="800" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="user" value="Browser&lt;br&gt;dashboard click&lt;br&gt;/jira/issues/?jql=project = &amp;quot;…&amp;quot; and …" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="40" y="200" width="170" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="cf" value="&lt;b&gt;CloudFront&lt;/b&gt;&lt;br&gt;jira.example.com" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="260" y="205" width="130" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="acl" value="&lt;b&gt;web ACL (CLOUDFRONT)&lt;/b&gt;&lt;br&gt;0 custom rule group&lt;br&gt;1 fallback URL group&lt;br&gt;2 CommonRuleSet&lt;br&gt;&lt;b&gt;3 SQLiRuleSet → SQLi_QUERYARGUMENTS&lt;/b&gt;&lt;br&gt;4 KnownBadInputs&lt;br&gt;5 LinuxRuleSet&lt;br&gt;6 IpReputationList&lt;br&gt;default: Allow" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="440" y="150" width="260" height="170" as="geometry"/>
+        </mxCell>
+        <mxCell id="alb" value="&lt;b&gt;ALB&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="760" y="205" width="110" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="app" value="&lt;b&gt;Apache + Jira&lt;/b&gt;&lt;br&gt;JQL parsed by the app" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="920" y="205" width="140" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="blk" value="&lt;b&gt;Block (15:21 → 17:17 UTC)&lt;/b&gt;&lt;br&gt;CloudFront default 403 page&lt;br&gt;X-Cache: Error from cloudfront" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="470" y="400" width="200" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="fix" value="&lt;b&gt;Fix&lt;/b&gt;: sub-rule in Count (adds label) + rule after group:&lt;br&gt;label SQLi_QueryArguments AND NOT path in /jira/issues, /gadgets/, /rest/ → Block" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="740" y="390" width="320" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="user" target="cf"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="cf" target="acl"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e3" value="Count / no match" style="edgeStyle=orthogonalEdgeStyle;html=1;fontSize=10;" edge="1" parent="1" source="acl" target="alb"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e4" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="alb" target="app"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e5" value="SQLi_QUERYARGUMENTS = Block" style="edgeStyle=orthogonalEdgeStyle;html=1;fontSize=10;strokeColor=#b85450;" edge="1" parent="1" source="acl" target="blk"><mxGeometry relative="1" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

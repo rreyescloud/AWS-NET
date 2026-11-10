@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NET-023 — Per-account login failure limiting</title>
+<style>
+:root{--bg:#fff;--fg:#1d232b;--muted:#5b6672;--card:#f5f7f9;--line:#d9dee4;--accent:#2563eb;--ok:#15803d;--warn:#b45309;--bad:#b91c1c;--code:#eef1f4}
+@media (prefers-color-scheme: dark){:root{--bg:#14181d;--fg:#e6e9ed;--muted:#9aa5b1;--card:#1c2229;--line:#2c343d;--accent:#60a5fa;--ok:#4ade80;--warn:#fbbf24;--bad:#f87171;--code:#232a32}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+main{max-width:760px;margin:0 auto;padding:32px 20px 80px}
+h1{font-size:1.6rem;margin:0 0 6px} h2{font-size:1.2rem;margin:36px 0 10px;padding-top:8px;border-top:1px solid var(--line)} h3{font-size:1rem;margin:20px 0 6px}
+.lead{color:var(--muted);margin:0 0 18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:12px 0}
+code{background:var(--code);padding:1px 5px;border-radius:4px;font-size:.88em}
+pre{background:var(--code);padding:12px;border-radius:8px;overflow-x:auto;font-size:.85em;line-height:1.45}
+table{border-collapse:collapse;width:100%;font-size:.92em;margin:10px 0}
+th,td{border:1px solid var(--line);padding:7px 9px;text-align:left;vertical-align:top} th{background:var(--card)}
+.tag{display:inline-block;font-size:.75em;font-weight:600;padding:2px 8px;border-radius:999px;border:1px solid currentColor}
+.ok{color:var(--ok)} .warn{color:var(--warn)} .bad{color:var(--bad)}
+.flow{display:flex;gap:6px;flex-wrap:wrap;margin:14px 0}
+.node{flex:1 1 110px;min-width:105px;border:2px solid var(--line);border-radius:10px;padding:10px;text-align:center;font-size:.85em;transition:border-color .3s,background .3s}
+.node b{display:block;font-size:.95em;margin-bottom:2px}
+.node.active{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,transparent)}
+.node.blind{opacity:.45}
+.stepctl{display:flex;gap:8px;align-items:center;margin-top:8px}
+button{font:inherit;background:var(--accent);color:#fff;border:0;border-radius:8px;padding:6px 14px;cursor:pointer} button[disabled]{opacity:.4;cursor:default}
+.steptext{min-height:4.5em}
+.opts{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.opts button{background:var(--card);color:var(--fg);border:1px solid var(--line)} .opts button.sel{background:var(--accent);color:#fff;border-color:var(--accent)}
+.sim label{display:block;margin:10px 0 2px;font-size:.92em} .sim input[type=range]{width:100%}
+.out{display:grid;grid-template-columns:1fr auto;gap:4px 12px;margin-top:12px;font-size:.92em} .out div:nth-child(even){text-align:right;font-weight:600}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main>
+<h1>Per-account login failure limiting on a custom OAuth token endpoint</h1>
+<p class="lead">NET-023 · AWS WAF. The goal: return 429 when one account has more than 5 failed logins per minute. WAF alone can't do it. The answer is a layered design with the per-account counter in the application.</p>
+
+<h2>1. The requirement</h2>
+<div class="card">
+<p><b>Architecture:</b> a custom OAuth 2.0 server. A Node.js Lambda sits behind API Gateway or an ALB. A REGIONAL AWS WAF web ACL protects the entry point.</p>
+<p><b>Flow:</b> the client sends <code>POST /token</code> with <code>grant_type=password</code>. Username and password are in a form-encoded body. The Lambda calls an external identity provider (IdP). The Lambda decides success or failure.</p>
+<p><b>Requirement:</b> return <code>429</code> when an account exceeds 5 failures per minute, per account, not per IP.</p>
+</div>
+
+<h2>2. Why WAF alone can't do it</h2>
+<p>Step through the request path. See what WAF can see at each step.</p>
+<div class="flow" id="flow">
+  <div class="node"><b>Client</b>POST /token</div>
+  <div class="node"><b>AWS WAF</b>Inspects the request</div>
+  <div class="node"><b>API GW / ALB</b>Forwards</div>
+  <div class="node"><b>Lambda</b>OAuth logic</div>
+  <div class="node"><b>External IdP</b>Checks password</div>
+  <div class="node"><b>Response</b>Token or error</div>
+</div>
+<div class="card steptext" id="steptext"></div>
+<div class="stepctl"><button id="prev">Back</button><button id="next">Next</button><span id="stepn" style="color:var(--muted);font-size:.9em"></span></div>
+
+<table>
+<tr><th>Limit</th><th>Detail</th></tr>
+<tr><td>WAF doesn't see the login result</td><td>WAF evaluates the request <i>before</i> the Lambda. Only <b>ATP response inspection</b> reads responses, and it runs <b>only for web ACLs that protect CloudFront</b>.</td></tr>
+<tr><td>Rate-based rules can't key on a body field</td><td>Valid keys: IP, forwarded IP, ASN, label namespace, header, cookie, query argument, query string, URI path, JA3, JA4, HTTP method. No body.</td></tr>
+</table>
+
+<h2>3. Options</h2>
+<div class="opts" id="opts"></div>
+<div class="card" id="optbox"></div>
+<p><b>Short answer:</b> no managed AWS capability meets the exact requirement. Option D (counter in the Lambda) is the right design. WAF (A, B) reduces volume before it reaches the Lambda.</p>
+
+<h2>4. Simulator: which layer stops a distributed attack</h2>
+<div class="card sim">
+  <label>Attacker IPs: <b id="vIps"></b></label><input type="range" id="ips" min="1" max="2000" value="500">
+  <label>Attempts per minute against <i>one</i> account (all IPs): <b id="vRate"></b></label><input type="range" id="rate" min="1" max="200" value="30">
+  <label>Attack duration (minutes): <b id="vDur"></b></label><input type="range" id="dur" min="1" max="60" value="10">
+  <label>Per-IP rate-based limit (requests / 5 min): <b id="vRbr"></b></label><input type="range" id="rbr" min="10" max="2000" step="10" value="100">
+  <div class="out" id="out"></div>
+</div>
+<p style="font-size:.9em;color:var(--muted)">Simple model: the attacker spreads attempts evenly across IPs. It ignores WAF mitigation lag.</p>
+
+<h2>5. What the lab confirmed (run on 2026-11-02)</h2>
+<table>
+<tr><th>Phase</th><th>Sent</th><th>Result</th></tr>
+<tr><td>A</td><td>Correct login</td><td class="ok">200 from the Lambda</td></tr>
+<tr><td>B</td><td>30 wrong passwords, one account, 30 forwarded IPs</td><td>1-5 → 400 · 6-30 → <b class="bad">429 from the Lambda</b>. WAF logged them as <b>ALLOW</b></td></tr>
+<tr><td>C</td><td>Real user, correct password, same minute</td><td class="bad">429 — lockout hits the real user</td></tr>
+<tr><td>D</td><td>One forwarded IP, random usernames</td><td>First WAF block at request <b>153</b>, after <b>88 s</b> (limit 100)</td></tr>
+</table>
+<ul>
+<li><b>Confirmed:</b> WAF never saw the distributed attack; only the per-account counter stopped it.</li>
+<li><b>Confirmed:</b> rate-based rules have mitigation lag (~50 extra requests here).</li>
+<li><b>Observed:</b> ATP keyed on the real source IP, not on <code>X-Forwarded-For</code> (label <code>volumetric:ip:low</code>). No <code>password_traversal</code> label for 30 attempts in under a minute.</li>
+<li><b>Observed:</b> behind API Gateway the WAF custom header arrives as-is (<code>lab-source</code>), with <code>x-amzn-ErrorType: ForbiddenException</code>.</li>
+<li><b>Observed:</b> a new REST stage took more than 2 minutes before WAF could associate with it.</li>
+</ul>
+
+<h2>6. Common mistakes</h2>
+<ul>
+<li>⚠️ <b>Lockout as DoS:</b> an attacker can lock real users. Keep the window short and prefer step-up over long lockouts.</li>
+<li>Expecting a "JSON body custom key" in a rate-based rule. It doesn't exist.</li>
+<li>Using ATP response inspection on a REGIONAL web ACL. It runs only for CloudFront.</li>
+<li>Expecting an exact limit from WAF. Rate-based rules and ATP have mitigation lag.</li>
+<li>CAPTCHA on an API <code>POST</code>: the client gets 405. On an API, block with 429.</li>
+</ul>
+</main>
+<script>
+const steps=[
+ "The client sends <code>POST /token</code> with <code>grant_type=password&username=...&password=...</code>.",
+ "WAF inspects the request. Match rules can read the body. A rate-based rule <b>can't aggregate on the username</b> in the body. ATP reads username and password with its own logic.",
+ "API Gateway or the ALB forwards the request to the Lambda. WAF is done.",
+ "The Lambda gets the request and knows the username. This is the first layer where a per-account counter works.",
+ "The IdP checks the password. <b>Only here</b> is success or failure known.",
+ "The Lambda returns a token or an error. A REGIONAL web ACL <b>never sees</b> this response. With CloudFront, ATP response inspection sees it, but counts failures per IP and per session, not per account."
+];
+let cur=0; const nodes=[...document.querySelectorAll('#flow .node')];
+function render(){nodes.forEach((el,i)=>{el.classList.toggle('active',i===cur);el.classList.toggle('blind',i>1&&cur===1)});
+ document.getElementById('steptext').innerHTML=steps[cur];document.getElementById('stepn').textContent=`Step ${cur+1} of ${steps.length}`;
+ document.getElementById('prev').disabled=cur===0;document.getElementById('next').disabled=cur===steps.length-1;}
+document.getElementById('prev').onclick=()=>{cur--;render()};document.getElementById('next').onclick=()=>{cur++;render()};render();
+const opts={
+ A:{n:"A. ATP (request)",f:'<span class="tag warn">Complement</span>',h:"<p>ATP reads username and password from the body, payload <code>FORM_ENCODED</code>. Works on REGIONAL web ACLs.</p><ul><li><code>AttributePasswordTraversal</code>: many passwords for <b>the same username</b>.</li><li><code>AttributeCompromisedCredentials</code>: stolen credentials.</li><li><code>VolumetricIpHigh</code>: more than 20 requests per IP in 10 minutes.</li></ul><p><b>Limit:</b> counts attempts, not failures. Fixed thresholds. Extra cost.</p>"},
+ B:{n:"B. ATP (response)",f:'<span class="tag warn">CloudFront only</span>',h:"<p>ATP reads the response (status, header or body) to count successes and failures.</p><ul><li><code>VolumetricIpFailedLoginResponseHigh</code>: more than 10 failures per IP in 10 minutes.</li><li><code>VolumetricSessionFailedLoginResponseHigh</code>: more than 10 failures per session in 30 minutes (needs a token).</li></ul><p><b>Limits:</b> CloudFront web ACLs only. Aggregates by IP and session, <b>not by account</b>.</p>"},
+ C:{n:"C. Header + rate-based",f:'<span class="tag warn">Weak</span>',h:"<p>The client app sends a hashed-username header. A rate-based rule uses it as a custom key.</p><p><b>Limits:</b> counts attempts, not failures. The client controls the header: an attacker drops or rotates it.</p>"},
+ D:{n:"D. Counter in Lambda",f:'<span class="tag ok">Meets the requirement</span>',h:"<p>The Lambda counts failures per account in DynamoDB and returns 429.</p><pre>key    = sha256(lower(trim(username))) + '#' + floor(epoch/60)\nbefore = GetItem → fails >= 5 → 429, skip the IdP\nafter  = IdP failure → ADD fails :1, ttl = epoch+120</pre>"},
+ E:{n:"E. IdP lockout",f:'<span class="tag ok">Verify</span>',h:"<p>Many identity providers lock accounts after repeated failures. The Lambda can map that error to 429. Confirm with the IdP vendor.</p>"}
+};
+const ob=document.getElementById('opts'),box=document.getElementById('optbox');
+Object.entries(opts).forEach(([k,o])=>{const b=document.createElement('button');b.textContent=o.n;b.id='o'+k;b.onclick=()=>sel(k);ob.appendChild(b)});
+function sel(k){Object.keys(opts).forEach(x=>document.getElementById('o'+x).classList.toggle('sel',x===k));box.innerHTML=opts[k].f+opts[k].h}
+sel('D');
+const $=id=>document.getElementById(id);
+function sim(){const ips=+$('ips').value,rate=+$('rate').value,dur=+$('dur').value,rbr=+$('rbr').value;
+ $('vIps').textContent=ips;$('vRate').textContent=rate;$('vDur').textContent=dur;$('vRbr').textContent=rbr;
+ const total=rate*dur,p5=rate*Math.min(dur,5)/ips,p10=rate*Math.min(dur,10)/ips;
+ const rows=[["Total attempts against the account",total],["Requests per IP (5 min)",p5.toFixed(2)],
+  ["Per-IP rate-based rule blocks",p5>rbr?'<span class="bad">Yes</span>':'<span class="ok">No — attack passes</span>'],
+  ["ATP VolumetricIpHigh (>20 / 10 min per IP)",p10>20?'<span class="bad">Yes</span>':'<span class="ok">No — attack passes</span>'],
+  ["ATP AttributePasswordTraversal",rate>5?'<span class="warn">Likely</span>':'Unlikely'],
+  ["Lambda counter: attempts answered with 429",Math.max(rate-5,0)*dur],["Attempts that reach the IdP",Math.min(rate,5)*dur+" (max 5 per minute)"]];
+ $('out').innerHTML=rows.map(r=>`<div>${r[0]}</div><div>${r[1]}</div>`).join('');}
+['ips','rate','dur','rbr'].forEach(id=>$(id).addEventListener('input',sim));sim();
+</script>
+</body>
+</html>
