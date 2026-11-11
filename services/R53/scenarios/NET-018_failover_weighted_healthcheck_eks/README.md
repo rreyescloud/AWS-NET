@@ -4,7 +4,7 @@
 **Status:** README and diagram only
 **Services:** Route 53 (public hosted zone, failover, weighted, alias) · Route 53 Health Checks · EKS · AWS Load Balancer Controller · ExternalDNS · Application Load Balancer · CloudWatch
 
-[📐 Open diagram in draw.io](https://app.diagrams.net/#Uhttps%3A%2F%2Fraw.githubusercontent.com%2Frreyescloud%2FAWS-NET%2Fmain%2Fservices%2FR53%2Fscenarios%2FNET-018_failover_weighted_healthcheck_eks%2Farchitecture.drawio)
+![Failover and weighted record layers, ownership split and health check paths](architecture.png)
 
 ## Business Context — SaaS / B2B API Platform
 
@@ -273,7 +273,8 @@ Order matters, and the leftovers nobody sees are what keep billing:
 ## Files
 
 - `README.md` — this document
-- `architecture.drawio` — record layers, ownership split, health check paths
+- `architecture.png` — record layers, ownership split, health check paths
+- `diagram.py` — regenerates the diagrams: `python3 diagram.py`
 
 ## References
 

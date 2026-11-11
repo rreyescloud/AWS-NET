@@ -42,7 +42,7 @@ This lab is designed as SME preparation. Every section includes the *why*, not j
 
 ## Architecture
 
-[📐 Open diagram in draw.io](https://app.diagrams.net/#Uhttps%3A%2F%2Fraw.githubusercontent.com%2Frreyescloud%2FAWS-NET%2Fmain%2Fservices%2FR53%2Fscenarios%2FNET-015_hybrid_resolver_cross_region%2Farchitecture.drawio)
+![Cross-region forwarding chain: VPC-B → VPC-A → simulated on-prem DNS](architecture.png)
 
 ```
 ┌──────────────────────────────────────────────────────────────────────────────────┐
@@ -479,7 +479,8 @@ instances stopped). Tear down the same day.
 ## Files
 
 - `README.md` — this document (study guide + exercises)
-- `architecture.drawio` — the three-VPC topology and the forwarding chain
+- `architecture.png` — the three-VPC topology and the forwarding chain
+- `diagram.py` — regenerates the diagrams: `python3 diagram.py`
 - `lab/deploy_lab.py` — `deploy | status | test | teardown`
 - `lab/dnsmasq.conf` — the on-prem DNS configuration (corp.example.com zone, SRV, big TXT)
 

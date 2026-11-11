@@ -8,6 +8,8 @@
 
 Route 53 Resolver Query Logging is a critical feature for DNS visibility, compliance, and security monitoring. However, customers frequently encounter issues during configuration, particularly in multi-account environments. This case covers the 4 most common problem categories identified from real support cases.
 
+![Resolver query logging vs. public hosted zone query logging, and the cross-account delivery path](architecture.png)
+
 
 ## Business Use Cases
 
@@ -68,7 +70,6 @@ Route 53 Resolver Query Logging uses **AWS Vended Logs V2** mechanism. The key m
     }
   ]
 }
-[📐 Open diagram in draw.io](https://app.diagrams.net/#Uhttps%3A%2F%2Fraw.githubusercontent.com%2Frreyescloud%2FAWS-NET%2Fmain%2Fservices%2FR53%2Fscenarios%2FNET-002_r53_query_logging%2Farchitecture.drawio)
 
 ```
 
@@ -265,7 +266,8 @@ part, the absolute numbers are not.
 ## Files
 
 - `README.md` — this document
-- `architecture.drawio` — the two logging planes, the delivery path, and where each failure mode sits
+- `architecture.png` — the two logging planes, the delivery path, and where each failure mode sits
+- `diagram.py` — regenerates the diagrams: `python3 diagram.py`
 - `deploy.py` / `cleanup.py` — not yet written; the labs below are the plan for them
 
 

@@ -55,7 +55,7 @@ Reported characteristics: sub-2-second settlement, ~$0.0001/tx, immutable on-cha
 
 The CLI-reproducible parts (Web ACL, Bot Control, association, logging) are in `lab/deploy_lab.py`. The monetization config + `Monetize` rule are console-only. The payment client is `lab/x402_pay_client.py`.
 
-[📐 Open diagram in draw.io](https://app.diagrams.net/#Uhttps%3A%2F%2Fraw.githubusercontent.com%2Frreyescloud%2FAWS-NET%2Fmain%2Fservices%2FWAF%2Fscenarios%2FNET-014_waf_ai_traffic_monetization_x402%2Farchitecture.drawio)
+![Architecture: the 402 → pay → 200 loop through CloudFront, AWS WAF and the x402 facilitator](architecture.png)
 
 ```
 # 1. Create Web ACL + Bot Control + associate + logging (CLI)
@@ -148,6 +148,8 @@ On-chain proof (Base Sepolia): payer 20.0 → 19.999 USDC, recipient 20.0 → 20
 - **`lab/x402_test.sh`** — Level 1 only: decodes the 402 payment challenge, no wallet needed
 - **`lab/x402_pay_client.py`** — Level 3: full x402 payment client (402 → sign EIP-3009 → 200)
 - **`lab/requirements.txt`** — pinned deps for the payment client
+- **`architecture.png`** — architecture diagram (402 → pay → 200 loop)
+- **`diagram.py`** — regenerates the diagrams: `python3 diagram.py`
 
 
 ## Cleanup

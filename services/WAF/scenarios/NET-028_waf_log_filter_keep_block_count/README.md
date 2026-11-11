@@ -4,7 +4,9 @@
 **Status:** Design question answered on 2026-11-05 from the AWS WAF logging filter API semantics and a read-only review of the four web ACLs, their logging configurations, 14 days of WAF metrics and the Firehose stream metrics. Impact sized at ×41 records but roughly USD 130–190/month. Not yet replicated in a lab.
 **Services:** AWS WAF (logging filters, rule action overrides, labels) · Amazon Data Firehose · Amazon S3 · CloudWatch Metrics
 
-[📐 Open diagram in draw.io](https://app.diagrams.net/#Uhttps%3A%2F%2Fraw.githubusercontent.com%2Frreyescloud%2FAWS-NET%2Fmain%2Fservices%2FWAF%2Fscenarios%2FNET-028_waf_log_filter_keep_block_count%2Farchitecture.drawio) · [Interactive explainer](explainers/explainer.html)
+![Architecture: web ACL decision, log record and the KEEP / default DROP logging filter before Firehose and S3](architecture.png)
+
+[Interactive explainer](explainers/explainer.html) · [`diagram.py`](diagram.py) regenerates the diagrams: `python3 diagram.py`
 
 ## Business Context — Media / Video streaming platform
 

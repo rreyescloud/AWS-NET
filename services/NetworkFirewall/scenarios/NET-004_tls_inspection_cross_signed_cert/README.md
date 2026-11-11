@@ -59,7 +59,7 @@ Client wants to:
 ## Investigation Timeline
 
 ### Attempt 1 (12:55:12 UTC)
-[📐 Open diagram in draw.io](https://app.diagrams.net/#Uhttps%3A%2F%2Fraw.githubusercontent.com%2Frreyescloud%2FAWS-NET%2Fmain%2Fservices%2FNetworkFirewall%2Fscenarios%2FNET-004_tls_inspection_cross_signed_cert%2Farchitecture.drawio)
+![Architecture: cross-account certificate flow and the Network Firewall TLS inspection failure point](architecture.png)
 
 ```
 Error: ServerCertificate chain is invalid and doesn't support the certificate body
@@ -88,6 +88,12 @@ The client's cross-account architecture hit both constraints:
 - ACM public certificates (AMAZON_ISSUED) cannot be exported with the private key → cannot import cross-account for inbound TLS inspection
 - Externally-issued certificates with cross-signed roots are rejected by NF
 
+![TCP three-way handshake](handshakes.png)
+![TLS 1.2 handshake and the chain-of-trust check](handshakes_tls12.png)
+![TLS 1.3 handshake](handshakes_tls13.png)
+![Network Firewall inbound TLS inspection as man-in-the-middle](handshakes_mitm.png)
+![Full HTTPS flow: TCP + TLS + HTTP and what NF sees](handshakes_https_flow.png)
+
 
 ## Lab Reproduction
 
@@ -108,6 +114,11 @@ Result: ❌ "ServerCertificate has an invalid chain of trust"
 Both certificates were accepted by ACM import without issue. The validation and rejection happens exclusively at the Network Firewall `CreateTLSInspectionConfiguration` API call.
 
 Lab code available in `./lab/` directory.
+
+![Lab architecture](lab/architecture_lab.png)
+![Lab inbound traffic flow and route tables](lab/architecture_lab_traffic_flow.png)
+
+`diagram.py` regenerates the diagrams: `python3 diagram.py`
 
 
 ## Key Findings

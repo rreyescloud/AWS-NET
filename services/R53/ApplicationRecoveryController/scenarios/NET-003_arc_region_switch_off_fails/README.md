@@ -29,7 +29,9 @@ The solution must guarantee that during failover:
 
 ## Architecture
 
-[📐 Open diagram in draw.io](https://app.diagrams.net/#Uhttps%3A%2F%2Fraw.githubusercontent.com%2Frreyescloud%2FAWS-NET%2Fmain%2Fservices%2FR53%2FApplicationRecoveryController%2Fscenarios%2FNET-003_arc_region_switch_off_fails%2Farchitecture.drawio)
+![Failure state: Step 3 (routing control OFF) fails and both Regions keep receiving traffic](architecture.png)
+
+![Full architecture: Route 53 failover records driven by ARC routing controls, Aurora Global Database and the Region Switch plan](architecture_full.png)
 
 ```
                     End Users
@@ -532,8 +534,9 @@ For a production financial workload, the ARC cluster cost (~$9,000/month) is jus
 | File | Purpose |
 |---|---|
 | README.md | This document |
-| architecture.drawio | Diagram focused on the failure scenario |
-| architecture_full.drawio | Full architecture: ARC + Aurora + Route 53 flow |
+| architecture.png | Diagram focused on the failure scenario |
+| architecture_full.png | Full architecture: ARC + Aurora + Route 53 flow |
+| diagram.py | Regenerates the diagrams: `python3 diagram.py` |
 | correspondence_01.md | Support correspondence for the original case |
 | test_commands.sh | Lab commands for ARC routing control testing |
 

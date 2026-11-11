@@ -58,10 +58,15 @@ services/
     └── scenarios/
         └── NET-XXX_name/
             ├── README.md      ← tier, problem, architecture, findings
-            ├── architecture.drawio
+            ├── architecture.png   ← diagram (+ .svg)
+            ├── diagram.py         ← regenerates the diagrams
             └── lab/           ← Lab tier only
                 └── deploy_lab.py   ← deploy | status | test | teardown
 ```
+
+## Diagrams
+
+Every diagram is generated from code with [`tools/diagrams/awsdiag.py`](tools/diagrams/) and the official AWS Architecture Icons. Regenerate one scenario with `python3 diagram.py` inside its folder, or all of them with `python3 tools/diagrams/build_all.py`.
 
 ## Running a Lab scenario
 

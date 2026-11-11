@@ -48,7 +48,7 @@ The container association is wired into a stateful rule group through `RuleGroup
 
 In the Suricata rule, that reference **must be written with a leading `@`**:
 
-[📐 Open diagram in draw.io](https://app.diagrams.net/#Uhttps%3A%2F%2Fraw.githubusercontent.com%2Frreyescloud%2FAWS-NET%2Fmain%2Fservices%2FNetworkFirewall%2Fscenarios%2FNET-010_container_attributes_referencing%2Farchitecture.drawio)
+![Architecture: container association resolving EKS pod IPs into the rule group, and the @ vs $ failure](architecture.png)
 
 ```
 alert tcp @CONTAINER_IPS any -> any any (msg:"traffic from tracked EKS pods"; sid:1000001; rev:1;)
@@ -131,4 +131,5 @@ or not the firewall is doing anything — delete the cluster in the same session
 - `lab/eks-cluster.yaml` — eksctl cluster config (OIDC on, single t3.small nodegroup)
 - `lab/workload.yaml` — `payments` namespace + `web` deployment (the attribute-filter dimensions)
 - `lab/nfw_container.py` — boto3 driver: create / describe / wait-active / rulegroup / delete-rulegroup / delete
-- `architecture.drawio` — how the association resolves pod IPs into the rule group, and the `@` vs `$` failure
+- `architecture.png` — how the association resolves pod IPs into the rule group, and the `@` vs `$` failure
+- `diagram.py` — regenerates the diagrams: `python3 diagram.py`

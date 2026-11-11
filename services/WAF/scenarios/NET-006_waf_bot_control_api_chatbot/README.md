@@ -36,7 +36,12 @@ Customer has a solid WAF baseline (IP Reputation, Common Rules, Known Bad Inputs
 
 ### Architecture:
 
-[📐 Open diagram in draw.io](https://app.diagrams.net/#Uhttps%3A%2F%2Fraw.githubusercontent.com%2Frreyescloud%2FAWS-NET%2Fmain%2Fservices%2FWAF%2Fscenarios%2FNET-006_waf_bot_control_api_chatbot%2Farchitecture.drawio)
+![Architecture: CloudFront + global WAF in front of API Gateway, Lambda and Bedrock; Bot Control returns a 202 Challenge to an API call](architecture.png)
+
+![Concepts: API, HTTP, REST and API Gateway, following one chat request through the lab](concepts.png)
+
+`diagram.py` regenerates the diagrams: `python3 diagram.py`
+
 ```
 EU Citizens (browser) → CloudFront [Global WAF] → API Gateway [Regional WAF] → Lambda → Bedrock
 ```

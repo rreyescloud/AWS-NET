@@ -4,7 +4,7 @@
 **Status:** Deploy ready
 **Services:** Application Recovery Controller (ARC) · IAM Policy Evaluation · Organizations SCPs · STS AssumeRole · API Gateway · CloudTrail
 
-[📐 Open diagram in draw.io](https://app.diagrams.net/#Uhttps%3A%2F%2Fraw.githubusercontent.com%2Frreyescloud%2FAWS-NET%2Fmain%2Fservices%2FR53%2FApplicationRecoveryController%2Fscenarios%2FNET-016_arc_region_switch_scp_deny%2Farchitecture.drawio)
+![Architecture: the network-perimeter SCP allows the engineer but denies the role ARC Region Switch assumes](architecture.png)
 
 ## Business Context
 
@@ -116,7 +116,8 @@ leave it behind (`teardown` now waits for each ARC level and looks the cluster u
 ## Files
 
 - `README.md` — this document
-- `architecture.drawio` — the failover topology, the SCP condition block, and why each condition is true
+- `architecture.png` — the failover topology, the SCP condition block, and why each condition is true
+- `diagram.py` — regenerates the diagram: `python3 diagram.py`
 - `lab/deploy_lab.py` — `deploy | test-deny | fix | test-allow | teardown`
 - `lab/scp_policy.json` — the SCP / permission boundary document
 

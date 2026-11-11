@@ -4,7 +4,7 @@
 **Status:** Deployed, exercises in progress (results recorded as they're run)
 **Services:** Route 53 Resolver DNS Firewall · DNS Firewall Advanced · Route 53 Resolver query logging · Private Hosted Zones · VPC security groups · EC2 · SSM · CloudWatch Logs
 
-[📐 Open diagram in draw.io](https://app.diagrams.net/#Uhttps%3A%2F%2Fraw.githubusercontent.com%2Frreyescloud%2FAWS-NET%2Fmain%2Fservices%2FR53%2Fscenarios%2FNET-019_dns_firewall_exfiltration%2Farchitecture.drawio)
+![DNS Firewall evaluation order, the CNAME chain and the bypass path](architecture.png)
 
 ## Business Context — Security Operations / Regulated Workloads
 
@@ -230,7 +230,8 @@ Order matters:
 ## Files
 
 - `README.md` — this document
-- `architecture.drawio` — evaluation order, the CNAME chain, and the bypass path
+- `architecture.png` — evaluation order, the CNAME chain, and the bypass path
+- `diagram.py` — regenerates the diagrams: `python3 diagram.py`
 - `lab/deploy_lab.py` — deploy, exercise knobs and verified teardown (published after the run)
 
 ## References

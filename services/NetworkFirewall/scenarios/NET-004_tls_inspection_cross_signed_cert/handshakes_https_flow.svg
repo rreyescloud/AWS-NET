@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1640" height="1340" viewBox="0 0 1640 1340" font-family="Helvetica Neue, Helvetica, Arial, sans-serif"><defs><marker id="e1F6FB8" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="4.2" markerHeight="4.2" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1F6FB8"/></marker><marker id="s1F6FB8" viewBox="0 0 10 10" refX="1.5" refY="5" markerWidth="4.2" markerHeight="4.2" orient="auto"><path d="M10,0 L0,5 L10,10 z" fill="#1F6FB8"/></marker><marker id="e2E8B2E" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="4.2" markerHeight="4.2" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#2E8B2E"/></marker><marker id="s2E8B2E" viewBox="0 0 10 10" refX="1.5" refY="5" markerWidth="4.2" markerHeight="4.2" orient="auto"><path d="M10,0 L0,5 L10,10 z" fill="#2E8B2E"/></marker><marker id="e5A6B7D" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="4.2" markerHeight="4.2" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#5A6B7D"/></marker><marker id="s5A6B7D" viewBox="0 0 10 10" refX="1.5" refY="5" markerWidth="4.2" markerHeight="4.2" orient="auto"><path d="M10,0 L0,5 L10,10 z" fill="#5A6B7D"/></marker><marker id="e7B3FE4" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="4.2" markerHeight="4.2" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#7B3FE4"/></marker><marker id="s7B3FE4" viewBox="0 0 10 10" refX="1.5" refY="5" markerWidth="4.2" markerHeight="4.2" orient="auto"><path d="M10,0 L0,5 L10,10 z" fill="#7B3FE4"/></marker><marker id="eE07B00" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="4.2" markerHeight="4.2" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#E07B00"/></marker><marker id="sE07B00" viewBox="0 0 10 10" refX="1.5" refY="5" markerWidth="4.2" markerHeight="4.2" orient="auto"><path d="M10,0 L0,5 L10,10 z" fill="#E07B00"/></marker></defs><rect width="1640" height="1340" fill="#FFFFFF"/>
+<rect x="20" y="190" width="1100" height="300" rx="8" fill="#1F6FB8" fill-opacity="0.05" stroke="#1F6FB8" stroke-width="2" stroke-dasharray="6,4"/>
+<text x="34" y="212" text-anchor="start" font-size="16" font-weight="700" fill="#1F6FB8">Phase 1 · TCP (L4) · connection</text>
+<rect x="20" y="510" width="1100" height="420" rx="8" fill="#7B3FE4" fill-opacity="0.05" stroke="#7B3FE4" stroke-width="2" stroke-dasharray="6,4"/>
+<text x="34" y="532" text-anchor="start" font-size="16" font-weight="700" fill="#7B3FE4">Phase 2 · TLS (L6) · encryption</text>
+<rect x="20" y="950" width="1100" height="220" rx="8" fill="#2E8B2E" fill-opacity="0.05" stroke="#2E8B2E" stroke-width="2" stroke-dasharray="6,4"/>
+<text x="34" y="972" text-anchor="start" font-size="16" font-weight="700" fill="#2E8B2E">Phase 3 · HTTP (L7) · encrypted data</text>
+<svg x="352.0" y="82.0" width="56" height="56" viewBox="0 0 48 48">
+    <title>Icon-Resource/General-Resource/Res_Client_48_Light</title>
+    <g id="i1-Icon-Resource/General-Resource/Res_Client_48" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path d="M42.299,38.773 L42.299,40.696 C42.299,41.134 41.945,41.49 41.506,41.49 L30.762,41.49 C30.323,41.49 29.968,41.134 29.968,40.696 L29.968,38.773 C29.968,38.335 30.323,37.98 30.762,37.98 L41.506,37.98 C41.945,37.98 42.299,38.335 42.299,38.773 L42.299,38.773 Z M43.797,42.399 C43.797,42.754 43.508,43.044 43.153,43.044 L4.645,43.044 C4.289,43.044 4,42.754 4,42.399 L4,37.011 C4,36.656 4.289,36.367 4.645,36.367 L43.153,36.367 C43.508,36.367 43.797,36.656 43.797,37.011 L43.797,42.399 Z M43.153,34.367 L4.645,34.367 C3.187,34.367 2,35.553 2,37.011 L2,42.399 C2,43.857 3.187,45.044 4.645,45.044 L43.153,45.044 C44.611,45.044 45.797,43.857 45.797,42.399 L45.797,37.011 C45.797,35.553 44.611,34.367 43.153,34.367 L43.153,34.367 Z M7.501,27.21 L40.264,27.21 L40.264,7.502 L7.501,7.502 L7.501,27.21 Z M40.842,5.502 L6.924,5.502 C6.14,5.502 5.501,6.139 5.501,6.923 L5.501,27.788 C5.501,28.572 6.14,29.21 6.924,29.21 L40.842,29.21 C41.626,29.21 42.264,28.572 42.264,27.788 L42.264,6.923 C42.264,6.139 41.626,5.502 40.842,5.502 L40.842,5.502 Z M43.797,30.067 C43.797,30.422 43.508,30.711 43.153,30.711 L4.645,30.711 C4.289,30.711 4,30.422 4,30.067 L4,4.644 C4,4.289 4.289,4 4.645,4 L43.153,4 C43.508,4 43.797,4.289 43.797,4.644 L43.797,30.067 Z M43.153,2 L4.645,2 C3.187,2 2,3.186 2,4.644 L2,30.067 C2,31.525 3.187,32.711 4.645,32.711 L43.153,32.711 C44.611,32.711 45.797,31.525 45.797,30.067 L45.797,4.644 C45.797,3.186 44.611,2 43.153,2 L43.153,2 Z" id="i1-Fill-3" fill="#232F3D"></path>
+    </g>
+</svg>
+<text x="380" y="160.0" text-anchor="middle" font-size="15" font-weight="700" fill="#232F3E">Client</text>
+<path d="M380,185 L380,1170" fill="none" stroke="#5A6B7D" stroke-width="2" stroke-dasharray="6,4"/>
+<svg x="992.0" y="82.0" width="56" height="56" viewBox="0 0 48 48">
+    <title>Icon-Resource/General-Resource/Res_Traditional-server_48_Light</title>
+    <g id="i2-Icon-Resource/General-Resource/Res_Traditional-server_48" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path d="M15.437,21.52 L32.064,21.52 L32.064,19.52 L15.437,19.52 L15.437,21.52 Z M15.437,17.196 L32.064,17.196 L32.064,15.196 L15.437,15.196 L15.437,17.196 Z M15.437,12.762 L32.064,12.762 L32.064,10.762 L15.437,10.762 L15.437,12.762 Z M15.437,8.494 L32.064,8.494 L32.064,6.494 L15.437,6.494 L15.437,8.494 Z M13,44.013 L34.499,44.013 L34.499,4 L13,4 L13,44.013 Z M35.032,2 L12.468,2 C11.659,2 11,2.659 11,3.469 L11,44.545 C11,45.355 11.659,46.013 12.468,46.013 L35.032,46.013 C35.841,46.013 36.499,45.355 36.499,44.545 L36.499,3.469 C36.499,2.659 35.841,2 35.032,2 L35.032,2 Z" id="i2-Fill-18" fill="#232F3D"></path>
+    </g>
+</svg>
+<text x="1020" y="160.0" text-anchor="middle" font-size="15" font-weight="700" fill="#232F3E">Server</text>
+<path d="M1020,185 L1020,1170" fill="none" stroke="#5A6B7D" stroke-width="2" stroke-dasharray="6,4"/>
+<path d="M386,270 L1014,270" fill="none" stroke="#1F6FB8" stroke-width="3.5" stroke-linejoin="round" marker-end="url(#e1F6FB8)"/>
+<circle cx="420" cy="270" r="16" fill="#1F6FB8" stroke="#FFFFFF" stroke-width="2.5"/>
+<text x="420" y="276" text-anchor="middle" font-size="17" font-weight="700" fill="#FFFFFF">1</text>
+<rect x="682" y="239" width="35" height="23" rx="4" fill="#FFFFFF" fill-opacity="0.92"/>
+<text x="700.0" y="256" text-anchor="middle" font-size="15" font-weight="700" fill="#1F6FB8">SYN</text>
+<path d="M1014,350 L386,350" fill="none" stroke="#2E8B2E" stroke-width="3.5" stroke-linejoin="round" marker-end="url(#e2E8B2E)"/>
+<circle cx="980" cy="350" r="16" fill="#2E8B2E" stroke="#FFFFFF" stroke-width="2.5"/>
+<text x="980" y="356" text-anchor="middle" font-size="17" font-weight="700" fill="#FFFFFF">2</text>
+<rect x="666" y="319" width="69" height="23" rx="4" fill="#FFFFFF" fill-opacity="0.92"/>
+<text x="700.0" y="336" text-anchor="middle" font-size="15" font-weight="700" fill="#2E8B2E">SYN-ACK</text>
+<path d="M386,430 L1014,430" fill="none" stroke="#1F6FB8" stroke-width="3.5" stroke-linejoin="round" marker-end="url(#e1F6FB8)"/>
+<circle cx="420" cy="430" r="16" fill="#1F6FB8" stroke="#FFFFFF" stroke-width="2.5"/>
+<text x="420" y="436" text-anchor="middle" font-size="17" font-weight="700" fill="#FFFFFF">3</text>
+<rect x="682" y="399" width="35" height="23" rx="4" fill="#FFFFFF" fill-opacity="0.92"/>
+<text x="700.0" y="416" text-anchor="middle" font-size="15" font-weight="700" fill="#1F6FB8">ACK</text>
+<path d="M386,590 L1014,590" fill="none" stroke="#1F6FB8" stroke-width="3.5" stroke-linejoin="round" marker-end="url(#e1F6FB8)"/>
+<circle cx="420" cy="590" r="16" fill="#1F6FB8" stroke="#FFFFFF" stroke-width="2.5"/>
+<text x="420" y="596" text-anchor="middle" font-size="17" font-weight="700" fill="#FFFFFF">4</text>
+<rect x="649" y="559" width="102" height="23" rx="4" fill="#FFFFFF" fill-opacity="0.92"/>
+<text x="700.0" y="576" text-anchor="middle" font-size="15" font-weight="700" fill="#1F6FB8">ClientHello</text>
+<text x="700.0" y="616" text-anchor="middle" font-size="13" font-weight="400" fill="#232F3E">SNI + cipher suites</text>
+<path d="M1014,690 L386,690" fill="none" stroke="#2E8B2E" stroke-width="3.5" stroke-linejoin="round" marker-end="url(#e2E8B2E)"/>
+<circle cx="980" cy="690" r="16" fill="#2E8B2E" stroke="#FFFFFF" stroke-width="2.5"/>
+<text x="980" y="696" text-anchor="middle" font-size="17" font-weight="700" fill="#FFFFFF">5</text>
+<rect x="590" y="659" width="220" height="23" rx="4" fill="#FFFFFF" fill-opacity="0.92"/>
+<text x="700.0" y="676" text-anchor="middle" font-size="15" font-weight="700" fill="#2E8B2E">ServerHello + certificate</text>
+<path d="M386,790 L1014,790" fill="none" stroke="#1F6FB8" stroke-width="3.5" stroke-linejoin="round" marker-end="url(#e1F6FB8)"/>
+<circle cx="420" cy="790" r="16" fill="#1F6FB8" stroke="#FFFFFF" stroke-width="2.5"/>
+<text x="420" y="796" text-anchor="middle" font-size="17" font-weight="700" fill="#FFFFFF">6</text>
+<rect x="645" y="759" width="111" height="23" rx="4" fill="#FFFFFF" fill-opacity="0.92"/>
+<text x="700.0" y="776" text-anchor="middle" font-size="15" font-weight="700" fill="#1F6FB8">Key exchange</text>
+<path d="M386,870 L1014,870" fill="none" stroke="#7B3FE4" stroke-width="3.5" stroke-linejoin="round" marker-start="url(#s7B3FE4)" marker-end="url(#e7B3FE4)"/>
+<circle cx="420" cy="870" r="16" fill="#7B3FE4" stroke="#FFFFFF" stroke-width="2.5"/>
+<text x="420" y="876" text-anchor="middle" font-size="17" font-weight="700" fill="#FFFFFF">7</text>
+<rect x="661" y="839" width="77" height="23" rx="4" fill="#FFFFFF" fill-opacity="0.92"/>
+<text x="700.0" y="856" text-anchor="middle" font-size="15" font-weight="700" fill="#7B3FE4">Finished</text>
+<text x="700" y="915" text-anchor="middle" font-size="13" font-weight="600" fill="#6A35D9">Result: both sides hold the session keys</text>
+<path d="M386,1040 L1014,1040" fill="none" stroke="#1F6FB8" stroke-width="3.5" stroke-linejoin="round" marker-end="url(#e1F6FB8)"/>
+<circle cx="420" cy="1040" r="16" fill="#1F6FB8" stroke="#FFFFFF" stroke-width="2.5"/>
+<text x="420" y="1046" text-anchor="middle" font-size="17" font-weight="700" fill="#FFFFFF">8</text>
+<rect x="666" y="1009" width="69" height="23" rx="4" fill="#FFFFFF" fill-opacity="0.92"/>
+<text x="700.0" y="1026" text-anchor="middle" font-size="15" font-weight="700" fill="#1F6FB8">Request</text>
+<text x="700.0" y="1066" text-anchor="middle" font-size="13" font-weight="400" fill="#232F3E">GET /api/trades · headers + body</text>
+<path d="M1014,1120 L386,1120" fill="none" stroke="#2E8B2E" stroke-width="3.5" stroke-linejoin="round" marker-end="url(#e2E8B2E)"/>
+<circle cx="980" cy="1120" r="16" fill="#2E8B2E" stroke="#FFFFFF" stroke-width="2.5"/>
+<text x="980" y="1126" text-anchor="middle" font-size="17" font-weight="700" fill="#FFFFFF">9</text>
+<rect x="661" y="1089" width="77" height="23" rx="4" fill="#FFFFFF" fill-opacity="0.92"/>
+<text x="700.0" y="1106" text-anchor="middle" font-size="15" font-weight="700" fill="#2E8B2E">Response</text>
+<text x="700" y="1160" text-anchor="middle" font-size="13" font-weight="400" fill="#232F3E">200 OK {trades: […]}</text>
+<rect x="1150" y="230" width="460" height="90" rx="8" fill="#FFF5EB" stroke="#E07B00" stroke-width="1.5" stroke-dasharray="5,4"/>
+<text x="1380.0" y="260" text-anchor="middle" font-size="15" font-weight="700" fill="#E07B00">NF sees</text>
+<text x="1380.0" y="288" text-anchor="middle" font-size="14" font-weight="400" fill="#232F3E">IPs + ports</text>
+<rect x="1150" y="560" width="460" height="160" rx="8" fill="#FFF5EB" stroke="#E07B00" stroke-width="1.5" stroke-dasharray="5,4"/>
+<text x="1380.0" y="590" text-anchor="middle" font-size="15" font-weight="700" fill="#E07B00">NF sees: SNI (domain)</text>
+<text x="1380.0" y="618" text-anchor="middle" font-size="14" font-weight="400" fill="#232F3E">Without TLS inspection:</text>
+<text x="1380.0" y="636" text-anchor="middle" font-size="14" font-weight="400" fill="#232F3E">domain filtering only</text>
+<text x="1380.0" y="654" text-anchor="middle" font-size="14" font-weight="400" fill="#232F3E">With TLS inspection:</text>
+<text x="1380.0" y="672" text-anchor="middle" font-size="14" font-weight="400" fill="#232F3E">NF terminates the handshake</text>
+<rect x="1150" y="980" width="460" height="130" rx="8" fill="#FFF5EB" stroke="#E07B00" stroke-width="1.5" stroke-dasharray="5,4"/>
+<text x="1380.0" y="1010" text-anchor="middle" font-size="15" font-weight="700" fill="#E07B00">NF sees</text>
+<text x="1380.0" y="1038" text-anchor="middle" font-size="14" font-weight="400" fill="#232F3E">Without TLS inspection: nothing</text>
+<text x="1380.0" y="1056" text-anchor="middle" font-size="14" font-weight="400" fill="#232F3E">With TLS inspection: everything —</text>
+<text x="1380.0" y="1074" text-anchor="middle" font-size="14" font-weight="400" fill="#232F3E">URLs, headers, body, payload</text>
+<text x="700" y="1215" text-anchor="middle" font-size="14" font-weight="400" fill="#5A6B7D">Typical latency: TCP ~1 RTT · TLS 1.2 ~2 RTT · TLS 1.3 ~1 RTT · HTTP variable</text>
+<rect x="20" y="1248" width="1600" height="72" rx="8" fill="#F7F9FC" stroke="#D5DBE3"/>
+<path d="M42.0,1284.0 L82.0,1284.0" stroke="#1F6FB8" stroke-width="3.5" marker-end="url(#e1F6FB8)"/>
+<text x="96.0" y="1290.0" text-anchor="start" font-size="16" font-weight="400" fill="#232F3E">Client → server</text>
+<path d="M562.0,1284.0 L602.0,1284.0" stroke="#2E8B2E" stroke-width="3.5" marker-end="url(#e2E8B2E)"/>
+<text x="616.0" y="1290.0" text-anchor="start" font-size="16" font-weight="400" fill="#232F3E">Server → client</text>
+<path d="M1082.0,1284.0 L1122.0,1284.0" stroke="#E07B00" stroke-width="3.5" stroke-dasharray="9,6" marker-end="url(#eE07B00)"/>
+<text x="1136.0" y="1290.0" text-anchor="start" font-size="16" font-weight="400" fill="#232F3E">What Network Firewall can see / do</text>
+</svg>

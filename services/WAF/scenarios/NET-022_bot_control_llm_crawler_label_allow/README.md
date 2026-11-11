@@ -4,7 +4,7 @@
 **Status:** Lab Part 1 (Bot Control version comparison) built and run on 2026-10-13. Part 2 (customer rules + fix) is still design.
 **Services:** AWS WAF (Bot Control, custom rule groups, labels) · AWS Firewall Manager · CloudFront · S3 · CloudWatch Logs · AWS Organizations
 
-[📐 Open diagram in draw.io](https://app.diagrams.net/#Uhttps%3A%2F%2Fraw.githubusercontent.com%2Frreyescloud%2FAWS-NET%2Fmain%2Fservices%2FWAF%2Fscenarios%2FNET-022_bot_control_llm_crawler_label_allow%2Farchitecture.drawio)
+![Architecture: two independent blockers stop LLM crawlers in the FMS-managed web ACL](architecture.png)
 
 ## Business Context — Healthcare Data & Analytics / Public Marketing Website
 
@@ -139,6 +139,8 @@ slot where nobody looked first. Read the action and the statement, never the nam
 ## Resolution
 
 **Status:** proposed. Application not confirmed.
+
+![Fix and lab variant: CategoryAI in Count, rebuilt post-process group P0–P3, two distributions sharing the web ACL](architecture_fix.png)
 
 ### Step 0 — Pin Bot Control to a version that classifies the crawler
 
@@ -503,8 +505,9 @@ aws s3api head-bucket --bucket net022-lab-<account>
 ## Files
 
 - `README.md`: this document
-- `architecture.drawio`: the customer architecture with both failing flows (page 1), and the fix
-  with the lab variant (page 2)
+- `architecture.png`: the customer architecture with both failing flows
+- `architecture_fix.png`: the fix with the lab variant
+- `diagram.py`: regenerates the diagrams: `python3 diagram.py`
 - `lab/deploy_lab.py`: Part 1 lab. Commands: `deploy`, `status`, `test`, `labels` and a verified
   `teardown`.
 - `explainers/ste100.md`: the case explained in ASD-STE100 (Simplified Technical English)

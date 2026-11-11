@@ -1,0 +1,170 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1960" height="1290" viewBox="0 0 1960 1290" font-family="Helvetica Neue, Helvetica, Arial, sans-serif"><defs><marker id="e1F6FB8" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="4.2" markerHeight="4.2" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1F6FB8"/></marker><marker id="s1F6FB8" viewBox="0 0 10 10" refX="1.5" refY="5" markerWidth="4.2" markerHeight="4.2" orient="auto"><path d="M10,0 L0,5 L10,10 z" fill="#1F6FB8"/></marker><marker id="e2E8B2E" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="4.2" markerHeight="4.2" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#2E8B2E"/></marker><marker id="s2E8B2E" viewBox="0 0 10 10" refX="1.5" refY="5" markerWidth="4.2" markerHeight="4.2" orient="auto"><path d="M10,0 L0,5 L10,10 z" fill="#2E8B2E"/></marker><marker id="e5A6B7D" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="4.2" markerHeight="4.2" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#5A6B7D"/></marker><marker id="s5A6B7D" viewBox="0 0 10 10" refX="1.5" refY="5" markerWidth="4.2" markerHeight="4.2" orient="auto"><path d="M10,0 L0,5 L10,10 z" fill="#5A6B7D"/></marker><marker id="eD13212" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="4.2" markerHeight="4.2" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#D13212"/></marker><marker id="sD13212" viewBox="0 0 10 10" refX="1.5" refY="5" markerWidth="4.2" markerHeight="4.2" orient="auto"><path d="M10,0 L0,5 L10,10 z" fill="#D13212"/></marker><marker id="eE07B00" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="4.2" markerHeight="4.2" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#E07B00"/></marker><marker id="sE07B00" viewBox="0 0 10 10" refX="1.5" refY="5" markerWidth="4.2" markerHeight="4.2" orient="auto"><path d="M10,0 L0,5 L10,10 z" fill="#E07B00"/></marker></defs><rect width="1960" height="1290" fill="#FFFFFF"/>
+<rect x="20" y="20" width="1920" height="1110" fill="none" stroke="#232F3E" stroke-width="2"/>
+<svg x="20" y="20" width="40" height="40" viewBox="0 0 40 40">
+    <title>Icon-Architecture-Group/32/AWS-Cloud_32</title>
+    <g id="i1-Icon-Architecture-Group/32/AWS-Cloud_32" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <rect id="i1-Rectangle" fill="#242F3E" x="0" y="0" width="40" height="40"></rect>
+        <path d="M28.993,27.9952689 L11.487,27.9762689 C9.121,27.9742689 7.154,26.1292689 7.012,23.7752689 C7.004,23.6522689 7,23.5262689 7,23.3972689 C7,20.2992689 9.091,19.2872689 10.337,18.9592689 C10.577,18.8962689 10.735,18.6662689 10.707,18.4192689 C10.676,18.1492689 10.659,17.8752689 10.659,17.5962689 C10.659,15.1322689 12.308,12.4822689 14.415,11.5632689 C15.359,11.1502689 16.232,10.9862689 17.023,10.9862689 C19.276,10.9862689 20.867,12.3152689 21.561,13.0332689 C22.329,13.8262689 22.927,14.8382689 23.34,16.0422689 C23.4,16.2192689 23.555,16.3472689 23.74,16.3742689 C23.918,16.4012689 24.109,16.3232689 24.219,16.1712689 C24.807,15.3502689 25.766,14.9822689 26.659,15.2392689 C27.782,15.5602689 28.516,16.7272689 28.62,18.3072689 C28.578,18.5762689 28.759,18.8292689 29.027,18.8772689 C30.222,19.0892689 33,19.9572689 33,23.4402689 C33,27.5892689 29.114,27.9822689 28.993,27.9952689 M29.594,17.9742689 C29.379,16.0672689 28.4,14.6962689 26.934,14.2782689 C25.899,13.9822689 24.811,14.2452689 23.989,14.9502689 C23.553,13.9362689 22.979,13.0602689 22.28,12.3382689 C20.023,10.0052689 16.933,9.37226889 14.014,10.6462689 C11.531,11.7302689 9.659,14.7182689 9.659,17.5962689 C9.659,17.7702689 9.665,17.9432689 9.676,18.1142689 C8.319,18.5732689 6,19.8752689 6,23.3972689 C6,23.5492689 6.004,23.6962689 6.014,23.8382689 C6.188,26.7162689 8.593,28.9732689 11.486,28.9762689 L29.034,28.9932689 C29.084,28.9892689 34,28.5192689 34,23.4402689 C34,19.5022689 31.003,18.3142689 29.594,17.9742689" id="i1-Fill-1" fill="#FFFFFF"></path>
+    </g>
+</svg>
+<text x="70" y="46" text-anchor="start" font-size="18" font-weight="600" fill="#232F3E">AWS Cloud</text>
+<rect x="50" y="80" width="1860" height="1030" fill="none" stroke="#00A4A6" stroke-width="2" stroke-dasharray="8,6"/>
+<svg x="50" y="80" width="40" height="40" viewBox="0 0 40 40">
+    <title>Icon-Architecture-Group/32/Region_32</title>
+    <g id="i2-Icon-Architecture-Group/32/Region_32" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <rect id="i2-Rectangle" fill="#00A4A6" x="0" y="0" width="40" height="40"></rect>
+        <path d="M14,20.026 L14,11.026 L29.293,11.026 L25.146,15.172 C24.951,15.368 24.951,15.684 25.146,15.88 L29.293,20.026 L14,20.026 Z M26.207,15.526 L30.854,10.88 C30.996,10.736 31.039,10.522 30.962,10.335 C30.885,10.148 30.702,10.026 30.5,10.026 L14,10.026 L14,8.97 C14.596,8.76 15.026,8.198 15.026,7.531 C15.026,6.687 14.34,6 13.495,6 C12.65,6 11.963,6.687 11.963,7.531 C11.963,8.201 12.398,8.766 13,8.973 L13,33.026 L10,33.026 L10,34.026 L17,34.026 L17,33.026 L14,33.026 L14,21.026 L30.5,21.026 C30.702,21.026 30.885,20.904 30.962,20.717 C31.039,20.53 30.996,20.316 30.854,20.172 L26.207,15.526 Z" id="i2-Fill-1" fill="#FFFFFF"></path>
+    </g>
+</svg>
+<text x="100" y="106" text-anchor="start" font-size="18" font-weight="600" fill="#00A4A6">Region us-east-1</text>
+<rect x="80" y="140" width="1800" height="950" fill="none" stroke="#E7157B" stroke-width="2"/>
+<svg x="80" y="140" width="40" height="40" viewBox="0 0 40 40">
+    <title>Icon-Architecture-Group/32/AWS-Account_32</title>
+    <g id="i3-Icon-Architecture-Group/32/AWS-Account_32" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <rect id="i3-Rectangle" fill="#E7157B" x="0" y="0" width="40" height="40"></rect>
+        <path d="M24.5,22 C26.43,22 28,23.57 28,25.5 C28,27.43 26.43,29 24.5,29 C22.57,29 21,27.43 21,25.5 C21,23.57 22.57,22 24.5,22 L24.5,22 Z M24.5,30 C26.981,30 29,27.981 29,25.5 C29,23.019 26.981,21 24.5,21 C22.019,21 20,23.019 20,25.5 C20,27.981 22.019,30 24.5,30 L24.5,30 Z M26.023,10.88 L29.084,17 L22.963,17 L26.023,10.88 Z M22.154,18 L29.893,18 C30.065,18 30.227,17.91 30.318,17.763 C30.409,17.615 30.417,17.432 30.34,17.276 L26.471,9.538 C26.301,9.2 25.746,9.2 25.576,9.538 L21.707,17.276 C21.63,17.432 21.638,17.615 21.729,17.763 C21.82,17.91 21.981,18 22.154,18 L22.154,18 Z M11,23 L18,23 L18,16 L11,16 L11,23 Z M10.5,24 L18.5,24 C18.776,24 19,23.776 19,23.5 L19,15.5 C19,15.224 18.776,15 18.5,15 L10.5,15 C10.224,15 10,15.224 10,15.5 L10,23.5 C10,23.776 10.224,24 10.5,24 L10.5,24 Z M8,32 L32,32 L32,8 L8,8 L8,32 Z M32.5,7 L7.5,7 C7.224,7 7,7.224 7,7.5 L7,32.5 C7,32.776 7.224,33 7.5,33 L32.5,33 C32.776,33 33,32.776 33,32.5 L33,7.5 C33,7.224 32.776,7 32.5,7 L32.5,7 Z" id="i3-Fill-1" fill="#FFFFFF"></path>
+    </g>
+</svg>
+<text x="130" y="166" text-anchor="start" font-size="18" font-weight="600" fill="#E7157B">Lab account</text>
+<rect x="110" y="200" width="760" height="860" fill="none" stroke="#8C4FFF" stroke-width="2"/>
+<svg x="110" y="200" width="40" height="40" viewBox="0 0 40 40">
+    <title>Icon-Architecture-Group/32/Virtual-private-cloud-VPC_32</title>
+    <g id="i4-Icon-Architecture-Group/32/Virtual-private-cloud-VPC_32" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <rect id="i4-Rectangle" fill="#8C4FFF" x="0" y="0" width="40" height="40"></rect>
+        <path d="M30.9707,21.0293596 L28.0267,19.7663596 L28.0267,30.2553596 C30.5717,29.9033596 30.9587,27.2873596 30.9747,27.1683596 L30.9707,21.0293596 Z M27.0267,30.2693596 L27.0267,19.7593596 L23.9917,21.0323596 L23.9917,27.2333596 C24.0047,27.2873596 24.4367,30.0003596 27.0267,30.2693596 L27.0267,30.2693596 Z M27.3327,18.5473596 C27.4567,18.4943596 27.5987,18.4953596 27.7237,18.5483596 L31.6677,20.2403596 C31.8517,20.3193596 31.9707,20.4993596 31.9707,20.6993596 L31.9707,27.2333596 C31.7877,28.6803596 30.6137,31.2963596 27.4437,31.2963596 C24.3687,31.2963596 23.1897,28.6843596 22.9957,27.3023596 L22.9917,20.6993596 C22.9917,20.4983596 23.1127,20.3163596 23.2977,20.2383596 L27.3327,18.5473596 Z M32.9827022,19.1843596 L27.5217,16.7783596 L21.9917,19.1053596 L21.9917,26.2333596 C21.9907,26.2753596 21.9377,29.1013596 23.6487,30.8563596 C24.5657,31.7973596 25.8427,32.2753596 27.4437,32.2753596 C29.0457,32.2753596 30.3307,31.7963596 31.2627,30.8533596 C32.9977,29.0953596 32.9827022,26.2683596 32.9827022,26.2403596 L32.9827022,19.1843596 Z M31.9797,31.5503596 C30.8527,32.6943596 29.3257,33.2753596 27.4437,33.2753596 C25.5597,33.2753596 24.0397,32.6943596 22.9267,31.5483596 C20.9217,29.4853596 20.9877,26.3513596 20.9917,26.2193596 L20.9917,18.7733596 C20.9917,18.5723596 21.1117,18.3903596 21.2967,18.3123596 L27.3317,15.7723596 C27.4587,15.7203596 27.6027,15.7193596 27.7277,15.7763596 L33.6837,18.4013596 C33.8657,18.4813596 33.9827,18.6603596 33.9827,18.8583596 L33.9827,26.2333596 C33.9847,26.3583596 34.0097,29.4883596 31.9797,31.5503596 L31.9797,31.5503596 Z M10.9917,24.2363596 L18.9917,24.2363596 L18.9917,25.2363596 L10.9917,25.2363596 C8.1807,25.2363596 6.1807,23.2203596 6.0127,20.2203596 C6.0007,20.1093596 5.9997,19.9753596 5.9997,19.8413596 C5.9997,17.3323596 7.3177,15.6183596 9.8167,14.8623596 C9.7977,14.6353596 9.7847,14.3963596 9.7847,14.2153596 C9.7847,11.2993596 11.3617,8.77035958 13.8017,7.77035958 C17.0997,6.42235958 20.8437,6.87635958 22.9077,8.87435958 C23.6527,9.59835958 24.2317,10.4163596 24.6677,11.3593596 C25.2767,10.9093596 26.0677,10.6983596 27.0167,10.7453596 C28.7967,10.8353596 30.1657,12.4583596 30.4497,14.7523596 C31.9477,14.8763596 32.9347,15.6353596 33.4597,17.0603596 L32.5227,17.4063596 C32.0947,16.2493596 31.3147,15.7333596 29.9917,15.7333596 C29.7267,15.7333596 29.5077,15.5273596 29.4917,15.2633596 C29.3537,12.9253596 28.0857,11.8003596 26.9657,11.7443596 C26.0207,11.6913596 25.3207,11.9633596 24.8867,12.5353596 C24.7757,12.6803596 24.6017,12.7523596 24.4137,12.7283596 C24.2337,12.7003596 24.0817,12.5773596 24.0187,12.4053596 C23.6147,11.3023596 23.0237,10.3823596 22.2117,9.59135958 C20.4237,7.86135958 17.1217,7.49235958 14.1807,8.69635958 C12.1177,9.54135958 10.7847,11.7073596 10.7847,14.2153596 C10.7847,14.4883596 10.8197,14.9113596 10.8507,15.1743596 C10.8807,15.4253596 10.7197,15.6583596 10.4747,15.7183596 C8.1687,16.2903596 6.9997,17.6773596 6.9997,19.8413596 C6.9997,19.9423596 6.9987,20.0423596 7.0087,20.1433596 C7.1497,22.6383596 8.7117,24.2363596 10.9917,24.2363596 L10.9917,24.2363596 Z" id="i4-Fill-1" fill="#FFFFFF"></path>
+    </g>
+</svg>
+<text x="160" y="226" text-anchor="start" font-size="18" font-weight="600" fill="#8C4FFF">EKS VPC</text>
+<rect x="140" y="260" width="700" height="560" fill="none" stroke="#7D8998" stroke-width="2" stroke-dasharray="8,6"/>
+<text x="152" y="286" text-anchor="start" font-size="18" font-weight="600" fill="#5A6B7D">EKS cluster nfw-container-lab · 1.31</text>
+<svg x="768.0" y="288.0" width="44" height="44" viewBox="0 0 80 80">
+    <title>Icon-Architecture/64/Arch_Amazon-Elastic-Kubernetes-Service_64</title>
+    <g id="i5-Icon-Architecture/64/Arch_Amazon-Elastic-Kubernetes-Service_64" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="i5-Icon-Architecture-BG/64/Compute" fill="#ED7100">
+            <rect id="i5-Rectangle" x="0" y="0" width="80" height="80"></rect>
+        </g>
+        <path d="M46.842,32.1990168 L40.013,40.1200132 L47.441,48.7840092 L44.669,48.7840092 L38,41.0000169 L38,49.0000169 L36,49.0000169 L36,32.0000169 L38,32.0000169 L38,39.0000169 L44.181,32.1990168 L46.842,32.1990168 Z M64,48.2340095 L56,43.4330117 L56,32.0000169 C56,31.6440171 55.812,31.3150172 55.504,31.1360173 L44,24.4260204 L44,14.7520248 L64,26.5710194 L64,48.2340095 Z M65.509,25.13902 L43.509,12.139026 C43.199,11.9560261 42.818,11.9540261 42.504,12.131026 C42.193,12.3090259 42,12.6410257 42,13.0000256 L42,25.0000201 C42,25.3550199 42.189,25.6840198 42.496,25.8640197 L54,32.5740166 L54,44.0000114 C54,44.3510113 54.185,44.6770111 54.486,44.857011 L64.486,50.8570083 C64.644,50.9520082 64.822,51 65,51 C65.17,51 65.34,50.9570082 65.493,50.8700083 C65.807,50.6930084 66,50.3600085 66,50 L66,26.0000196 C66,25.6460198 65.814,25.31902 65.509,25.13902 L65.509,25.13902 Z M40.445,66.863001 L17,54.3990067 L17,26.5710194 L37,14.7520248 L37,24.4510204 L26.463,31.1560173 C26.175,31.3400172 26,31.6580171 26,32.0000169 L26,49.0000091 C26,49.373009 26.208,49.7150088 26.538,49.8870087 L39.991,56.8870055 C40.28,57.0370055 40.624,57.0380055 40.912,56.8880055 L53.964,50.1440086 L61.996,54.9640064 L40.445,66.863001 Z M64.515,54.1420068 L54.515,48.1420095 C54.217,47.9640096 53.849,47.9520096 53.541,48.1120095 L40.455,54.8730065 L28,48.3930094 L28,32.5490167 L38.537,25.8440197 C38.825,25.6600198 39,25.3420199 39,25.0000201 L39,13.0000256 C39,12.6410257 38.808,12.3090259 38.496,12.131026 C38.184,11.9540261 37.802,11.9560261 37.491,12.139026 L15.491,25.13902 C15.187,25.31902 15,25.6460198 15,26.0000196 L15,55 C15,55.3690062 15.204,55.7090061 15.53,55.883006 L39.984,68.8830001 C40.131,68.961 40.292,69 40.453,69 C40.62,69 40.786,68.958 40.937,68.8750001 L64.484,55.875006 C64.797,55.7020061 64.993,55.3750062 65.0001416,55.0180064 C65.006,54.6600066 64.821,54.3260067 64.515,54.1420068 L64.515,54.1420068 Z" id="i5-Amazon-Elastic-Kubernetes-Service_Icon_64_Squid" fill="#FFFFFF"></path>
+    </g>
+</svg>
+<rect x="170" y="360" width="640" height="430" fill="none" stroke="#ED7100" stroke-width="2"/>
+<svg x="170" y="360" width="40" height="40" viewBox="0 0 40 40">
+    <title>Icon-Architecture-Group/32/EC2-instance-contents_32</title>
+    <g id="i6-Icon-Architecture-Group/32/EC2-instance-contents_32" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <rect id="i6-Rectangle" fill="#ED7100" x="0" y="0" width="40" height="40"></rect>
+        <path d="M10,29 L29,29 L29,10 L10,10 L10,29 Z M33,12 L33,11 L30,11 L30,9.5 C30,9.224 29.776,9 29.5,9 L28,9 L28,6 L27,6 L27,9 L24,9 L24,6 L23,6 L23,9 L20,9 L20,6 L19,6 L19,9 L16,9 L16,6 L15,6 L15,9 L12,9 L12,6 L11,6 L11,9 L9.5,9 C9.224,9 9,9.224 9,9.5 L9,11 L6,11 L6,12 L9,12 L9,15 L6,15 L6,16 L9,16 L9,19 L6,19 L6,20 L9,20 L9,23 L6,23 L6,24 L9,24 L9,27 L6,27 L6,28 L9,28 L9,29.5 C9,29.776 9.224,30 9.5,30 L11,30 L11,33 L12,33 L12,30 L15,30 L15,33 L16,33 L16,30 L19,30 L19,33 L20,33 L20,30 L23,30 L23,33 L24,33 L24,30 L27,30 L27,33 L28,33 L28,30 L29.5,30 C29.776,30 30,29.776 30,29.5 L30,28 L33,28 L33,27 L30,27 L30,24 L33,24 L33,23 L30,23 L30,20 L33,20 L33,19 L30,19 L30,16 L33,16 L33,15 L30,15 L30,12 L33,12 Z" id="i6-Fill-1" fill="#FFFFFF"></path>
+    </g>
+</svg>
+<text x="220" y="386" text-anchor="start" font-size="18" font-weight="600" fill="#ED7100">Node group ng-1 · t3.small</text>
+<rect x="200" y="430" width="580" height="330" rx="8" fill="#ED7100" fill-opacity="0.07" stroke="#ED7100" stroke-width="2" stroke-dasharray="6,4"/>
+<text x="214" y="452" text-anchor="start" font-size="16" font-weight="700" fill="#B85A00">namespace payments · team=payments</text>
+<svg x="276.0" y="516.0" width="48" height="48" viewBox="0 0 48 48">
+    <title>Icon-Resource/Containers/Res_Amazon-Elastic-Container-Service_Container-1_48</title>
+    <g id="i7-Icon-Resource/Containers/Res_Amazon-Elastic-Container-Service_Container-1_48" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path d="M38.725,33.7354 L40.725,33.7354 L40.725,14.4974 L38.725,14.4974 L38.725,33.7354 Z M33.479,33.7354 L35.479,33.7354 L35.479,14.4974 L33.479,14.4974 L33.479,33.7354 Z M28.232,33.7354 L30.232,33.7354 L30.232,14.4974 L28.232,14.4974 L28.232,33.7354 Z M22.986,33.7354 L24.986,33.7354 L24.986,14.4974 L22.986,14.4974 L22.986,33.7354 Z M17.739,33.7354 L19.739,33.7354 L19.739,14.4974 L17.739,14.4974 L17.739,33.7354 Z M12.493,33.7354 L14.493,33.7354 L14.493,14.4974 L12.493,14.4974 L12.493,33.7354 Z M7.246,33.7354 L9.246,33.7354 L9.246,14.4974 L7.246,14.4974 L7.246,33.7354 Z M3.999,36.2324 L43.972,36.2324 L43.972,12.0004 L3.999,12.0004 L3.999,36.2324 Z M44.972,9.9994 L3,9.9994 C2.447,9.9994 2,10.4474 2,10.9994 L2,37.2324 C2,37.7844 2.447,38.2324 3,38.2324 L44.972,38.2324 C45.525,38.2324 45.972,37.7844 45.972,37.2324 L45.972,10.9994 C45.972,10.4474 45.525,9.9994 44.972,9.9994 L44.972,9.9994 Z" id="i7-Amazon-Elastic-Container-Service-Container-1_Resource-Icon_light-bg" fill="#ED7100"></path>
+    </g>
+</svg>
+<text x="300" y="586.0" text-anchor="middle" font-size="14" font-weight="400" fill="#232F3E">web-1</text>
+<text x="300" y="604.0" text-anchor="middle" font-size="14" font-weight="400" fill="#232F3E">192.168.49.243</text>
+<text x="300" y="622.0" text-anchor="middle" font-size="14" font-weight="400" fill="#232F3E">app=web</text>
+<text x="300" y="640.0" text-anchor="middle" font-size="14" font-weight="400" fill="#232F3E">tier=frontend</text>
+<svg x="466.0" y="516.0" width="48" height="48" viewBox="0 0 48 48">
+    <title>Icon-Resource/Containers/Res_Amazon-Elastic-Container-Service_Container-1_48</title>
+    <g id="i8-Icon-Resource/Containers/Res_Amazon-Elastic-Container-Service_Container-1_48" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path d="M38.725,33.7354 L40.725,33.7354 L40.725,14.4974 L38.725,14.4974 L38.725,33.7354 Z M33.479,33.7354 L35.479,33.7354 L35.479,14.4974 L33.479,14.4974 L33.479,33.7354 Z M28.232,33.7354 L30.232,33.7354 L30.232,14.4974 L28.232,14.4974 L28.232,33.7354 Z M22.986,33.7354 L24.986,33.7354 L24.986,14.4974 L22.986,14.4974 L22.986,33.7354 Z M17.739,33.7354 L19.739,33.7354 L19.739,14.4974 L17.739,14.4974 L17.739,33.7354 Z M12.493,33.7354 L14.493,33.7354 L14.493,14.4974 L12.493,14.4974 L12.493,33.7354 Z M7.246,33.7354 L9.246,33.7354 L9.246,14.4974 L7.246,14.4974 L7.246,33.7354 Z M3.999,36.2324 L43.972,36.2324 L43.972,12.0004 L3.999,12.0004 L3.999,36.2324 Z M44.972,9.9994 L3,9.9994 C2.447,9.9994 2,10.4474 2,10.9994 L2,37.2324 C2,37.7844 2.447,38.2324 3,38.2324 L44.972,38.2324 C45.525,38.2324 45.972,37.7844 45.972,37.2324 L45.972,10.9994 C45.972,10.4474 45.525,9.9994 44.972,9.9994 L44.972,9.9994 Z" id="i8-Amazon-Elastic-Container-Service-Container-1_Resource-Icon_light-bg" fill="#ED7100"></path>
+    </g>
+</svg>
+<text x="490" y="586.0" text-anchor="middle" font-size="14" font-weight="400" fill="#232F3E">web-2</text>
+<text x="490" y="604.0" text-anchor="middle" font-size="14" font-weight="400" fill="#232F3E">192.168.62.171</text>
+<text x="490" y="622.0" text-anchor="middle" font-size="14" font-weight="400" fill="#232F3E">app=web</text>
+<text x="490" y="640.0" text-anchor="middle" font-size="14" font-weight="400" fill="#232F3E">tier=frontend</text>
+<svg x="656.0" y="516.0" width="48" height="48" viewBox="0 0 48 48">
+    <title>Icon-Resource/Containers/Res_Amazon-Elastic-Container-Service_Container-1_48</title>
+    <g id="i9-Icon-Resource/Containers/Res_Amazon-Elastic-Container-Service_Container-1_48" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path d="M38.725,33.7354 L40.725,33.7354 L40.725,14.4974 L38.725,14.4974 L38.725,33.7354 Z M33.479,33.7354 L35.479,33.7354 L35.479,14.4974 L33.479,14.4974 L33.479,33.7354 Z M28.232,33.7354 L30.232,33.7354 L30.232,14.4974 L28.232,14.4974 L28.232,33.7354 Z M22.986,33.7354 L24.986,33.7354 L24.986,14.4974 L22.986,14.4974 L22.986,33.7354 Z M17.739,33.7354 L19.739,33.7354 L19.739,14.4974 L17.739,14.4974 L17.739,33.7354 Z M12.493,33.7354 L14.493,33.7354 L14.493,14.4974 L12.493,14.4974 L12.493,33.7354 Z M7.246,33.7354 L9.246,33.7354 L9.246,14.4974 L7.246,14.4974 L7.246,33.7354 Z M3.999,36.2324 L43.972,36.2324 L43.972,12.0004 L3.999,12.0004 L3.999,36.2324 Z M44.972,9.9994 L3,9.9994 C2.447,9.9994 2,10.4474 2,10.9994 L2,37.2324 C2,37.7844 2.447,38.2324 3,38.2324 L44.972,38.2324 C45.525,38.2324 45.972,37.7844 45.972,37.2324 L45.972,10.9994 C45.972,10.4474 45.525,9.9994 44.972,9.9994 L44.972,9.9994 Z" id="i9-Amazon-Elastic-Container-Service-Container-1_Resource-Icon_light-bg" fill="#ED7100"></path>
+    </g>
+</svg>
+<text x="680" y="586.0" text-anchor="middle" font-size="14" font-weight="400" fill="#232F3E">web-3</text>
+<text x="680" y="604.0" text-anchor="middle" font-size="14" font-weight="400" fill="#232F3E">192.168.33.241</text>
+<text x="680" y="622.0" text-anchor="middle" font-size="14" font-weight="400" fill="#232F3E">app=web</text>
+<text x="680" y="640.0" text-anchor="middle" font-size="14" font-weight="400" fill="#232F3E">tier=frontend</text>
+<rect x="140" y="860" width="700" height="130" rx="8" fill="#FFF5EB" stroke="#ED7100" stroke-width="2"/>
+<text x="490.0" y="911.9" text-anchor="middle" font-size="15" font-weight="700" fill="#B85A00">VPC CNI · AWS_VPC_K8S_CNI_EXTERNALSNAT = true</text>
+<text x="490.0" y="930.9" text-anchor="middle" font-size="14" font-weight="400" fill="#232F3E">External SNAT disabled: each pod keeps its real VPC address,</text>
+<text x="490.0" y="948.9" text-anchor="middle" font-size="14" font-weight="400" fill="#232F3E">so the firewall sees the pod, not the node.</text>
+<svg x="932.0" y="327.0" width="56" height="56" viewBox="0 0 80 80">
+    <title>Icon-Architecture/64/Arch_AWS-Network-Firewall_64</title>
+    <g id="i10-Icon-Architecture/64/Arch_AWS-Network-Firewall_64" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="i10-Icon-Architecture-BG/64/Security-Identity-Compliance" fill="#DD344C">
+            <rect id="i10-Rectangle" x="0" y="0" width="80" height="80"></rect>
+        </g>
+        <g id="i10-Icon-Service/64/AWS-Network-Firewall_64" transform="translate(12.000000, 12.300000)" fill="#FFFFFF">
+            <path d="M54,45.7046767 L45,45.7046767 L42,45.7046767 L42,39.7046767 L51,39.7046767 L54,39.7046767 L54,45.7046767 Z M44,53.7046767 L32,53.7046767 L32,47.7046767 L41,47.7046767 L44,47.7046767 L44,53.7046767 Z M22.591,51.6906767 C18.422,51.6906767 14.595,49.5876767 12.354,46.0656767 C10.565,43.2556767 10.534,39.6286767 12.275,36.5946767 L12.33,36.4966767 C14.422,33.3216767 13.672,28.9106767 13.004,26.4776767 C14.923,27.4636767 16.661,29.9746767 17.278,31.0816767 C17.47,31.4236767 17.85,31.6226767 18.231,31.5926767 C18.622,31.5616767 18.958,31.3066767 19.092,30.9386767 C21.009,25.6726767 19.723,21.7846767 18.314,19.4556767 C19.568,19.8886767 21.1,20.5406767 22.616,21.4966767 C27.231,24.4066767 29.571,28.6586767 29.571,34.1336767 C29.571,34.4056767 29.683,34.6666767 29.88,34.8556767 C30.076,35.0436767 30.341,35.1396767 30.614,35.1326767 C31.808,35.0806767 33.963,34.1636767 34.96,31.2606767 C34.985,31.3966767 35,31.5446767 35,31.7046767 L35,37.7046767 L26,37.7046767 C25.447,37.7046767 25,38.1526767 25,38.7046767 L25,46.7046767 C25,47.2566767 25.447,47.7046767 26,47.7046767 L30,47.7046767 L30,49.2546767 C28.271,50.8016767 25.605,51.6906767 22.591,51.6906767 L22.591,51.6906767 Z M6.168,33.9476767 C4.267,32.6596767 2,30.2216767 2,25.9206767 C2,19.9646767 6.144,18.0116767 8.613,17.3776767 C9.076,17.2586767 9.391,16.8276767 9.362,16.3506767 L9.265,14.7116767 C9.265,9.96667668 12.533,4.86067668 16.706,3.08767668 C23.925,0.0236766813 29.041,4.05267668 30.904,5.92867668 C32.423,7.45567668 33.607,9.40767668 34.425,11.7276767 C34.548,12.0776767 34.854,12.3296767 35.221,12.3846767 C35.584,12.4396767 35.954,12.2866767 36.173,11.9886767 C37.409,10.3106767 39.541,9.61167668 41.47,10.2446767 C43.64,10.9576767 44.891,13.0746767 44.91,16.0576767 L44.904,16.0946767 C44.828,16.6296767 45.191,17.1296767 45.725,17.2216767 C47.606,17.5456767 53.745,19.1366767 53.745,26.0036767 C53.745,28.2046767 53.158,30.0316767 52,31.4616767 L52,30.7046767 C52,30.1526767 51.553,29.7046767 51,29.7046767 L36.494,29.7046767 C35.876,28.5846767 34.902,28.1076767 34.843,28.0796767 C34.55,27.9466767 34.21,27.9636767 33.932,28.1216767 C33.653,28.2816767 33.468,28.5656767 33.435,28.8856767 C33.188,31.2336767 32.266,32.2866767 31.524,32.7566767 C31.049,25.8506767 27.028,21.8976767 23.622,19.7666767 C19.752,17.3456767 15.925,16.7396767 15.764,16.7146767 C15.317,16.6446767 14.882,16.8866767 14.699,17.2996767 C14.517,17.7126767 14.635,18.1976767 14.985,18.4816767 C15.172,18.6336767 19.139,21.9486767 17.794,28.2496767 C16.457,26.4736767 14.156,24.0706767 11.495,24.0706767 C11.163,24.0706767 10.854,24.2356767 10.667,24.5106767 C10.481,24.7856767 10.443,25.1346767 10.567,25.4426767 C10.591,25.5026767 12.785,31.0996767 11,34.7826767 L11,34.7046767 L8.635,34.7046767 C7.753,34.7046767 6.9,34.4426767 6.168,33.9476767 L6.168,33.9476767 Z M41,37.7046767 L37,37.7046767 L37,31.7046767 L50,31.7046767 L50,37.7046767 L41,37.7046767 Z M40,45.7046767 L31,45.7046767 L27,45.7046767 L27,39.7046767 L36,39.7046767 L40,39.7046767 L40,45.7046767 Z M55,37.7046767 L52,37.7046767 L52,34.2316767 C54.446,32.3146767 55.745,29.4766767 55.745,26.0036767 C55.745,18.4186767 49.747,16.0946767 46.89,15.4196767 C46.684,11.8926767 44.924,9.27467668 42.094,8.34467668 C39.877,7.61667668 37.482,8.11367668 35.722,9.57467668 C34.852,7.61167668 33.712,5.91567668 32.322,4.51767668 C27.842,0.0116766813 21.713,-1.21232332 15.925,1.24667668 C10.987,3.34367668 7.265,9.13267668 7.267,14.7706767 L7.319,15.6736767 C4.624,16.5596767 0,19.0796767 0,25.9206767 C0,31.3716767 3.162,34.3266767 5.047,35.6036767 C6.111,36.3236767 7.353,36.7046767 8.635,36.7046767 L9.999,36.7046767 C8.475,40.1386767 8.691,44.0356767 10.666,47.1396767 C13.276,51.2416767 17.734,53.6906767 22.591,53.6906767 C25.41,53.6906767 28.002,52.9976767 30,51.7516767 L30,54.7046767 C30,55.2566767 30.447,55.7046767 31,55.7046767 L45,55.7046767 C45.553,55.7046767 46,55.2566767 46,54.7046767 L46,47.7046767 L55,47.7046767 C55.553,47.7046767 56,47.2566767 56,46.7046767 L56,38.7046767 C56,38.1526767 55.553,37.7046767 55,37.7046767 L55,37.7046767 Z" id="i10-Fill-1"></path>
+        </g>
+    </g>
+</svg>
+<text x="960" y="296.0" text-anchor="middle" font-size="15" font-weight="600" fill="#232F3E">Network</text>
+<text x="960" y="315.0" text-anchor="middle" font-size="15" font-weight="600" fill="#232F3E">Firewall</text>
+<rect x="1030" y="250" width="440" height="210" rx="8" fill="#FFFFFF" stroke="#DD344C" stroke-width="2"/>
+<text x="1250.0" y="314.9" text-anchor="middle" font-size="15" font-weight="700" fill="#DD344C">Container association</text>
+<text x="1250.0" y="333.9" text-anchor="middle" font-size="14" font-weight="400" fill="#232F3E">eks-payments-monitor</text>
+<text x="1250.0" y="351.9" text-anchor="middle" font-size="14" font-weight="400" fill="#232F3E">Type = EKS (immutable)</text>
+<text x="1250.0" y="369.9" text-anchor="middle" font-size="14" font-weight="400" fill="#232F3E">ClusterArn = nfw-container-lab</text>
+<text x="1250.0" y="387.9" text-anchor="middle" font-size="14" font-weight="400" fill="#232F3E">AttributeFilters: namespace = payments</text>
+<text x="1250.0" y="405.9" text-anchor="middle" font-size="14" font-weight="400" fill="#232F3E">app = web</text>
+<rect x="1520" y="250" width="330" height="210" rx="8" fill="#EEF7EE" stroke="#2E8B2E" stroke-width="1.5" stroke-dasharray="5,4"/>
+<text x="1685.0" y="280" text-anchor="middle" font-size="15" font-weight="700" fill="#2E8B2E">Status = ACTIVE</text>
+<text x="1685.0" y="308" text-anchor="middle" font-size="14" font-weight="400" fill="#232F3E">ResolvedCidrCount = 3</text>
+<text x="1685.0" y="326" text-anchor="middle" font-size="14" font-weight="400" fill="#232F3E">3 pods matched, 3 running.</text>
+<text x="1685.0" y="344" text-anchor="middle" font-size="14" font-weight="400" fill="#232F3E">Scale the deployment</text>
+<text x="1685.0" y="362" text-anchor="middle" font-size="14" font-weight="400" fill="#232F3E">and the set tracks it.</text>
+<path d="M1470,355 L1520,355" fill="none" stroke="#5A6B7D" stroke-width="2" stroke-dasharray="6,4"/>
+<rect x="1030" y="560" width="820" height="160" rx="8" fill="#FFFFFF" stroke="#DD344C" stroke-width="2"/>
+<text x="1440.0" y="620.55" text-anchor="middle" font-size="14" font-weight="700" fill="#DD344C">Stateful rule group · container-ref-rules</text>
+<text x="1440.0" y="637.55" text-anchor="middle" font-size="13" font-weight="400" fill="#232F3E">ReferenceSets.IPSetReferences.CONTAINER_IPS.ReferenceArn = association ARN</text>
+<text x="1440.0" y="653.55" text-anchor="middle" font-size="13" font-weight="400" fill="#232F3E"></text>
+<text x="1440.0" y="669.55" text-anchor="middle" font-size="13" font-weight="400" fill="#232F3E">alert tcp @CONTAINER_IPS any -&gt; any any (msg:"traffic from tracked EKS pods"; sid:1000001; rev:1;)</text>
+<rect x="920" y="830" width="560" height="190" rx="8" fill="#FDF0EE" stroke="#D13212" stroke-width="1.5" stroke-dasharray="5,4"/>
+<text x="1200.0" y="860" text-anchor="middle" font-size="15" font-weight="700" fill="#D13212">The one-character gotcha</text>
+<text x="1200.0" y="888" text-anchor="middle" font-size="14" font-weight="400" fill="#232F3E">@NAME = dynamic IP-set reference</text>
+<text x="1200.0" y="906" text-anchor="middle" font-size="14" font-weight="400" fill="#232F3E">(resource groups, container associations)</text>
+<text x="1200.0" y="924" text-anchor="middle" font-size="14" font-weight="400" fill="#232F3E">$NAME = static variable (RuleVariables.IPSets)</text>
+<text x="1200.0" y="942" text-anchor="middle" font-size="14" font-weight="400" fill="#232F3E">$CONTAINER_IPS → InvalidRequestException:</text>
+<text x="1200.0" y="960" text-anchor="middle" font-size="14" font-weight="400" fill="#232F3E">cannot be null or empty · RuleVariables.IPSets</text>
+<rect x="1510" y="830" width="340" height="190" rx="8" fill="#FDF1F7" stroke="#E7157B" stroke-width="1.5" stroke-dasharray="5,4"/>
+<text x="1680.0" y="860" text-anchor="middle" font-size="14" font-weight="700" fill="#B0105C">Constraints</text>
+<text x="1680.0" y="888" text-anchor="middle" font-size="13" font-weight="400" fill="#232F3E">EKS: external SNAT disabled</text>
+<text x="1680.0" y="904" text-anchor="middle" font-size="13" font-weight="400" fill="#232F3E">Type ECS | EKS is immutable</text>
+<text x="1680.0" y="920" text-anchor="middle" font-size="13" font-weight="400" fill="#232F3E">ECS: awsvpc network mode</text>
+<text x="1680.0" y="936" text-anchor="middle" font-size="13" font-weight="400" fill="#232F3E">≤ 5 monitoring configs</text>
+<text x="1680.0" y="952" text-anchor="middle" font-size="13" font-weight="400" fill="#232F3E">Delete rule group, then association</text>
+<text x="1680.0" y="968" text-anchor="middle" font-size="13" font-weight="400" fill="#232F3E">API in boto3, not aws-cli v2</text>
+<path d="M960,388 L960,500 L786,500" fill="none" stroke="#E07B00" stroke-width="3.5" stroke-linejoin="round" marker-end="url(#eE07B00)"/>
+<circle cx="880" cy="500" r="16" fill="#E07B00" stroke="#FFFFFF" stroke-width="2.5"/>
+<text x="880" y="506" text-anchor="middle" font-size="17" font-weight="700" fill="#FFFFFF">1</text>
+<path d="M786,690 L1024,690" fill="none" stroke="#1F6FB8" stroke-width="3.5" stroke-linejoin="round" marker-end="url(#e1F6FB8)"/>
+<circle cx="840" cy="690" r="16" fill="#1F6FB8" stroke="#FFFFFF" stroke-width="2.5"/>
+<text x="840" y="696" text-anchor="middle" font-size="17" font-weight="700" fill="#FFFFFF">2</text>
+<rect x="912" y="660" width="76" height="20" rx="4" fill="#FFFFFF" fill-opacity="0.92"/>
+<text x="950" y="675" text-anchor="middle" font-size="13" font-weight="700" fill="#1F6FB8">3 pod IPs</text>
+<path d="M1250,460 L1250,554" fill="none" stroke="#2E8B2E" stroke-width="3.5" stroke-linejoin="round" marker-end="url(#e2E8B2E)"/>
+<circle cx="1250" cy="507" r="16" fill="#2E8B2E" stroke="#FFFFFF" stroke-width="2.5"/>
+<text x="1250" y="513" text-anchor="middle" font-size="17" font-weight="700" fill="#FFFFFF">3</text>
+<text x="1280" y="512" text-anchor="start" font-size="14" font-weight="700" fill="#2E8B2E">@CONTAINER_IPS</text>
+<path d="M1200,720 L1200,824" fill="none" stroke="#D13212" stroke-width="3.5" stroke-linejoin="round" stroke-dasharray="9,6" marker-end="url(#eD13212)"/>
+<circle cx="1200" cy="772" r="16" fill="#D13212" stroke="#FFFFFF" stroke-width="2.5"/>
+<text x="1200" y="778" text-anchor="middle" font-size="17" font-weight="700" fill="#FFFFFF">4</text>
+<text x="1230" y="777" text-anchor="start" font-size="14" font-weight="700" fill="#D13212">$CONTAINER_IPS</text>
+<rect x="20" y="1158" width="1920" height="112" rx="8" fill="#F7F9FC" stroke="#D5DBE3"/>
+<circle cx="60.0" cy="1194.0" r="16" fill="#E07B00" stroke="#FFFFFF" stroke-width="2.5"/>
+<text x="60.0" y="1200.0" text-anchor="middle" font-size="17" font-weight="700" fill="#FFFFFF">1</text>
+<text x="88.0" y="1200.0" text-anchor="start" font-size="16" font-weight="400" fill="#232F3E">Association watches the cluster (namespace=payments, app=web)</text>
+<circle cx="1000.0" cy="1194.0" r="16" fill="#1F6FB8" stroke="#FFFFFF" stroke-width="2.5"/>
+<text x="1000.0" y="1200.0" text-anchor="middle" font-size="17" font-weight="700" fill="#FFFFFF">2</text>
+<text x="1028.0" y="1200.0" text-anchor="start" font-size="16" font-weight="400" fill="#232F3E">Pod IPs resolve into a live CIDR set (ResolvedCidrCount = 3)</text>
+<circle cx="60.0" cy="1234.0" r="16" fill="#2E8B2E" stroke="#FFFFFF" stroke-width="2.5"/>
+<text x="60.0" y="1240.0" text-anchor="middle" font-size="17" font-weight="700" fill="#FFFFFF">3</text>
+<text x="88.0" y="1240.0" text-anchor="start" font-size="16" font-weight="400" fill="#232F3E">Rule group references it as @CONTAINER_IPS (works)</text>
+<circle cx="1000.0" cy="1234.0" r="16" fill="#D13212" stroke="#FFFFFF" stroke-width="2.5"/>
+<text x="1000.0" y="1240.0" text-anchor="middle" font-size="17" font-weight="700" fill="#FFFFFF">4</text>
+<text x="1028.0" y="1240.0" text-anchor="start" font-size="16" font-weight="400" fill="#232F3E">$CONTAINER_IPS → static-variable lookup → create fails</text>
+</svg>

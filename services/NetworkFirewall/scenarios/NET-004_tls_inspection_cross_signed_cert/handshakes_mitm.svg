@@ -1,0 +1,114 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1860" height="1360" viewBox="0 0 1860 1360" font-family="Helvetica Neue, Helvetica, Arial, sans-serif"><defs><marker id="e1F6FB8" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="4.2" markerHeight="4.2" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1F6FB8"/></marker><marker id="s1F6FB8" viewBox="0 0 10 10" refX="1.5" refY="5" markerWidth="4.2" markerHeight="4.2" orient="auto"><path d="M10,0 L0,5 L10,10 z" fill="#1F6FB8"/></marker><marker id="e2E8B2E" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="4.2" markerHeight="4.2" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#2E8B2E"/></marker><marker id="s2E8B2E" viewBox="0 0 10 10" refX="1.5" refY="5" markerWidth="4.2" markerHeight="4.2" orient="auto"><path d="M10,0 L0,5 L10,10 z" fill="#2E8B2E"/></marker><marker id="e5A6B7D" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="4.2" markerHeight="4.2" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#5A6B7D"/></marker><marker id="s5A6B7D" viewBox="0 0 10 10" refX="1.5" refY="5" markerWidth="4.2" markerHeight="4.2" orient="auto"><path d="M10,0 L0,5 L10,10 z" fill="#5A6B7D"/></marker><marker id="e7B3FE4" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="4.2" markerHeight="4.2" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#7B3FE4"/></marker><marker id="s7B3FE4" viewBox="0 0 10 10" refX="1.5" refY="5" markerWidth="4.2" markerHeight="4.2" orient="auto"><path d="M10,0 L0,5 L10,10 z" fill="#7B3FE4"/></marker><marker id="eE07B00" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="4.2" markerHeight="4.2" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#E07B00"/></marker><marker id="sE07B00" viewBox="0 0 10 10" refX="1.5" refY="5" markerWidth="4.2" markerHeight="4.2" orient="auto"><path d="M10,0 L0,5 L10,10 z" fill="#E07B00"/></marker></defs><rect width="1860" height="1360" fill="#FFFFFF"/>
+<rect x="20" y="190" width="900" height="510" rx="8" fill="#1F6FB8" fill-opacity="0.05" stroke="#1F6FB8" stroke-width="2" stroke-dasharray="6,4"/>
+<text x="34" y="212" text-anchor="start" font-size="16" font-weight="700" fill="#1F6FB8">Session #1 · client ↔ NF</text>
+<rect x="540" y="860" width="900" height="240" rx="8" fill="#7B3FE4" fill-opacity="0.05" stroke="#7B3FE4" stroke-width="2" stroke-dasharray="6,4"/>
+<text x="554" y="882" text-anchor="start" font-size="16" font-weight="700" fill="#7B3FE4">Session #2 · NF ↔ server</text>
+<svg x="272.0" y="82.0" width="56" height="56" viewBox="0 0 48 48">
+    <title>Icon-Resource/General-Resource/Res_Users_48_Light</title>
+    <g id="i1-Icon-Resource/General-Resource/Res_Users_48" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path d="M28.639,9.286 C28.639,6.371 31.052,4 34.019,4 C36.985,4 39.397,6.371 39.397,9.286 C39.397,12.201 36.985,14.572 34.019,14.572 C31.052,14.572 28.639,12.201 28.639,9.286 L28.639,9.286 Z M40.163,16.334 C39.516,15.932 38.833,15.6 38.128,15.333 C40.098,14.023 41.397,11.802 41.397,9.286 C41.397,5.269 38.087,2 34.019,2 C29.95,2 26.639,5.269 26.639,9.286 C26.639,11.796 27.932,14.014 29.895,15.325 C28.614,15.808 27.41,16.515 26.349,17.425 L27.652,18.943 C29.434,17.414 31.689,16.572 34,16.572 C35.802,16.572 37.569,17.077 39.109,18.033 C41.849,19.735 43.647,22.725 43.953,26 L34,26 L34,28 L45,28 C45.553,28 46,27.553 46,27 C46,22.657 43.764,18.57 40.163,16.334 L40.163,16.334 Z M8.639,9.286 C8.639,6.371 11.052,4 14.019,4 C16.985,4 19.397,6.371 19.397,9.286 C19.397,12.201 16.985,14.572 14.019,14.572 C11.052,14.572 8.639,12.201 8.639,9.286 L8.639,9.286 Z M14,26 L4.046,26 C4.53,20.717 8.81,16.572 14,16.572 C15.802,16.572 17.569,17.077 19.109,18.033 C19.541,18.302 19.958,18.608 20.349,18.943 L21.652,17.426 C21.184,17.024 20.684,16.657 20.163,16.334 C19.516,15.932 18.833,15.6 18.128,15.333 C20.098,14.023 21.397,11.802 21.397,9.286 C21.397,5.269 18.087,2 14.019,2 C9.95,2 6.639,5.269 6.639,9.286 C6.639,11.801 7.937,14.023 9.907,15.332 C5.302,17.071 2,21.638 2,27 C2,27.553 2.448,28 3,28 L14,28 L14,26 Z M14.046,44 C14.53,38.717 18.81,34.572 24,34.572 C25.802,34.572 27.569,35.077 29.109,36.033 C31.849,37.735 33.647,40.725 33.953,44 L14.046,44 Z M18.639,27.286 C18.639,24.371 21.052,22 24.019,22 C26.985,22 29.397,24.371 29.397,27.286 C29.397,30.201 26.985,32.572 24.019,32.572 C21.052,32.572 18.639,30.201 18.639,27.286 L18.639,27.286 Z M30.163,34.334 C29.516,33.932 28.833,33.6 28.128,33.333 C30.098,32.023 31.397,29.802 31.397,27.286 C31.397,23.269 28.087,20 24.019,20 C19.95,20 16.639,23.269 16.639,27.286 C16.639,29.801 17.937,32.023 19.907,33.332 C15.302,35.071 12,39.638 12,45 C12,45.553 12.448,46 13,46 L35,46 C35.553,46 36,45.553 36,45 C36,40.657 33.764,36.57 30.163,34.334 L30.163,34.334 Z" id="i1-Fill-1" fill="#242F3E"></path>
+    </g>
+</svg>
+<text x="300" y="160.0" text-anchor="middle" font-size="15" font-weight="700" fill="#232F3E">Client</text>
+<text x="300" y="179.0" text-anchor="middle" font-size="15" font-weight="700" fill="#232F3E">broker / custodian</text>
+<path d="M300,185 L300,1200" fill="none" stroke="#5A6B7D" stroke-width="2" stroke-dasharray="6,4"/>
+<svg x="772.0" y="82.0" width="56" height="56" viewBox="0 0 80 80">
+    <title>Icon-Architecture/64/Arch_AWS-Network-Firewall_64</title>
+    <g id="i2-Icon-Architecture/64/Arch_AWS-Network-Firewall_64" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="i2-Icon-Architecture-BG/64/Security-Identity-Compliance" fill="#DD344C">
+            <rect id="i2-Rectangle" x="0" y="0" width="80" height="80"></rect>
+        </g>
+        <g id="i2-Icon-Service/64/AWS-Network-Firewall_64" transform="translate(12.000000, 12.300000)" fill="#FFFFFF">
+            <path d="M54,45.7046767 L45,45.7046767 L42,45.7046767 L42,39.7046767 L51,39.7046767 L54,39.7046767 L54,45.7046767 Z M44,53.7046767 L32,53.7046767 L32,47.7046767 L41,47.7046767 L44,47.7046767 L44,53.7046767 Z M22.591,51.6906767 C18.422,51.6906767 14.595,49.5876767 12.354,46.0656767 C10.565,43.2556767 10.534,39.6286767 12.275,36.5946767 L12.33,36.4966767 C14.422,33.3216767 13.672,28.9106767 13.004,26.4776767 C14.923,27.4636767 16.661,29.9746767 17.278,31.0816767 C17.47,31.4236767 17.85,31.6226767 18.231,31.5926767 C18.622,31.5616767 18.958,31.3066767 19.092,30.9386767 C21.009,25.6726767 19.723,21.7846767 18.314,19.4556767 C19.568,19.8886767 21.1,20.5406767 22.616,21.4966767 C27.231,24.4066767 29.571,28.6586767 29.571,34.1336767 C29.571,34.4056767 29.683,34.6666767 29.88,34.8556767 C30.076,35.0436767 30.341,35.1396767 30.614,35.1326767 C31.808,35.0806767 33.963,34.1636767 34.96,31.2606767 C34.985,31.3966767 35,31.5446767 35,31.7046767 L35,37.7046767 L26,37.7046767 C25.447,37.7046767 25,38.1526767 25,38.7046767 L25,46.7046767 C25,47.2566767 25.447,47.7046767 26,47.7046767 L30,47.7046767 L30,49.2546767 C28.271,50.8016767 25.605,51.6906767 22.591,51.6906767 L22.591,51.6906767 Z M6.168,33.9476767 C4.267,32.6596767 2,30.2216767 2,25.9206767 C2,19.9646767 6.144,18.0116767 8.613,17.3776767 C9.076,17.2586767 9.391,16.8276767 9.362,16.3506767 L9.265,14.7116767 C9.265,9.96667668 12.533,4.86067668 16.706,3.08767668 C23.925,0.0236766813 29.041,4.05267668 30.904,5.92867668 C32.423,7.45567668 33.607,9.40767668 34.425,11.7276767 C34.548,12.0776767 34.854,12.3296767 35.221,12.3846767 C35.584,12.4396767 35.954,12.2866767 36.173,11.9886767 C37.409,10.3106767 39.541,9.61167668 41.47,10.2446767 C43.64,10.9576767 44.891,13.0746767 44.91,16.0576767 L44.904,16.0946767 C44.828,16.6296767 45.191,17.1296767 45.725,17.2216767 C47.606,17.5456767 53.745,19.1366767 53.745,26.0036767 C53.745,28.2046767 53.158,30.0316767 52,31.4616767 L52,30.7046767 C52,30.1526767 51.553,29.7046767 51,29.7046767 L36.494,29.7046767 C35.876,28.5846767 34.902,28.1076767 34.843,28.0796767 C34.55,27.9466767 34.21,27.9636767 33.932,28.1216767 C33.653,28.2816767 33.468,28.5656767 33.435,28.8856767 C33.188,31.2336767 32.266,32.2866767 31.524,32.7566767 C31.049,25.8506767 27.028,21.8976767 23.622,19.7666767 C19.752,17.3456767 15.925,16.7396767 15.764,16.7146767 C15.317,16.6446767 14.882,16.8866767 14.699,17.2996767 C14.517,17.7126767 14.635,18.1976767 14.985,18.4816767 C15.172,18.6336767 19.139,21.9486767 17.794,28.2496767 C16.457,26.4736767 14.156,24.0706767 11.495,24.0706767 C11.163,24.0706767 10.854,24.2356767 10.667,24.5106767 C10.481,24.7856767 10.443,25.1346767 10.567,25.4426767 C10.591,25.5026767 12.785,31.0996767 11,34.7826767 L11,34.7046767 L8.635,34.7046767 C7.753,34.7046767 6.9,34.4426767 6.168,33.9476767 L6.168,33.9476767 Z M41,37.7046767 L37,37.7046767 L37,31.7046767 L50,31.7046767 L50,37.7046767 L41,37.7046767 Z M40,45.7046767 L31,45.7046767 L27,45.7046767 L27,39.7046767 L36,39.7046767 L40,39.7046767 L40,45.7046767 Z M55,37.7046767 L52,37.7046767 L52,34.2316767 C54.446,32.3146767 55.745,29.4766767 55.745,26.0036767 C55.745,18.4186767 49.747,16.0946767 46.89,15.4196767 C46.684,11.8926767 44.924,9.27467668 42.094,8.34467668 C39.877,7.61667668 37.482,8.11367668 35.722,9.57467668 C34.852,7.61167668 33.712,5.91567668 32.322,4.51767668 C27.842,0.0116766813 21.713,-1.21232332 15.925,1.24667668 C10.987,3.34367668 7.265,9.13267668 7.267,14.7706767 L7.319,15.6736767 C4.624,16.5596767 0,19.0796767 0,25.9206767 C0,31.3716767 3.162,34.3266767 5.047,35.6036767 C6.111,36.3236767 7.353,36.7046767 8.635,36.7046767 L9.999,36.7046767 C8.475,40.1386767 8.691,44.0356767 10.666,47.1396767 C13.276,51.2416767 17.734,53.6906767 22.591,53.6906767 C25.41,53.6906767 28.002,52.9976767 30,51.7516767 L30,54.7046767 C30,55.2566767 30.447,55.7046767 31,55.7046767 L45,55.7046767 C45.553,55.7046767 46,55.2566767 46,54.7046767 L46,47.7046767 L55,47.7046767 C55.553,47.7046767 56,47.2566767 56,46.7046767 L56,38.7046767 C56,38.1526767 55.553,37.7046767 55,37.7046767 L55,37.7046767 Z" id="i2-Fill-1"></path>
+        </g>
+    </g>
+</svg>
+<text x="800" y="160.0" text-anchor="middle" font-size="15" font-weight="700" fill="#232F3E">Network Firewall</text>
+<text x="800" y="179.0" text-anchor="middle" font-size="15" font-weight="700" fill="#232F3E">TLS inspection engine</text>
+<path d="M800,185 L800,1200" fill="none" stroke="#5A6B7D" stroke-width="2" stroke-dasharray="6,4"/>
+<svg x="1292.0" y="82.0" width="56" height="56" viewBox="0 0 48 48">
+    <title>Icon-Resource/Networking-and-Content-Delivery/Res_Elastic-Load-Balancing_Application-Load-Balancer_48</title>
+    <g id="i3-Icon-Resource/Networking-and-Content-Delivery/Res_Elastic-Load-Balancing_Application-Load-Balancer_48" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path d="M33.69,34.375 L36.035,34.375 L36.035,32 L33.69,32 L33.69,34.375 Z M26.751,34.375 L29.126,34.375 L29.126,32 L26.751,32 L26.751,34.375 Z M18.876,34.375 L21.251,34.375 L21.251,32 L18.876,32 L18.876,34.375 Z M11.966,34.375 L14.251,34.375 L14.251,32 L11.966,32 L11.966,34.375 Z M18.001,16.875 L30.001,16.875 L30.001,11 L18.001,11 L18.001,16.875 Z M37.035,30 L35.501,30 L35.501,26.625 C35.501,26.072 35.053,25.625 34.501,25.625 L32.001,25.625 L32.001,22.25 C32.001,21.697 31.553,21.25 31.001,21.25 L25.001,21.25 L25.001,18.875 L31.001,18.875 C31.553,18.875 32.001,18.428 32.001,17.875 L32.001,10 C32.001,9.447 31.553,9 31.001,9 L17.001,9 C16.448,9 16.001,9.447 16.001,10 L16.001,17.875 C16.001,18.428 16.448,18.875 17.001,18.875 L23.001,18.875 L23.001,21.25 L17.001,21.25 C16.448,21.25 16.001,21.697 16.001,22.25 L16.001,25.625 L13.501,25.625 C12.948,25.625 12.501,26.072 12.501,26.625 L12.501,30 L10.965,30 C10.413,30 9.965,30.447 9.965,31 L9.965,35.375 C9.965,35.928 10.413,36.375 10.965,36.375 L15.251,36.375 C15.803,36.375 16.251,35.928 16.251,35.375 L16.251,31 C16.251,30.447 15.803,30 15.251,30 L14.501,30 L14.501,27.625 L18.626,27.625 L18.626,30 L17.876,30 C17.323,30 16.876,30.447 16.876,31 L16.876,35.375 C16.876,35.928 17.323,36.375 17.876,36.375 L22.251,36.375 C22.803,36.375 23.251,35.928 23.251,35.375 L23.251,31 C23.251,30.447 22.803,30 22.251,30 L20.626,30 L20.626,26.625 C20.626,26.072 20.178,25.625 19.626,25.625 L18.001,25.625 L18.001,23.25 L30.001,23.25 L30.001,25.625 L28.376,25.625 C27.823,25.625 27.376,26.072 27.376,26.625 L27.376,30 L25.751,30 C25.198,30 24.751,30.447 24.751,31 L24.751,35.375 C24.751,35.928 25.198,36.375 25.751,36.375 L30.126,36.375 C30.678,36.375 31.126,35.928 31.126,35.375 L31.126,31 C31.126,30.447 30.678,30 30.126,30 L29.376,30 L29.376,27.625 L33.501,27.625 L33.501,30 L32.69,30 C32.137,30 31.69,30.447 31.69,31 L31.69,35.375 C31.69,35.928 32.137,36.375 32.69,36.375 L37.035,36.375 C37.587,36.375 38.035,35.928 38.035,35.375 L38.035,31 C38.035,30.447 37.587,30 37.035,30 L37.035,30 Z M24.001,44 C12.972,44 4,35.028 4,24 C4,12.972 12.972,4 24.001,4 C35.029,4 44.001,12.972 44.001,24 C44.001,35.028 35.029,44 24.001,44 L24.001,44 Z M24.001,2 C11.869,2 2,11.869 2,24 C2,36.131 11.869,46 24.001,46 C36.131,46 46.001,36.131 46.001,24 C46.001,11.869 36.131,2 24.001,2 L24.001,2 Z" id="i3-AWS-Elastic-Load-Balancing_-Application-Load-Balancer_Resource-Icon_light-bg" fill="#8C4FFF"></path>
+    </g>
+</svg>
+<text x="1320" y="160.0" text-anchor="middle" font-size="15" font-weight="700" fill="#232F3E">Server</text>
+<text x="1320" y="179.0" text-anchor="middle" font-size="15" font-weight="700" fill="#232F3E">ALB → ECS</text>
+<path d="M1320,185 L1320,1200" fill="none" stroke="#5A6B7D" stroke-width="2" stroke-dasharray="6,4"/>
+<path d="M306,260 L794,260" fill="none" stroke="#1F6FB8" stroke-width="3.5" stroke-linejoin="round" marker-end="url(#e1F6FB8)"/>
+<circle cx="340" cy="260" r="16" fill="#1F6FB8" stroke="#FFFFFF" stroke-width="2.5"/>
+<text x="340" y="266" text-anchor="middle" font-size="17" font-weight="700" fill="#FFFFFF">1</text>
+<rect x="490" y="229" width="119" height="23" rx="4" fill="#FFFFFF" fill-opacity="0.92"/>
+<text x="550.0" y="246" text-anchor="middle" font-size="15" font-weight="700" fill="#1F6FB8">TCP handshake</text>
+<text x="550.0" y="286" text-anchor="middle" font-size="13" font-weight="400" fill="#232F3E">SYN / SYN-ACK / ACK</text>
+<path d="M306,360 L794,360" fill="none" stroke="#1F6FB8" stroke-width="3.5" stroke-linejoin="round" marker-end="url(#e1F6FB8)"/>
+<circle cx="340" cy="360" r="16" fill="#1F6FB8" stroke="#FFFFFF" stroke-width="2.5"/>
+<text x="340" y="366" text-anchor="middle" font-size="17" font-weight="700" fill="#FFFFFF">2</text>
+<rect x="499" y="329" width="102" height="23" rx="4" fill="#FFFFFF" fill-opacity="0.92"/>
+<text x="550.0" y="346" text-anchor="middle" font-size="15" font-weight="700" fill="#1F6FB8">ClientHello</text>
+<text x="550.0" y="386" text-anchor="middle" font-size="13" font-weight="400" fill="#232F3E">SNI api.trading.example.com</text>
+<path d="M794,460 L306,460" fill="none" stroke="#2E8B2E" stroke-width="3.5" stroke-linejoin="round" marker-end="url(#e2E8B2E)"/>
+<circle cx="760" cy="460" r="16" fill="#2E8B2E" stroke="#FFFFFF" stroke-width="2.5"/>
+<text x="760" y="466" text-anchor="middle" font-size="17" font-weight="700" fill="#FFFFFF">3</text>
+<rect x="440" y="429" width="220" height="23" rx="4" fill="#FFFFFF" fill-opacity="0.92"/>
+<text x="550.0" y="446" text-anchor="middle" font-size="15" font-weight="700" fill="#2E8B2E">ServerHello + certificate</text>
+<text x="550.0" y="486" text-anchor="middle" font-size="13" font-weight="400" fill="#232F3E">NF acts AS the server (configured private key)</text>
+<path d="M306,560 L794,560" fill="none" stroke="#1F6FB8" stroke-width="3.5" stroke-linejoin="round" marker-start="url(#s1F6FB8)" marker-end="url(#e1F6FB8)"/>
+<circle cx="340" cy="560" r="16" fill="#1F6FB8" stroke="#FFFFFF" stroke-width="2.5"/>
+<text x="340" y="566" text-anchor="middle" font-size="17" font-weight="700" fill="#FFFFFF">4</text>
+<rect x="432" y="529" width="237" height="23" rx="4" fill="#FFFFFF" fill-opacity="0.92"/>
+<text x="550.0" y="546" text-anchor="middle" font-size="15" font-weight="700" fill="#1F6FB8">Key exchange → session keys</text>
+<path d="M306,640 L794,640" fill="none" stroke="#1F6FB8" stroke-width="3.5" stroke-linejoin="round" marker-end="url(#e1F6FB8)"/>
+<circle cx="340" cy="640" r="16" fill="#1F6FB8" stroke="#FFFFFF" stroke-width="2.5"/>
+<text x="340" y="646" text-anchor="middle" font-size="17" font-weight="700" fill="#FFFFFF">5</text>
+<rect x="444" y="609" width="212" height="23" rx="4" fill="#FFFFFF" fill-opacity="0.92"/>
+<text x="550.0" y="626" text-anchor="middle" font-size="15" font-weight="700" fill="#1F6FB8">HTTP request (encrypted)</text>
+<text x="550.0" y="666" text-anchor="middle" font-size="13" font-weight="400" fill="#232F3E">GET /api/trades HTTP/1.1</text>
+<rect x="840" y="715" width="360" height="130" rx="8" fill="#FFF5EB" stroke="#E07B00" stroke-width="2"/>
+<text x="1020.0" y="760.55" text-anchor="middle" font-size="14" font-weight="700" fill="#E07B00">NF decrypts and inspects</text>
+<text x="1020.0" y="777.55" text-anchor="middle" font-size="13" font-weight="400" fill="#232F3E">Suricata rules</text>
+<text x="1020.0" y="793.55" text-anchor="middle" font-size="13" font-weight="400" fill="#232F3E">malware · injection · C2</text>
+<text x="1020.0" y="809.55" text-anchor="middle" font-size="13" font-weight="400" fill="#232F3E">if OK → re-encrypt, forward</text>
+<path d="M806,920 L1314,920" fill="none" stroke="#7B3FE4" stroke-width="3.5" stroke-linejoin="round" marker-end="url(#e7B3FE4)"/>
+<circle cx="840" cy="920" r="16" fill="#7B3FE4" stroke="#FFFFFF" stroke-width="2.5"/>
+<text x="840" y="926" text-anchor="middle" font-size="17" font-weight="700" fill="#FFFFFF">6</text>
+<rect x="1000" y="889" width="119" height="23" rx="4" fill="#FFFFFF" fill-opacity="0.92"/>
+<text x="1060.0" y="906" text-anchor="middle" font-size="15" font-weight="700" fill="#7B3FE4">TCP handshake</text>
+<path d="M806,990 L1314,990" fill="none" stroke="#7B3FE4" stroke-width="3.5" stroke-linejoin="round" marker-end="url(#e7B3FE4)"/>
+<circle cx="840" cy="990" r="16" fill="#7B3FE4" stroke="#FFFFFF" stroke-width="2.5"/>
+<text x="840" y="996" text-anchor="middle" font-size="17" font-weight="700" fill="#FFFFFF">7</text>
+<rect x="879" y="959" width="363" height="23" rx="4" fill="#FFFFFF" fill-opacity="0.92"/>
+<text x="1060.0" y="976" text-anchor="middle" font-size="15" font-weight="700" fill="#7B3FE4">TLS handshake (NF as client → real server)</text>
+<path d="M806,1060 L1314,1060" fill="none" stroke="#7B3FE4" stroke-width="3.5" stroke-linejoin="round" marker-end="url(#e7B3FE4)"/>
+<circle cx="840" cy="1060" r="16" fill="#7B3FE4" stroke="#FFFFFF" stroke-width="2.5"/>
+<text x="840" y="1066" text-anchor="middle" font-size="17" font-weight="700" fill="#FFFFFF">8</text>
+<rect x="866" y="1029" width="388" height="23" rx="4" fill="#FFFFFF" fill-opacity="0.92"/>
+<text x="1060.0" y="1046" text-anchor="middle" font-size="15" font-weight="700" fill="#7B3FE4">HTTP request (re-encrypted) · GET /api/trades</text>
+<path d="M1314,1160 L306,1160" fill="none" stroke="#2E8B2E" stroke-width="3.5" stroke-linejoin="round" marker-end="url(#e2E8B2E)"/>
+<circle cx="1280" cy="1160" r="16" fill="#2E8B2E" stroke="#FFFFFF" stroke-width="2.5"/>
+<text x="1280" y="1166" text-anchor="middle" font-size="17" font-weight="700" fill="#FFFFFF">9</text>
+<rect x="624" y="1129" width="371" height="23" rx="4" fill="#FFFFFF" fill-opacity="0.92"/>
+<text x="810.0" y="1146" text-anchor="middle" font-size="15" font-weight="700" fill="#2E8B2E">HTTP response (encrypted) · 200 OK · via NF</text>
+<rect x="1440" y="200" width="400" height="190" rx="8" fill="#F7F3FF" stroke="#7B3FE4" stroke-width="1.5" stroke-dasharray="5,4"/>
+<text x="1640.0" y="230" text-anchor="middle" font-size="15" font-weight="700" fill="#6A35D9">Why NF needs the private key</text>
+<text x="1640.0" y="258" text-anchor="middle" font-size="14" font-weight="400" fill="#232F3E">In session #1 NF acts as the real</text>
+<text x="1640.0" y="276" text-anchor="middle" font-size="14" font-weight="400" fill="#232F3E">server. The client's key exchange</text>
+<text x="1640.0" y="294" text-anchor="middle" font-size="14" font-weight="400" fill="#232F3E">uses the certificate public key.</text>
+<text x="1640.0" y="312" text-anchor="middle" font-size="14" font-weight="400" fill="#232F3E">No private key → no session keys</text>
+<text x="1640.0" y="330" text-anchor="middle" font-size="14" font-weight="400" fill="#232F3E">→ no decryption.</text>
+<rect x="1440" y="420" width="400" height="160" rx="8" fill="#FDF0EE" stroke="#D13212" stroke-width="1.5" stroke-dasharray="5,4"/>
+<text x="1640.0" y="450" text-anchor="middle" font-size="15" font-weight="700" fill="#D13212">NET-004</text>
+<text x="1640.0" y="478" text-anchor="middle" font-size="14" font-weight="400" fill="#232F3E">Imported cert has a cross-signed</text>
+<text x="1640.0" y="496" text-anchor="middle" font-size="14" font-weight="400" fill="#232F3E">root → rejected at</text>
+<text x="1640.0" y="514" text-anchor="middle" font-size="14" font-weight="400" fill="#232F3E">CreateTLSInspectionConfiguration;</text>
+<text x="1640.0" y="532" text-anchor="middle" font-size="14" font-weight="400" fill="#232F3E">NF never gets to use it.</text>
+<rect x="20" y="1268" width="1820" height="72" rx="8" fill="#F7F9FC" stroke="#D5DBE3"/>
+<path d="M42.0,1304.0 L82.0,1304.0" stroke="#1F6FB8" stroke-width="3.5" marker-end="url(#e1F6FB8)"/>
+<text x="96.0" y="1310.0" text-anchor="start" font-size="16" font-weight="400" fill="#232F3E">Client → NF (session #1)</text>
+<path d="M487.0,1304.0 L527.0,1304.0" stroke="#7B3FE4" stroke-width="3.5" marker-end="url(#e7B3FE4)"/>
+<text x="541.0" y="1310.0" text-anchor="start" font-size="16" font-weight="400" fill="#232F3E">NF → server (session #2)</text>
+<path d="M932.0,1304.0 L972.0,1304.0" stroke="#2E8B2E" stroke-width="3.5" marker-end="url(#e2E8B2E)"/>
+<text x="986.0" y="1310.0" text-anchor="start" font-size="16" font-weight="400" fill="#232F3E">Responses towards the client</text>
+<path d="M1377.0,1304.0 L1417.0,1304.0" stroke="#E07B00" stroke-width="3.5" stroke-dasharray="9,6" marker-end="url(#eE07B00)"/>
+<text x="1431.0" y="1310.0" text-anchor="start" font-size="16" font-weight="400" fill="#232F3E">NF inspection</text>
+</svg>

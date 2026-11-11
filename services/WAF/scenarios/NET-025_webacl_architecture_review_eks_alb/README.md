@@ -4,7 +4,9 @@
 **Status:** Design review framework written on 2026-11-03. The customer's web ACL JSON, logging configuration and per-rule metrics are still pending, so findings below are the review method plus the checks that decide each answer.
 **Services:** AWS WAF (managed rule groups, rate-based rules, labels, WCU) · Elastic Load Balancing (ALB) · Amazon EKS (AWS Load Balancer Controller) · CloudWatch
 
-[📐 Open diagram in draw.io](https://app.diagrams.net/#Uhttps%3A%2F%2Fraw.githubusercontent.com%2Frreyescloud%2FAWS-NET%2Fmain%2Fservices%2FWAF%2Fscenarios%2FNET-025_webacl_architecture_review_eks_alb%2Farchitecture.drawio) · [Interactive explainer](explainers/explainer.html)
+![Architecture: one REGIONAL web ACL shared by the two EKS ingress ALBs, rule order and review findings](architecture.png)
+
+[Interactive explainer](explainers/explainer.html) · [`diagram.py`](diagram.py) regenerates the diagrams: `python3 diagram.py`
 
 ## Business Context — Banking Software / Hosted escrow platform
 

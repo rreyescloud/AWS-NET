@@ -8,8 +8,9 @@ A multi-account hub-and-spoke TGW onboarding workflow stops being usable at scal
 is not in the network at all. It is one unpaginated DynamoDB `Scan` in an AWS Solutions resolver.
 The lab reproduces the failure, and the fix, without deploying the solution or a TGW.
 
-Diagram: [architecture.drawio](architecture.drawio) — page 1 is the lab topology, page 2 the customer
-architecture it was generalised from.
+![Lab topology: AppSync with the upstream, paginated and GSI resolvers over one DynamoDB table](architecture.png)
+
+![Customer architecture (generalised): STNO hub-and-spoke, console path and the failing read](architecture_customer.png)
 
 ## Business Context — Public Sector / Research Computing
 
@@ -253,9 +254,10 @@ the IAM role, then verifies each is gone before reporting success.
 ## Files
 
 - `README.md` — this write-up
-- `architecture.drawio` — page 1: lab topology (AppSync, three resolvers, data source role, table,
-  Scan page split, baseline read); page 2: the generalised customer hub-and-spoke, console path and
-  the failing read
+- `architecture.png` — lab topology (AppSync, three resolvers, data source role, table,
+  Scan page split, baseline read)
+- `architecture_customer.png` — the generalised customer hub-and-spoke, console path and the failing read
+- `diagram.py` — regenerates the diagrams: `python3 diagram.py`
 - `lab/deploy_lab.py` — `deploy | seed | status | compare | scan-stats | search | teardown`
 
 ## References

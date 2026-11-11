@@ -33,7 +33,9 @@ All infrastructure fixes attempted (ACU increase, ParallelApplyBufferSize 100→
 
 ## Architecture
 
-[📐 Open diagram in draw.io](https://app.diagrams.net/#Uhttps%3A%2F%2Fraw.githubusercontent.com%2Frreyescloud%2FAWS-NET%2Fmain%2Fservices%2FVPC%2Fscenarios%2FNET-007_dms_aurora_kafka_latency%2Farchitecture.drawio)
+![Architecture: DMS CDC from Aurora MySQL to local and cross-VPC Kafka, sandbox and production](architecture.png)
+
+`diagram.py` regenerates the diagrams: `python3 diagram.py`
 
 ## Environment
 
@@ -115,6 +117,8 @@ Network evidence:
 
 
 ## Lab Notes (2026-05-23)
+
+![Lab: Aurora MySQL in eu-central-1b, DMS and MSK Serverless endpoints in a private two-AZ VPC](architecture_lab.png)
 
 Attempted to replicate in eu-central-1 (<LAB_ACCOUNT_ID>):
 - Aurora MySQL Serverless v2 (8.0.mysql_aurora.3.08.2) — deployed OK

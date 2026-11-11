@@ -150,6 +150,8 @@ Result: curl TIMEOUT — 100% packet loss from both AZs
 
 **Root cause:** RNAT performs reverse NAT (EIP → original source 10.200.1.168) but has no route for 10.200.0.0/16. Return packets are blackholed.
 
+![Problem: no spoke routes in the RNAT route table, return traffic blackholed](architecture_asymmetric_problem.png)
+
 **Fix — add per-AZ spoke subnet routes:**
 ```
 RNAT Route Table (corrected):
@@ -163,6 +165,8 @@ Result: HTTP 200 from both AZs, symmetric routing confirmed
   EC2 AZ1 (10.200.1.168) → Public IP 54.187.117.215 (RNAT AZ1 EIP)
   EC2 AZ2 (10.200.2.209) → Public IP 44.235.1.54    (RNAT AZ2 EIP)
 ```
+
+![Solution: per-AZ spoke routes in the RNAT route table give symmetric routing](architecture_correct_chaining.png)
 
 ### Key Conclusions
 
@@ -179,6 +183,8 @@ Result: HTTP 200 from both AZs, symmetric routing confirmed
 ### Lab Resources
 
 See `lab/resources.json` for all resource IDs.
+
+`diagram.py` regenerates the diagrams: `python3 diagram.py`
 
 
 ## References

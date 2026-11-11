@@ -4,7 +4,9 @@
 **Status:** Root cause confirmed on 2026-11-04 from the change history (web ACL update events), per-rule WAF metrics, a browser HAR capture and a WAF log record. Findings and the label-based exception were prepared for the customer; the customer still has to review the other sub-rules that went back to Block. Not yet replicated in a lab.
 **Services:** AWS WAF (AWS managed rule groups, rule action overrides, labels) · Amazon CloudFront · Elastic Load Balancing (ALB) · AWS CloudTrail · CloudWatch
 
-[📐 Open diagram in draw.io](https://app.diagrams.net/#Uhttps%3A%2F%2Fraw.githubusercontent.com%2Frreyescloud%2FAWS-NET%2Fmain%2Fservices%2FWAF%2Fscenarios%2FNET-027_sqli_managed_rule_blocks_jql_query_args%2Farchitecture.drawio) · [Interactive explainer](explainers/explainer.html)
+![Architecture: SQLi_QUERYARGUMENTS blocks the JQL query at the CloudFront web ACL, and the Count + label-rule fix](architecture.png)
+
+[Interactive explainer](explainers/explainer.html) · [`diagram.py`](diagram.py) regenerates the diagrams: `python3 diagram.py`
 
 ## Business Context — Pension Administration Software / Self-hosted issue tracker for client test cycles
 

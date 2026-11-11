@@ -4,7 +4,9 @@
 **Status:** Design written on 2026-11-10 from the Route 53 resolved IP validation launch (2026-10-21). The CLI-first replication method is defined below. It hasn't been run in a lab yet.
 **Services:** AWS Network Firewall (firewall policy, stateful rule groups, Suricata) · Route 53 Resolver · Route 53 Resolver DNS Firewall · CloudWatch Logs · EC2 · Systems Manager
 
-[📐 Open diagram in draw.io](https://app.diagrams.net/#Uhttps%3A%2F%2Fraw.githubusercontent.com%2Frreyescloud%2FAWS-NET%2Fmain%2Fservices%2FNetworkFirewall%2Fscenarios%2FNET-029_resolved_ip_validation_non_http_domain_egress%2Farchitecture.drawio) · [Interactive explainer](explainers/explainer.html)
+![Architecture: resolved IP validation — DNS answer recorded, SFTP to the resolved IP passes, unresolved IP is dropped](architecture.png)
+
+[Interactive explainer](explainers/explainer.html) · `diagram.py` regenerates the diagrams: `python3 diagram.py`
 
 Related: [NET-011](../NET-011_suricata_domain_allowlist_syn_drop/) (a Suricata domain allowlist where the catch-all drop kills the SYN). Resolved-domain rules match on the destination IP, not on the SNI, so they avoid that whole class of problem.
 

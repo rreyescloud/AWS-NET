@@ -4,7 +4,9 @@
 **Status:** Lab built, run and torn down on 2026-11-02 with ATP enabled ([lab/](lab/)). Teardown verified: no resources left. Results below.
 **Services:** AWS WAF (rate-based rules, ATP) · API Gateway / Application Load Balancer · Lambda · DynamoDB · CloudFront (optional)
 
-[📐 Open diagram in draw.io](https://app.diagrams.net/#Uhttps%3A%2F%2Fraw.githubusercontent.com%2Frreyescloud%2FAWS-NET%2Fmain%2Fservices%2FWAF%2Fscenarios%2FNET-023_per_account_login_failure_limiting%2Farchitecture.drawio) · [Interactive explainer](explainers/explainer.html)
+![Architecture: request path through API Gateway / ALB, the REGIONAL web ACL, the Lambda counter and the external IdP](architecture.png)
+
+[Interactive explainer](explainers/explainer.html)
 
 ## Business Context — SaaS provider / Multi-tenant platform with its own OAuth server
 

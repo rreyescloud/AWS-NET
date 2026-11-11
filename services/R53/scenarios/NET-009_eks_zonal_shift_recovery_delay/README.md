@@ -39,7 +39,7 @@ Two factors made this particular test worse than a production shift would be:
 
 ## Architecture
 
-[📐 Open diagram in draw.io](https://app.diagrams.net/#Uhttps%3A%2F%2Fraw.githubusercontent.com%2Frreyescloud%2FAWS-NET%2Fmain%2Fservices%2FR53%2Fscenarios%2FNET-009_eks_zonal_shift_recovery_delay%2Farchitecture.drawio)
+![Zonal shift recovery chain: serial polling loops after the shift expires](architecture.png)
 
 ```
 EKS cluster, three AZs, Karpenter-provisioned compute (no managed node groups)

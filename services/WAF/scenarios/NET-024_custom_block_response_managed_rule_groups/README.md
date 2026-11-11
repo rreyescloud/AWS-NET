@@ -4,7 +4,9 @@
 **Status:** Lab built and run on 2026-11-02 ([lab/](lab/)) with Firewall Manager simulated by web ACL priorities. **Firewall Manager part run on 2026-11-04** in a two-account AWS Organizations lab (FMS administrator + member, `RETROFIT_EXISTING`). Results below.
 **Services:** AWS WAF (custom responses, managed rule groups, rule action overrides, labels) · AWS Firewall Manager (WAFV2 policy, `RETROFIT_EXISTING`) · CloudFront (custom error responses)
 
-[📐 Open diagram in draw.io](https://app.diagrams.net/#Uhttps%3A%2F%2Fraw.githubusercontent.com%2Frreyescloud%2FAWS-NET%2Fmain%2Fservices%2FWAF%2Fscenarios%2FNET-024_custom_block_response_managed_rule_groups%2Farchitecture.drawio) · [Interactive explainer](explainers/explainer.html)
+![Architecture: where the block response comes from — CloudFront, the retrofitted web ACL and Firewall Manager](architecture.png)
+
+[Interactive explainer](explainers/explainer.html)
 
 ## Business Context — Banking / Developer portal (pre-production)
 

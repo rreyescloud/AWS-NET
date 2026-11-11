@@ -91,7 +91,7 @@ they are lifecycle and billing surprises caused by a resource that costs money w
 
 **Results**
 
-[📐 Open diagram in draw.io](https://app.diagrams.net/#Uhttps%3A%2F%2Fraw.githubusercontent.com%2Frreyescloud%2FAWS-NET%2Fmain%2Fservices%2FR53%2Fscenarios%2FNET-008_global_resolver_troubleshooting%2Farchitecture.drawio)
+![Global Resolver failure modes: timeout, REFUSED and NXDOMAIN fail at different stages](architecture.png)
 
 ```
 Do53  (dig @<anycast-ip> app.lab.internal)
